@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPP · Sign in</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Splash: only shown the first time the page is entered through the link in this
+       browser session. The script below decides whether to show it BEFORE the page is
+       painted (this avoids the "appears and then hides" flicker when the user comes
+       back here after logging out). -->
+  <div id="spp-splash" class="is-hidden" role="img" aria-label="SPP — Pedagogical Practice Software">
+    <div class="splash-halo" aria-hidden="true"></div>
+    <img src="img/welcome.jpeg" alt="Welcome to SPP">
+    <div class="splash-bar" aria-hidden="true"><span></span></div>
+  </div>
+
+
+  <main class="login-container">
+    <section class="login-hero" aria-label="Pedagogical Practice Software">
+      <div class="hero-header">
+        <div class="logo-box" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i><span>SP</span></div>
+        <div class="hero-titles"><h1>SPP</h1><p>Pedagogical Practice Software</p><span class="title-underline"></span></div>
+      </div>
+      <div class="hero-illustration" aria-hidden="true"><img class="education-illustration" src="img/logo-emblem.png" alt=""></div>
+    </section>
+    <section class="login-form-section">
+      <header class="form-header"><h2 class="form-title">Sign in</h2><span class="form-title-underline" aria-hidden="true"></span><p>Select your role and enter your institutional credentials.</p></header>
+      <form class="login-form" action="#" method="post" autocomplete="off">
+        <fieldset class="role-selection"><legend class="sr-only">Select your role</legend>
+          <div class="role-option"><input type="radio" name="role" id="student" required><label class="role-card" for="student"><i class="fa-solid fa-graduation-cap"></i><span>Student</span></label></div>
+          <div class="role-option"><input type="radio" name="role" id="tutor"><label class="role-card" for="tutor"><i class="fa-solid fa-user"></i><span>Academic<br>Tutor</span></label></div>
+          <div class="role-option"><input type="radio" name="role" id="advisor"><label class="role-card" for="advisor"><i class="fa-solid fa-user-group"></i><span>Pedagogical<br>Advisor</span></label></div>
+          <div class="role-option"><input type="radio" name="role" id="director"><label class="role-card" for="director"><i class="fa-solid fa-briefcase"></i><span>Director</span></label></div>
+        </fieldset>
+        <div class="input-group"><label for="username">Username</label><div class="input-wrapper"><i class="fa-regular fa-user icon-left"></i><input id="username" name="username" type="text" placeholder="Enter your institutional username" required></div></div>
+        <div class="input-group password-group"><label for="password">Password</label><div class="input-wrapper"><i class="fa-solid fa-lock icon-left"></i><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button class="btn-visibility" type="button" aria-label="Show password"><i class="fa-regular fa-eye-slash"></i></button></div></div>
+        <button class="btn-submit" type="submit"><span>Enter the portal</span><i class="fa-solid fa-arrow-right"></i></button>
+      </form>
+    </section>
+  </main>
+  <script src="js/core/api.js"></script>
+  <script src="js/pages/login.js"></script>
+</body>
+</html>

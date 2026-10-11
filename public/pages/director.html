@@ -1,0 +1,1555 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<title>SPP-Director</title>
+	<link rel="stylesheet" href="../css/variables.css">
+	<link rel="stylesheet" href="../css/shell.css">
+	<link rel="stylesheet" href="../css/director.css">
+	<link rel="stylesheet" href="../css/users.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+	<main class="app-shell">
+		<aside class="app-sidebar">
+			<div>
+				<header class="app-brand">
+					<div>
+						<h1>SPP</h1>
+						<p>Pedagogical Practice<br>Software</p><span aria-hidden="true"></span>
+					</div>
+					<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+						<i class="fa-solid fa-bars hamburger-icon"></i>
+						<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+					</button>
+				</header>
+				<nav class="app-navigation" aria-label="Main navigation">
+					<a class="app-nav-link app-nav-link--active" href="#practice" aria-current="page"><i
+							class="fa-solid fa-book-open" aria-hidden="true"></i><span>Practices</span></a>
+					<a class="app-nav-link" href="#create-practice"><i class="fa-solid fa-circle-plus"
+							aria-hidden="true"></i><span>Create Practice</span></a>
+					<a class="app-nav-link" href="#manage-users"><i class="fa-solid fa-user-group"
+							aria-hidden="true"></i><span>Manage Users</span></a>
+					<a class="app-nav-link" href="#manage-practices"><i class="fa-solid fa-clipboard-list"
+							aria-hidden="true"></i><span>Practice Types</span></a>
+					<a class="app-nav-link" href="#manage-institutions"><i class="fa-solid fa-building"
+							aria-hidden="true"></i><span>Institutions</span></a>
+					<a class="app-nav-link" href="#reports"><i class="fa-solid fa-chart-line"
+							aria-hidden="true"></i><span>Reports</span></a>
+					<a class="app-nav-link" href="#profile"><i class="fa-solid fa-user"
+							aria-hidden="true"></i><span>Profile</span></a>
+				</nav>
+			</div>
+			<a class="app-logout" href="../index.html"><i class="fa-solid fa-door-open" aria-hidden="true"></i><span>Log
+					out</span></a>
+		</aside>
+
+		<!-- Create practice -->
+		<section class="app-content" id="create-practice" style="display: none;">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggleCreate" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open director menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<h2 class="cp-main-title">Practice Management</h2>
+
+				<div class="cp-layout">
+					<!-- Left column -->
+					<div class="cp-card">
+						<div class="cp-field">
+							<label>Practice Type</label>
+							<div class="cp-input-wrap">
+								<select>
+									<option value="" disabled selected>Select Practice Type</option>
+									<option value="1">Pedagogical Observation Practice</option>
+									<option value="2">Teaching Deepening Practice</option>
+									<option value="3">Immersion or Intervention Practice</option>
+									<option value="3">Immersion or Intervention Practice</option>
+									<option value="3">Immersion or Intervention Practice</option>
+									<option value="3">Immersion or Intervention Practice</option>
+									<option value="3">Immersion or Intervention Practice</option>
+									<option value="3">Immersion or Intervention Practice</option>
+								</select>
+								<i class="fa-solid fa-chevron-down right-icon"></i>
+							</div>
+						</div>
+
+						<div class="cp-field">
+							<label>Entity / Institution</label>
+							<div class="cp-input-wrap">
+								<select>
+									<option value="" disabled selected>Select the Institution</option>
+									<option value="1">Bucaramanga Higher Normal School</option>
+									<option value="2">San Jose School</option>
+									<option value="2">San Jose School</option>
+									<option value="2">San Jose School</option>
+									<option value="2">San Jose School</option>
+									<option value="2">San Jose School</option>
+									<option value="2">San Jose School</option>
+									<option value="2">San Jose School</option>
+								</select>
+								<i class="fa-solid fa-chevron-down right-icon"></i>
+							</div>
+						</div>
+
+						<div class="cp-field">
+							<label>Start Date</label>
+							<div class="cp-input-wrap">
+								<input type="date" class="cp-date-input" required>
+								<i class="fa-regular fa-calendar right-icon"></i>
+							</div>
+						</div>
+
+						<div class="cp-field">
+							<label>End Date</label>
+							<div class="cp-input-wrap">
+								<input type="date" class="cp-date-input" required>
+								<i class="fa-regular fa-calendar right-icon"></i>
+							</div>
+						</div>
+					</div>
+
+					<!-- Right column -->
+					<div class="cp-card">
+						<div class="cp-field">
+							<label>Assigned Student</label>
+							<div class="cp-input-wrap">
+								<select>
+									<option value="" disabled selected>Select the Student</option>
+									<option value="1">Edwin Tester</option>
+									<option value="2">Jose David Suarez</option>
+								</select>
+								<i class="fa-solid fa-chevron-down right-icon"></i>
+							</div>
+						</div>
+
+						<div class="cp-field">
+							<label>Assigned Tutor</label>
+							<div class="cp-input-wrap">
+								<select>
+									<option value="" disabled selected>Select the Tutor</option>
+									<option value="1">Ramiro Jesus Urtado Bueno</option>
+									<option value="2">Juan Carlos Ramirez</option>
+								</select>
+								<i class="fa-solid fa-chevron-down right-icon"></i>
+							</div>
+						</div>
+
+						<div class="cp-field">
+							<label>Assigned Advisor</label>
+							<div class="cp-input-wrap">
+								<select>
+									<option value="" disabled selected>Select the Advisor</option>
+									<option value="1">Claudia Patricia Rueda Pardo</option>
+									<option value="2">Luisa Fernanda Rodriguez</option>
+									<option value="2">Luisa Fernanda Rodriguez</option>
+									<option value="2">Luisa Fernanda Rodriguez</option>
+									<option value="2">Luisa Fernanda Rodriguez</option>
+									<option value="2">Luisa Fernanda Rodriguez</option>
+									<option value="2">Luisa Fernanda Rodriguez</option>
+								</select>
+								<i class="fa-solid fa-chevron-down right-icon"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="cp-actions">
+					<button type="button" class="cp-btn cp-btn-save">Save</button>
+					<button type="button" class="cp-btn cp-btn-cancel">Cancel</button>
+				</div>
+			</div>
+		</section>
+
+		<!-- Practice -->
+		<section class="app-content" id="practice">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open director menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<section class="practice-panel" aria-labelledby="practice-title">
+					<div class="practice-header">
+						<h2 id="practice-title">Practice Information</h2>
+						<div class="practice-status">
+							<span>Status</span>
+							<div class="status-badge"></div>
+							<div class="ev-menu-wrapper" id="practice-options-menu" style="margin-left: 8px;">
+								<button type="button" class="ev-menu-btn" aria-label="Practice options" aria-expanded="false" style="color: #111827; background-color: #e5e7eb; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
+									<i class="fa-solid fa-ellipsis-vertical" aria-hidden="true" style="font-size: 1.1rem;"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--edit" id="btn-edit-practice" role="menuitem">
+										<i class="fa-solid fa-pen" aria-hidden="true"></i> Editar
+									</button>
+									<button type="button" class="ev-dropdown-item ev-item--delete" id="btn-delete-practice" role="menuitem" style="color: #b3261e;">
+										<i class="fa-solid fa-trash" aria-hidden="true"></i> Eliminar
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<form class="practice-form" action="#" method="post">
+						<div class="practice-field"><label for="practice-name">Practice Name</label>
+							<div class="practice-value" id="practice-name">.....</div>
+						</div>
+						<div class="practice-field"><label for="tutor">Tutor</label>
+							<div class="practice-value" id="tutor">.....</div>
+						</div>
+						<div class="practice-field"><label for="hours">Practice Hours</label>
+							<div class="practice-value" id="hours">.....</div>
+						</div>
+						<div class="practice-field"><label for="institution">Institution</label>
+							<div class="practice-value" id="institution">.....</div>
+						</div>
+						<div class="practice-field"><label for="advisor">Advisor</label>
+							<div class="practice-value" id="advisor">.....</div>
+						</div>
+						<div class="practice-field"><label for="semester">Semester</label>
+							<div class="practice-value" id="semester">.....</div>
+						</div>
+						<div class="practice-field practice-field--date"><label for="start-date">Start Date</label>
+							<div>
+								<div class="practice-value" id="start-date">.....</div><i class="fa-regular fa-calendar"
+									aria-hidden="true"></i>
+							</div>
+						</div>
+						<div class="practice-field practice-field--date"><label for="end-date">End Date</label>
+							<div>
+								<div class="practice-value" id="end-date">.....</div><i class="fa-regular fa-calendar"
+									aria-hidden="true"></i>
+							</div>
+						</div>
+						<div class="practice-field"><label for="code">Practice Code</label>
+							<div class="practice-value" id="code">.....</div>
+						</div>
+					</form>
+					<button class="practice-submit" type="button"><i class="fa-solid fa-right-to-bracket"
+							aria-hidden="true"></i><span>Enter</span></button>
+				</section>
+
+				<!-- LOGBOOK PANEL (shown after Enter) -->
+				<section class="logbook-panel" id="logbook-panel" aria-labelledby="logbook-title"
+					style="display: none;">
+					<div class="logbook-header">
+						<button type="button" class="logbook-back-btn" id="logbookBack"
+							aria-label="Back to Practice Information">
+							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+						</button>
+						<h2 id="logbook-title" class="logbook-title">Practice <span class="lb-student-name"
+								aria-label="View student credential">- Test Student</span></h2>
+					</div>
+					<div class="logbook-info-card">
+						<div class="logbook-info-item">
+							<span class="lb-info-label">Final Grade</span>
+							<span class="lb-info-value">Not graded</span>
+						</div>
+						<div class="logbook-info-item">
+							<span class="lb-info-label">General Observation</span>
+							<span class="lb-info-value">No observations</span>
+						</div>
+					</div>
+
+					<div class="logbook-action-card">
+						<div class="lb-action-left">
+							<div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
+							<span class="lb-action-label">Activities</span>
+						</div>
+						<button type="button" class="lb-action-btn" id="activities-btn"><i
+								class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+					</div>
+
+					<div class="logbook-action-card">
+						<div class="lb-action-left">
+							<div class="stat-icon"><i class="fa-solid fa-circle-question"></i></div>
+							<span class="lb-action-label">Questions Section</span>
+						</div>
+						<button type="button" class="lb-action-btn" id="questions-btn"><i
+								class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+					</div>
+				</section>
+
+				<!-- ACTIVITIES PANEL (shown after Enter) -->
+				<section class="activities-panel" id="activities-panel" aria-labelledby="activities-title"
+					style="display: none;">
+					<div class="activities-header">
+						<button type="button" class="activities-back-btn" id="activitiesBack"
+							aria-label="Back to Logbook Information">
+							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+						</button>
+						<h2 id="activities-title" class="activities-title">Activities</h2>
+					</div>
+					<div id="activities-list-container"></div>
+				</section>
+
+				<!-- QUESTIONS PANEL (shown after Enter) -->
+				<section class="questions-panel" id="questions-panel" aria-labelledby="questions-title"
+					style="display: none;">
+					<div class="questions-header">
+						<button type="button" class="questions-back-btn" id="questionsBack"
+							aria-label="Back to Logbook Information">
+							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+						</button>
+						<h2 id="questions-title" class="questions-title">Questions Section</h2>
+					</div>
+					<p style="padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: 0.95rem;">
+						No content yet
+					</p>
+				</section>
+
+				<!-- EVIDENCE PANEL (shown after entering an Activity) -->
+				<section class="evidences-panel" id="evidences-panel" aria-labelledby="evidences-title"
+					style="display: none;">
+					<div class="evidences-header">
+						<button type="button" class="evidences-back-btn" id="evidencesBack"
+							aria-label="Back to Activities">
+							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+						</button>
+						<h2 id="evidences-title" class="evidences-title">Activity</h2>
+					</div>
+
+					<!-- Activity Details Card -->
+					<div class="act-details-card">
+						<div class="act-details-left" id="act-left-panel">
+							<div class="act-details-header-row">
+								<h3 class="act-details-title">Activity Information</h3>
+							</div>
+							<div class="act-field">
+								<span class="act-label">Activity Name</span>
+								<div class="act-value-box" id="act-name-display">-</div>
+							</div>
+							<div class="act-row" id="act-grid-row">
+								<div class="act-field act-field--date">
+									<span class="act-label" id="lbl-assigned-date">Assignment Date</span>
+									<div class="act-value-box"><span id="act-start-display">-</span><i
+											class="fa-regular fa-calendar" id="act-calendar-icon" aria-hidden="true"
+											style="display: none;"></i></div>
+								</div>
+								<div class="act-field act-field--date" id="act-deadline-container">
+									<span class="act-label">Deadline</span>
+									<div class="act-value-box" id="act-end-display">without limit</div>
+								</div>
+								<div class="act-field" id="act-nota-container" style="cursor: default;">
+									<span class="act-label" id="lbl-grade">Grade:</span>
+									<div class="act-value-box" id="act-grade-display">0</div>
+								</div>
+								<div class="act-field">
+									<span class="act-label" id="lbl-hours">Hours Completed</span>
+									<div class="act-value-box" id="act-hours-display">0</div>
+								</div>
+							</div>
+							<div class="act-field" id="act-desc-container">
+								<span class="act-label">Description</span>
+								<div class="act-desc-box" id="act-desc-display">-</div>
+							</div>
+						</div>
+						<div class="act-details-right" id="act-right-panel">
+							<div class="am-file-list" id="act-files-display"></div>
+						</div>
+					</div>
+
+					<h3 class="feedback-title">Activity Evidence</h3>
+
+					<div class="feedback-section">
+						<h3 class="feedback-title">Feedback</h3>
+
+						<!-- Evidence Template (Hidden) -->
+						<div class="ev-card" style="display: none;">
+							<div class="ev-card-body">
+								<p class="ev-card-title"></p>
+								<p class="ev-card-desc"></p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Evidence options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem">
+										<i class="fa-solid fa-eye" aria-hidden="true"></i> View
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Feedback Template (Hidden) -->
+						<div class="feedback-card" style="display: none;">
+							<div class="feedback-card-body">
+								<div class="feedback-header">
+									<span class="feedback-role"></span>
+									<span class="feedback-date"></span>
+								</div>
+								<p class="feedback-content"></p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Feedback options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem">
+										<i class="fa-solid fa-eye" aria-hidden="true"></i> View
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</section>
+
+		<!-- ===================================================================== USER MANAGEMENT — step-by-step registration + list. Styles in css/users.css · Logic in js/pages/users.js ===================================================================== -->
+		<section class="app-content" id="manage-users" style="display: none;">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggleUsers" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open director menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<header class="um-header">
+					<h1>Manage Users <span class="um-count-pill" id="um-total-pill">0 registered users</span>
+					</h1>
+				</header>
+
+				<nav class="reports-tabs um-tabs" aria-label="User management">
+					<button type="button" class="reports-tab-btn um-tab-btn active" data-um-panel="um-panel-register">
+						<i class="fa-solid fa-user-plus" aria-hidden="true"></i> Register User
+					</button>
+					<button type="button" class="reports-tab-btn um-tab-btn" data-um-panel="um-panel-list">
+						<i class="fa-solid fa-list" aria-hidden="true"></i> List Users
+					</button>
+				</nav>
+
+				<!-- ============ TAB 1: STEP-BY-STEP REGISTRATION ============ -->
+				<div id="um-panel-register" class="um-panel">
+					<div class="um-wizard-layout" data-step="1">
+						<div class="um-wizard-main">
+							<header class="um-header">
+								<h2 id="um-form-title">Register new user</h2>
+								<p id="um-form-desc">Complete the four steps to register the user in the institutional
+									software.</p>
+							</header>
+
+							<ol class="um-steps">
+								<li class="um-step-item is-current" aria-current="step">
+									<span class="um-step-dot">1</span>
+									<span class="um-step-text"><small>Step 1</small><strong>Identity</strong></span>
+								</li>
+								<li class="um-step-bar" aria-hidden="true"></li>
+								<li class="um-step-item">
+									<span class="um-step-dot">2</span>
+									<span class="um-step-text"><small>Step 2</small><strong>Role</strong></span>
+								</li>
+								<li class="um-step-bar" aria-hidden="true"></li>
+								<li class="um-step-item">
+									<span class="um-step-dot">3</span>
+									<span class="um-step-text"><small>Step 3</small><strong>Access</strong></span>
+								</li>
+								<li class="um-step-bar" aria-hidden="true"></li>
+								<li class="um-step-item">
+									<span class="um-step-dot">4</span>
+									<span class="um-step-text"><small>Step 4</small><strong>Confirmation</strong></span>
+								</li>
+							</ol>
+
+							<form id="um-form" action="#" method="post" novalidate>
+
+								<!-- STEP 1 -->
+								<div class="cp-card um-step-panel is-active" data-step="1">
+									<div class="um-step-head">
+										<div>
+											<h3>Personal data and identity</h3>
+											<p>Enter the names and the document exactly as they appear in the official
+												record.</p>
+										</div>
+										<span class="um-tag">Required</span>
+									</div>
+
+									<div class="um-grid">
+										<div class="um-field">
+											<label for="um-doc-type">Document type</label>
+											<div class="cp-input-wrap">
+												<select id="um-doc-type" name="doc-type">
+													<option value="" disabled selected>Select Document Type</option>
+													<option value="CC">Citizenship card</option>
+													<option value="CE">Foreigner ID card</option>
+													<option value="PAS">Passport</option>
+												</select>
+												<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
+											</div>
+											<span class="um-error"></span>
+										</div>
+
+										<div class="um-field">
+											<label for="um-doc-number">Document number</label>
+											<div class="um-control um-control--mono">
+												<i class="fa-solid fa-hashtag" aria-hidden="true"></i>
+												<input id="um-doc-number" name="doc-number" type="text"
+													inputmode="numeric" autocomplete="off" placeholder="1098234871">
+											</div>
+											<span class="um-error"></span>
+										</div>
+
+										<div class="um-field">
+											<label for="um-names">First names</label>
+											<div class="um-control">
+												<i class="fa-solid fa-user" aria-hidden="true"></i>
+												<input id="um-names" name="names" type="text" autocomplete="given-name"
+													placeholder="Mariana Sofía">
+											</div>
+											<span class="um-error"></span>
+										</div>
+
+										<div class="um-field">
+											<label for="um-surnames">Last names</label>
+											<div class="um-control">
+												<i class="fa-solid fa-users" aria-hidden="true"></i>
+												<input id="um-surnames" name="surnames" type="text"
+													autocomplete="family-name" placeholder="Cárdenas Mendoza">
+											</div>
+											<span class="um-error"></span>
+										</div>
+									</div>
+								</div>
+
+								<!-- STEP 2 -->
+								<div class="cp-card um-step-panel" data-step="2">
+									<div class="um-step-head">
+										<div>
+											<h3>Institutional role and affiliation</h3>
+											<p>The role defines which panel the person sees when entering the portal.
+											</p>
+										</div>
+										<span class="um-tag">Permissions</span>
+									</div>
+
+									<div class="um-field">
+										<label>Assigned role</label>
+										<div class="um-roles">
+											<label class="um-role">
+												<input type="radio" name="um-role" value="student" checked>
+												<span class="um-role-box">
+													<i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+													<span><strong>Student</strong><span>Records evidence and answers the
+															logbook.</span></span>
+												</span>
+											</label>
+											<label class="um-role">
+												<input type="radio" name="um-role" value="tutor">
+												<span class="um-role-box">
+													<i class="fa-solid fa-user" aria-hidden="true"></i>
+													<span><strong>Academic Tutor</strong><span>Reviews activities and
+															leaves feedback.</span></span>
+												</span>
+											</label>
+											<label class="um-role">
+												<input type="radio" name="um-role" value="advisor">
+												<span class="um-role-box">
+													<i class="fa-solid fa-user-group" aria-hidden="true"></i>
+													<span><strong>Pedagogical Advisor</strong><span>Accompanies the
+															practice at the institution.</span></span>
+												</span>
+											</label>
+										</div>
+									</div>
+
+									<div class="um-grid">
+										<div class="um-field">
+											<label for="um-program" id="um-program-label">Academic program</label>
+											<div class="cp-input-wrap">
+												<select id="um-program" name="program">
+													<option value="" disabled selected>Select a program</option>
+													<option value="Early Childhood Education Degree"
+														data-faculty="Faculty of Education and Humanities">Early
+														Childhood Education Degree</option>
+													<option value="Physical Education Degree"
+														data-faculty="Faculty of Education and Humanities">Physical
+														Education Degree</option>
+													<option value="Modern Languages Degree"
+														data-faculty="Faculty of Education and Humanities">Modern
+														Languages Degree</option>
+													<option value="Mathematics Degree"
+														data-faculty="Faculty of Basic Sciences">Mathematics Degree
+													</option>
+													<option value="Social Sciences Degree"
+														data-faculty="Faculty of Social Sciences">Social Sciences Degree
+													</option>
+													<option value="Bucaramanga Higher Normal School"
+														data-faculty="Practice institution">Bucaramanga Higher Normal
+														School</option>
+													<option value="Pedagogical Practice Directorate"
+														data-faculty="Academic Vice-Rectorate">Pedagogical Practice
+														Directorate</option>
+												</select>
+												<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
+											</div>
+											<span class="um-error"></span>
+										</div>
+
+										<div class="um-field">
+											<label for="um-faculty">Faculty or department</label>
+											<div class="um-control um-control--locked">
+												<i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+												<input id="um-faculty" name="faculty" type="text" readonly
+													placeholder="Filled in automatically">
+											</div>
+											<span class="um-hint"><i class="fa-solid fa-wand-magic-sparkles"
+													aria-hidden="true"></i> Filled in according to the chosen
+												program.</span>
+										</div>
+									</div>
+
+									<div class="um-status-row">
+										<div class="um-status-copy">
+											<strong>Account status</strong>
+										</div>
+										<div class="um-switch" role="group" aria-label="Account status">
+											<button type="button" data-status="active" class="is-on">Active</button>
+											<button type="button" data-status="inactive">Inactive</button>
+										</div>
+									</div>
+								</div>
+
+								<!-- STEP 3 -->
+								<div class="cp-card um-step-panel" data-step="3">
+									<div class="um-step-head">
+										<div>
+											<h3>Access credentials</h3>
+											<p>With these details the person signs in to the portal for the first time.
+											</p>
+										</div>
+										<span class="um-tag">Security</span>
+									</div>
+
+									<div class="um-field">
+										<label for="um-email">Institutional e-mail</label>
+										<div class="um-control">
+											<i class="fa-solid fa-at" aria-hidden="true"></i>
+											<input id="um-email" name="email" type="text" autocomplete="off"
+												placeholder="first.lastname">
+											<span class="um-suffix">@university.edu</span>
+										</div>
+										<span class="um-error"></span>
+										<span class="um-hint"><i class="fa-solid fa-circle-check"
+												aria-hidden="true"></i> We suggest it from the name, but you can change
+											it.</span>
+									</div>
+
+									<div class="um-field">
+										<label for="um-pass">Temporary password</label>
+										<div class="um-control um-control--mono">
+											<i class="fa-solid fa-key" aria-hidden="true"></i>
+											<input id="um-pass" name="pass" type="password" autocomplete="new-password">
+											<button type="button" class="um-icon-btn" id="um-pass-toggle"
+												aria-label="Show password"><i class="fa-regular fa-eye-slash"
+													aria-hidden="true"></i></button>
+										</div>
+										<span class="um-error"></span>
+										<button type="button" class="um-ghost-btn" id="um-pass-generate"
+											style="align-self:flex-start;margin-top:4px;">
+											<i class="fa-solid fa-dice" aria-hidden="true"></i> Generate a secure one
+										</button>
+									</div>
+
+
+
+									<label class="um-check">
+										<input type="checkbox" id="um-notify" checked>
+										<span>
+											<strong>Send the credentials by e-mail</strong>
+											<span>The link expires in 72 hours and forces a password change on first
+												sign-in.</span>
+										</span>
+									</label>
+								</div>
+
+								<!-- STEP 4 -->
+								<div class="cp-card um-step-panel" data-step="4">
+									<div class="um-step-head">
+										<div>
+											<h3>Review before saving</h3>
+											<p>This is how the user's credential will look inside the portal.</p>
+										</div>
+										<span class="um-tag">Last step</span>
+									</div>
+
+									<dl class="um-summary" id="um-summary"></dl>
+
+
+								</div>
+
+								<div class="um-wizard-actions">
+									<span class="um-progress-text" id="um-progress-text">Step 1 of 4</span>
+									<button type="button" class="cp-btn cp-btn-cancel" id="um-btn-reset">Clear</button>
+									<button type="button" class="cp-btn cp-btn-cancel" id="um-btn-prev"
+										style="display:none;">Previous</button>
+									<button type="button" class="cp-btn cp-btn-save" id="um-btn-next">Next</button>
+									<button type="submit" class="cp-btn cp-btn-save" id="um-btn-submit"
+										style="display:none;"><i class="fa-solid fa-user-check"
+											aria-hidden="true"></i>Register</button>
+								</div>
+							</form>
+						</div>
+
+						<!-- Live credential -->
+						<aside class="um-preview" aria-label="Credential preview">
+							<div id="um-preview-card"></div>
+							<div class="um-checklist">
+								<h4><i class="fa-solid fa-circle-info" aria-hidden="true"></i> How to use this card
+								</h4>
+								<ul>
+									<li class="is-ok"><i class="fa-solid fa-circle-check"
+											aria-hidden="true"></i><span>It updates as you type in the form.</span></li>
+									<li class="is-ok"><i class="fa-solid fa-circle-check"
+											aria-hidden="true"></i><span>From "View logbook" you jump to the user's
+											practice.</span></li>
+									<li class="is-ok"><i class="fa-solid fa-circle-check"
+											aria-hidden="true"></i><span>The eye shows the temporary password so you can
+											read it out.</span></li>
+								</ul>
+							</div>
+						</aside>
+					</div>
+				</div>
+
+				<!-- ============ TAB 2: LIST ============ -->
+				<div id="um-panel-list" class="um-panel" style="display: none;">
+					<div class="stats-grid">
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="um-kpi-students">0</span>
+								<span class="stat-label">Students</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-user"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="um-kpi-tutors">0</span>
+								<span class="stat-label">Academic tutors</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-user-group"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="um-kpi-advisors">0</span>
+								<span class="stat-label">Pedagogical advisors</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="um-kpi-pending">0</span>
+								<span class="stat-label">Without active access</span>
+							</div>
+						</article>
+					</div>
+
+					<div class="um-toolbar">
+						<div class="um-search">
+							<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+							<label class="sr-only" for="um-search">Search user</label>
+							<input id="um-search" type="search" placeholder="Search by name, document or e-mail">
+						</div>
+
+						<div class="cp-input-wrap um-filter-wrap">
+							<label class="sr-only" for="um-filter-role">Filter by role</label>
+							<select id="um-filter-role">
+								<option value="" disabled selected>Select a role</option>
+								<option value="">All</option>
+								<option value="student">Students</option>
+								<option value="tutor">Academic tutors</option>
+								<option value="advisor">Pedagogical advisors</option>
+							</select>
+							<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
+						</div>
+
+						<div class="cp-input-wrap um-filter-wrap">
+							<label class="sr-only" for="um-filter-status">Filter by status</label>
+							<select id="um-filter-status">
+								<option value="" disabled selected>Select a status</option>
+								<option value="">All</option>
+								<option value="active">Active</option>
+								<option value="inactive">Inactive</option>
+							</select>
+							<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
+						</div>
+
+						<button type="button" class="um-ghost-btn" id="um-btn-clear"><i class="fa-solid fa-rotate-left"
+								aria-hidden="true"></i> Clear</button>
+						<button type="button" class="cp-btn cp-btn-save" id="um-btn-new"
+							style="height:46px;padding:0 22px;font-size:15px;"><i class="fa-solid fa-user-plus"
+								aria-hidden="true"></i> New user</button>
+					</div>
+
+					<div class="um-bulk" id="um-bulk" hidden>
+						<p class="um-bulk-info"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span
+								id="um-selected-count">0</span> users selected</p>
+						<div class="um-bulk-actions">
+							<button type="button" data-bulk="activate"><i class="fa-solid fa-unlock"
+									aria-hidden="true"></i> Activate</button>
+							<button type="button" data-bulk="suspend"><i class="fa-solid fa-ban"
+									aria-hidden="true"></i> Suspend</button>
+							<button type="button" data-bulk="delete"><i class="fa-solid fa-trash"
+									aria-hidden="true"></i> Delete</button>
+							<button type="button" data-bulk="cancel" aria-label="Cancel selection"><i
+									class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+						</div>
+					</div>
+
+					<div class="um-table-panel">
+						<div class="um-table-scroll">
+							<table class="um-table" aria-label="User list">
+								<thead>
+									<tr>
+										<th scope="col" class="um-col-check">
+											<label class="sr-only" for="um-select-all">Select all</label>
+											<input type="checkbox" id="um-select-all">
+										</th>
+										<th scope="col">User</th>
+										<th scope="col">Document</th>
+										<th scope="col">Institutional role</th>
+										<th scope="col">Program</th>
+										<th scope="col">Status</th>
+										<th scope="col" class="um-col-actions">Actions</th>
+									</tr>
+								</thead>
+								<tbody id="um-tbody"></tbody>
+							</table>
+						</div>
+
+						<div class="um-cards" id="um-cards"></div>
+
+						<div class="um-pagination">
+							<div class="um-pagination-info">
+								<span id="um-range">No results</span>
+								<span class="um-rows">
+									<label for="um-rows">Rows:</label>
+									<select id="um-rows">
+										<option value="5">5</option>
+										<option value="10" selected>10</option>
+										<option value="25">25</option>
+										<option value="50">50</option>
+									</select>
+								</span>
+							</div>
+							<div class="um-pages" id="um-pages"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Manage practice types -->
+		<section class="app-content" id="manage-practices" style="display: none;">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggleGtp" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open director menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<header class="um-header">
+					<h1><span id="ptm-main-title">Manage practice types</span> <span class="um-count-pill" id="ptm-total-pill">0 practice types
+							registered</span></h1>
+				</header>
+				<nav class="reports-tabs ptm-tabs" aria-label="Practice type management">
+					<button type="button" class="reports-tab-btn ptm-tab-btn active"
+						data-ptm-panel="ptm-panel-register">
+						<i class="fa-solid fa-circle-plus" aria-hidden="true"></i> <span class="ptm-tab-title">Register Practice Type</span>
+					</button>
+					<button type="button" class="reports-tab-btn ptm-tab-btn" data-ptm-panel="ptm-panel-list">
+						<i class="fa-solid fa-list" aria-hidden="true"></i> List types
+					</button>
+				</nav>
+
+				<div id="ptm-panel-register" class="ptm-panel">
+					<form class="ptm-form ptm-form-centered" id="ptm-form-register" action="#" method="post" novalidate>
+						<div class="cp-card ptm-card">
+							<div class="cp-field">
+								<label for="ptm-name">Practice Name</label>
+								<div class="cp-input-wrap">
+									<input id="ptm-name" name="name" type="text" placeholder="Practice name"
+										autocomplete="off">
+								</div>
+							</div>
+
+							<div class="ptm-form-row">
+								<div class="cp-field">
+									<label for="ptm-semester">Semester No.</label>
+									<div class="cp-input-wrap">
+										<select id="ptm-semester" name="semester">
+											<option value="" disabled selected>Select Semester</option>
+											<option value="1">1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+											<option value="4">4</option>
+											<option value="5">5</option>
+											<option value="6">6</option>
+											<option value="7">7</option>
+											<option value="8">8</option>
+										</select>
+										<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
+									</div>
+								</div>
+
+								<div class="cp-field">
+									<label for="ptm-hours">Required Hours</label>
+									<div class="cp-input-wrap">
+										<input id="ptm-hours" name="hours" type="text" class="ptm-hours-input"
+											placeholder="Hours" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+											aria-describedby="ptm-hours-hint">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cp-actions ptm-actions">
+							<button type="submit" class="cp-btn cp-btn-save">Register Type</button>
+							<button type="button" class="cp-btn cp-btn-cancel" id="ptm-btn-cancel">Cancel</button>
+						</div>
+					</form>
+				</div>
+
+				<div id="ptm-panel-list" class="ptm-panel" style="display: none;">
+					<div class="ptm-type-list" id="ptm-type-list" aria-label="List of practice types">
+						<article class="ev-card ptm-type-card" data-code="TIP-001">
+							<div class="ev-card-body ptm-type-card-body">
+								<p class="ptm-type-label">Practice type</p>
+								<p class="ev-card-title ptm-type-name">Pedagogical Observation Practice</p>
+								<p class="ptm-type-meta">
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Practice Code</span>
+										TIP-001</span>
+									<span class="ptm-meta-sep" aria-hidden="true">|</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Semester</span> 5</span>
+									<span class="ptm-meta-sep" aria-hidden="true">|</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Hours</span> 120</span>
+								</p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Practice type options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
+											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
+									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
+											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
+									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
+											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+								</div>
+							</div>
+						</article>
+
+						<article class="ev-card ptm-type-card" data-code="TIP-002">
+							<div class="ev-card-body ptm-type-card-body">
+								<p class="ptm-type-label">Practice type</p>
+								<p class="ev-card-title ptm-type-name">Teaching Deepening Practice</p>
+								<p class="ptm-type-meta">
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Practice Code</span>
+										TIP-002</span>
+									<span class="ptm-meta-sep" aria-hidden="true">|</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Semester</span> 7</span>
+									<span class="ptm-meta-sep" aria-hidden="true">|</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Hours</span> 160</span>
+								</p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Practice type options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
+											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
+									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
+											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
+									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
+											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+								</div>
+							</div>
+						</article>
+
+						<article class="ev-card ptm-type-card" data-code="TIP-003">
+							<div class="ev-card-body ptm-type-card-body">
+								<p class="ptm-type-label">Practice type</p>
+								<p class="ev-card-title ptm-type-name">Immersion or Intervention Practice</p>
+								<p class="ptm-type-meta">
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Practice Code</span>
+										TIP-003</span>
+									<span class="ptm-meta-sep" aria-hidden="true">|</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Semester</span> 9</span>
+									<span class="ptm-meta-sep" aria-hidden="true">|</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Hours</span> 200</span>
+								</p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Practice type options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
+											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
+									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
+											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
+									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
+											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+								</div>
+							</div>
+						</article>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Manage institutions -->
+		<section class="app-content" id="manage-institutions" style="display: none;">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggleInst" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open director menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<header class="um-header">
+					<h1><span id="inst-main-title">Manage institutions</span> <span class="um-count-pill" id="inst-total-pill">0 institutions
+							registered</span></h1>
+				</header>
+				<nav class="reports-tabs inst-tabs" aria-label="Institution management">
+					<button type="button" class="reports-tab-btn inst-tab-btn active"
+						data-inst-panel="inst-panel-register">
+						<i class="fa-solid fa-circle-plus" aria-hidden="true"></i> <span class="inst-tab-title">Register Institution</span>
+					</button>
+					<button type="button" class="reports-tab-btn inst-tab-btn" data-inst-panel="inst-panel-list">
+						<i class="fa-solid fa-list" aria-hidden="true"></i> List institutions
+					</button>
+				</nav>
+
+				<div id="inst-panel-register" class="inst-panel">
+					<form id="inst-form-register" class="inst-form" action="#" method="post" novalidate>
+						<div class="cp-layout inst-layout">
+							<div class="cp-card">
+								<div class="cp-field">
+									<label for="inst-taxid">Institution Tax ID</label>
+									<div class="cp-input-wrap">
+										<input id="inst-taxid" name="taxid" type="text" placeholder="Tax ID"
+											inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+									</div>
+								</div>
+								<div class="cp-field">
+									<label for="inst-manager">Manager</label>
+									<div class="cp-input-wrap">
+										<input id="inst-manager" name="manager" type="text" placeholder="Manager name"
+											autocomplete="name">
+									</div>
+								</div>
+								<div class="cp-field">
+									<label for="inst-address">Address</label>
+									<div class="cp-input-wrap">
+										<input id="inst-address" name="address" type="text"
+											placeholder="Institution address" autocomplete="street-address">
+									</div>
+								</div>
+							</div>
+
+							<div class="cp-card">
+								<div class="cp-field">
+									<label for="inst-name">Institution Name</label>
+									<div class="cp-input-wrap">
+										<input id="inst-name" name="name" type="text" placeholder="Institution name"
+											autocomplete="organization">
+									</div>
+								</div>
+								<div class="cp-field">
+									<label for="inst-email">E-mail</label>
+									<div class="cp-input-wrap">
+										<input id="inst-email" name="email" type="email"
+											placeholder="email@institution.edu" autocomplete="email">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cp-actions inst-actions">
+							<button type="submit" class="cp-btn cp-btn-save">Register Institution</button>
+							<button type="button" class="cp-btn cp-btn-cancel" id="inst-btn-cancel">Cancel</button>
+						</div>
+					</form>
+				</div>
+
+				<div id="inst-panel-list" class="inst-panel" style="display: none;">
+					<div class="entity-list inst-entity-list" id="inst-entity-list" aria-label="List of institutions">
+						<article class="ev-card inst-entity-card" data-taxid="900123456-7">
+							<div class="ev-card-body">
+								<p class="entity-card-label">Institution</p>
+								<p class="ev-card-title">Bucaramanga Higher Normal School</p>
+								<p class="entity-card-meta">
+									<span class="entity-meta-item"><span class="entity-meta-key">Tax ID</span>
+										900123456-7</span>
+									<span class="entity-meta-sep" aria-hidden="true">|</span>
+									<span class="entity-meta-item"><span class="entity-meta-key">Manager</span> María
+										Fernanda Prieto</span>
+									<span class="entity-meta-sep" aria-hidden="true">|</span>
+									<span class="entity-meta-item"><span class="entity-meta-key">Email</span>
+										contact@ensb.edu.co</span>
+								</p>
+								<p class="entity-card-desc">45th Street #18-22, Bucaramanga</p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Institution options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
+											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
+									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
+											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
+									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
+											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+								</div>
+							</div>
+						</article>
+
+						<article class="ev-card inst-entity-card" data-taxid="890456789-1">
+							<div class="ev-card-body">
+								<p class="entity-card-label">Institution</p>
+								<p class="ev-card-title">San Jose School</p>
+								<p class="entity-card-meta">
+									<span class="entity-meta-item"><span class="entity-meta-key">Tax ID</span>
+										890456789-1</span>
+									<span class="entity-meta-sep" aria-hidden="true">|</span>
+									<span class="entity-meta-item"><span class="entity-meta-key">Manager</span> Juan
+										Carlos Ramirez</span>
+									<span class="entity-meta-sep" aria-hidden="true">|</span>
+									<span class="entity-meta-item"><span class="entity-meta-key">Email</span>
+										info@sanjoseschool.edu</span>
+								</p>
+								<p class="entity-card-desc">González Valencia Ave. # 55-119, Bucaramanga</p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Institution options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
+											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
+									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
+											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
+									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
+											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+								</div>
+							</div>
+						</article>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Reports -->
+		<section class="app-content" id="reports" style="display: none;">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggleReports" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open director menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+			<div class="reports-wrapper">
+				<header class="reports-header">
+					<h2>Reports and Statistics</h2>
+					<p>Overview of the status of the professional practices</p>
+				</header>
+
+				<nav class="reports-tabs" aria-label="Report navigation">
+					<button class="reports-tab-btn active"><i class="fa-solid fa-chart-line"></i> General</button>
+					<button class="reports-tab-btn"><i class="fa-solid fa-clipboard-list"></i> Types</button>
+					<button class="reports-tab-btn"><i class="fa-regular fa-book"></i> Practice</button>
+					<button class="reports-tab-btn"><i class="fa-regular fa-comment"></i> Feedback</button>
+					<button class="reports-tab-btn"><i class="fa-solid fa-building"></i> Institutions</button>
+				</nav>
+
+				<!-- ===== TAB: GENERAL ===== -->
+				<div class="report-panel" id="tab-general">
+					<div class="stats-grid">
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-copy"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-gen-total">&mdash;</span>
+								<span class="stat-label">Total Practices</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-file-circle-check"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-gen-active">&mdash;</span>
+								<span class="stat-label">Active</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-gen-completed">&mdash;</span>
+								<span class="stat-label">Completed</span>
+							</div>
+						</article>
+					</div>
+
+					<div class="charts-grid">
+						<article class="chart-panel">
+							<h3><i class="fa-solid fa-building-columns"></i> Top Institutions</h3>
+							<ul class="progress-list" id="rep-gen-institutions"></ul>
+						</article>
+
+						<article class="chart-panel">
+							<h3><i class="fa-solid fa-user-group"></i> Top Tutors</h3>
+							<ul class="progress-list" id="rep-gen-tutors"></ul>
+						</article>
+					</div>
+				</div>
+
+				<!-- ===== TAB: TYPES ===== -->
+				<div class="report-panel" id="tab-types" style="display:none;">
+					<article class="types-table-panel">
+						<h3 class="types-table-title">Summary Table</h3>
+
+						<!-- Desktop view: regular table with its own scroll -->
+						<div class="types-table-scroll">
+							<table class="types-table" aria-label="Summary table of practice types">
+								<thead>
+									<tr>
+										<th scope="col">Practice Type</th>
+										<th scope="col">Students</th>
+										<th scope="col">% Participation</th>
+									</tr>
+								</thead>
+								<tbody id="rep-types-body"></tbody>
+							</table>
+						</div>
+
+						<!-- Mobile view: cards -->
+						<div class="types-cards" id="rep-types-cards" aria-label="Practice type details (mobile)"></div>
+					</article>
+				</div>
+
+				<!-- ======== TAB: Practice =========== -->
+				<div class="report-panel" id="tab-practice" style="display:none;">
+
+					<div class="stats-grid">
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-practice-total">&mdash;</span>
+								<span class="stat-label">Total Practices</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-practice-no-evidence">&mdash;</span>
+								<span class="stat-label">Without Evidence</span>
+							</div>
+						</article>
+					</div>
+
+					<!-- Practice status chart -->
+					<article class="hdist-panel">
+						<h3 class="hdist-title">Practice Status</h3>
+						<div class="hdist-list" id="rep-practice-status"></div>
+						<p class="hdist-footer" id="rep-practice-status-total">Total : 0</p>
+					</article>
+
+					<article class="types-table-panel">
+						<h3 class="types-table-title">Practices without Evidence</h3>
+
+						<!-- Desktop view: regular table with its own scroll -->
+						<div class="types-table-scroll">
+							<table class="types-table" aria-label="Table of practices without evidence">
+								<thead>
+									<tr>
+										<th scope="col">Practice ID</th>
+										<th scope="col">Institution</th>
+										<th scope="col">Student</th>
+									</tr>
+								</thead>
+								<tbody id="rep-practice-no-evidence-body"></tbody>
+							</table>
+						</div>
+
+						<!-- Mobile view: cards -->
+						<div class="types-cards" id="rep-practice-no-evidence-cards" aria-label="Practices without evidence (mobile)"></div>
+					</article>
+				</div>
+
+				<!-- ====== TAB - Feedback ======= -->
+				<div class="report-panel" id="tab-feedback" style="display:none;">
+					<div class="stats-grid">
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-user-pen"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-fb-tutor">&mdash;</span>
+								<span class="stat-label">Tutor Feedback</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-user-pen"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-fb-advisor">&mdash;</span>
+								<span class="stat-label">Advisor Feedback</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-fb-without-tutor">&mdash;</span>
+								<span class="stat-label">No Tutor Feedback</span>
+							</div>
+						</article>
+					</div>
+
+					<div class="charts-grid">
+						<article class="chart-panel">
+							<h3><i class="fa-solid fa-user-group"></i> Most active tutors</h3>
+							<ul class="progress-list" id="rep-fb-tutors"></ul>
+						</article>
+
+						<article class="chart-panel">
+							<h3><i class="fa-solid fa-user-group"></i> Most active advisors</h3>
+							<ul class="progress-list" id="rep-fb-advisors"></ul>
+						</article>
+					</div>
+
+					<article class="types-table-panel">
+						<h3 class="types-table-title">Practices without tutor feedback</h3>
+
+						<!-- Desktop view: regular table with its own scroll -->
+						<div class="types-table-scroll">
+							<table class="types-table" aria-label="Table of practices without tutor feedback">
+								<thead>
+									<tr>
+										<th scope="col">Practice ID</th>
+										<th scope="col">Institution</th>
+										<th scope="col">Student</th>
+									</tr>
+								</thead>
+								<tbody id="rep-fb-no-tutor-body"></tbody>
+							</table>
+						</div>
+
+						<!-- Mobile view: cards -->
+						<div class="types-cards" id="rep-fb-no-tutor-cards" aria-label="Practices without tutor feedback (mobile)"></div>
+					</article>
+				</div>
+
+				<!-- ====== TAB - Institutions ======= -->
+				<div class="report-panel" id="tab-institutions" style="display:none;">
+					<div class="stats-grid">
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-building-columns"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-inst-total">&mdash;</span>
+								<span class="stat-label">Total Institutions</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-inst-active">&mdash;</span>
+								<span class="stat-label">With Active Students</span>
+							</div>
+						</article>
+						<article class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+							<div class="stat-info">
+								<span class="stat-value" id="rep-inst-completed-only">&mdash;</span>
+								<span class="stat-label">Completed Only</span>
+							</div>
+						</article>
+					</div>
+
+					<!-- Institutions chart -->
+					<article class="hdist-panel">
+						<h3 class="hdist-title">Institutions with Most Student Teachers</h3>
+						<div class="hdist-list" id="rep-inst-distribution"></div>
+						<p class="hdist-footer" id="rep-inst-distribution-total">Total : 0</p>
+					</article>
+
+					<article class="types-table-panel">
+						<h3 class="types-table-title">Institution Details by Student Teachers</h3>
+
+						<!-- Desktop view: regular table with its own scroll -->
+						<div class="types-table-scroll">
+							<table class="types-table" aria-label="Institution details table by student teachers">
+								<thead>
+									<tr>
+										<th scope="col">Institution</th>
+										<th scope="col">Active Student Teachers</th>
+										<th scope="col">Completed Student Teachers</th>
+									</tr>
+								</thead>
+								<tbody id="rep-inst-details-body"></tbody>
+							</table>
+						</div>
+
+						<!-- Mobile view: cards -->
+						<div class="types-cards" id="rep-inst-details-cards" aria-label="Institution details (mobile)"></div>
+					</article>
+				</div>
+			</div><!-- /.reports-wrapper -->
+			<!-- The reports tag closes here -->
+		</section>
+
+		<!-- ========== TAB: PROFILE ==========-->
+		<section class="app-content" id="profile" style="display: none;">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggleProfile" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open director menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<h2 class="cp-main-title" id="profile-title">Profile</h2>
+				<section class="profile-panel" aria-labelledby="profile-title">
+					<div class="profile-layout">
+						<div class="profile-column">
+							<div class="profile-info-list">
+								<div class="profile-info-item">
+									<div class="profile-info-icon"><i class="fa-solid fa-id-badge"></i></div>
+									<div class="profile-info-text">
+										<span class="profile-info-label">Full Name:</span>
+										<span class="profile-info-value">Director Name</span>
+									</div>
+								</div>
+								<div class="profile-info-item">
+									<div class="profile-info-icon"><i class="fa-solid fa-address-card"></i></div>
+									<div class="profile-info-text">
+										<span class="profile-info-label">ID:</span>
+										<span class="profile-info-value">Document - ID</span>
+									</div>
+								</div>
+								<div class="profile-info-item">
+									<div class="profile-info-icon"><i class="fa-solid fa-envelope"></i></div>
+									<div class="profile-info-text">
+										<span class="profile-info-label">Email:</span>
+										<span class="profile-info-value">Email</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</section>
+	</main>
+
+	<!-- Success modal (Create Practice) -->
+	<div id="successModal" class="modal-overlay" style="display: none;">
+		<div class="modal-content">
+			<header class="modal-header">
+				<h3>SPP</h3>
+			</header>
+			<div class="modal-body">
+				<i class="fa-solid fa-circle-check"></i>
+				<p>Practice created successfully</p>
+				<button id="modalAccept" class="modal-btn">Accept</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal: user credential -->
+	<div id="um-modal-credential" class="modal-overlay" style="display: none;">
+		<div class="modal-content um-modal-card">
+			<div id="um-modal-credential-body"></div>
+			<button type="button" class="um-modal-close" data-um-close>Close</button>
+		</div>
+	</div>
+
+	<!-- Modal: student credential (logbook) -->
+	<div id="lb-modal-credential" class="modal-overlay" style="display: none;">
+		<div class="um-modal-card">
+			<div id="lb-modal-credential-body"></div>
+		</div>
+	</div>
+	<script src="../js/core/api.js"></script>
+	<script src="../js/core/session.js"></script>
+	<script src="../js/core/shell.js"></script>
+	<script src="../js/config.js"></script>
+	<script src="../js/core/custom-select.js"></script>
+	<script src="../js/core/panels.js"></script>
+	<script src="../js/core/modals.js"></script>
+	<script src="../js/core/credential.js"></script>
+	<script src="../js/pages/director.js"></script>
+	<script src="../js/pages/users.js"></script>
+	<script src="../js/pages/director.api.js"></script>
+</body>
+</html>

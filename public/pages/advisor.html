@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<title>SPP-Advisor</title>
+	<link rel="stylesheet" href="../css/variables.css">
+	<link rel="stylesheet" href="../css/shell.css">
+	<link rel="stylesheet" href="../css/advisor.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+	<main class="app-shell">
+		<aside class="app-sidebar">
+			<div>
+				<header class="app-brand">
+					<div>
+						<h1>SPP</h1>
+						<p>Pedagogical Practice<br>Software</p><span aria-hidden="true"></span>
+					</div>
+					<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+						<i class="fa-solid fa-bars hamburger-icon"></i>
+						<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+					</button>
+				</header>
+				<nav class="app-navigation" aria-label="Main navigation">
+					<a class="app-nav-link app-nav-link--active" href="#practice" aria-current="page"><i
+							class="fa-solid fa-book-open" aria-hidden="true"></i><span>Practices</span></a>
+					<a class="app-nav-link" href="#profile"><i class="fa-solid fa-user"
+							aria-hidden="true"></i><span>Profile</span></a>
+				</nav>
+			</div>
+			<a class="app-logout" href="../index.html"><i class="fa-solid fa-door-open" aria-hidden="true"></i><span>Log
+					out</span></a>
+		</aside>
+
+		<section class="app-content" id="practice">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open advisor menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Advisor Name</strong><small>Advisor</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<section class="practice-panel" aria-labelledby="practice-title">
+					<div class="practice-header">
+						<h2 id="practice-title">Practice Information</h2>
+						<div class="practice-status">
+							<span>Status</span>
+							<div class="status-badge"></div>
+						</div>
+					</div>
+					<form class="practice-form" action="#" method="post">
+						<div class="practice-field"><label for="practice-name">Practice Name</label>
+							<div class="practice-value" id="practice-name">.....</div>
+						</div>
+						<div class="practice-field"><label for="tutor">Tutor</label>
+							<div class="practice-value" id="tutor">.....</div>
+						</div>
+						<div class="practice-field"><label for="hours">Practice Hours</label>
+							<div class="practice-value" id="hours">.....</div>
+						</div>
+						<div class="practice-field"><label for="institution">Institution</label>
+							<div class="practice-value" id="institution">.....</div>
+						</div>
+						<div class="practice-field"><label for="advisor">Advisor</label>
+							<div class="practice-value" id="advisor">.....</div>
+						</div>
+						<div class="practice-field"><label for="semester">Semester</label>
+							<div class="practice-value" id="semester">.....</div>
+						</div>
+						<div class="practice-field practice-field--date"><label for="start-date">Start Date</label>
+							<div>
+								<div class="practice-value" id="start-date">.....</div><i class="fa-regular fa-calendar"
+									aria-hidden="true"></i>
+							</div>
+						</div>
+						<div class="practice-field practice-field--date"><label for="end-date">End Date</label>
+							<div>
+								<div class="practice-value" id="end-date">.....</div><i class="fa-regular fa-calendar"
+									aria-hidden="true"></i>
+							</div>
+						</div>
+						<div class="practice-field"><label for="code">Practice Code</label>
+							<div class="practice-value" id="code">.....</div>
+						</div>
+					</form>
+					<button class="practice-submit" type="button"><i class="fa-solid fa-right-to-bracket"
+							aria-hidden="true"></i><span>Enter</span></button>
+				</section>
+
+				<!-- LOGBOOK PANEL (shown after Enter) -->
+				<section class="logbook-panel" id="logbook-panel" aria-labelledby="logbook-title"
+					style="display: none;">
+					<div class="logbook-header">
+						<button type="button" class="logbook-back-btn" id="logbookBack"
+							aria-label="Volver a Información de Logbook">
+							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+						</button>
+						<h2 id="logbook-title" class="logbook-title">Practice <span class="lb-student-name"
+								aria-label="Ver credencial del estudiante"></span></h2>
+					</div>
+					<div class="logbook-info-card" id="logbook-info-card" style="cursor: pointer;">
+						<div class="logbook-info-item">
+							<span class="lb-info-label">Final Grade</span>
+							<span class="lb-info-value" id="grade-display">-</span>
+							
+						</div>
+						<div class="logbook-info-item">
+							<span class="lb-info-label">General Observation</span>
+							<span class="lb-info-value" id="obs-display">-</span>
+							
+						</div>
+					</div>
+					
+
+					<div class="logbook-action-card">
+						<div class="lb-action-left">
+							<div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
+							<span class="lb-action-label">Activities</span>
+						</div>
+						<button type="button" class="lb-action-btn" id="preguntas-actividades-btn"><i
+								class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+					</div>
+
+					
+				</section>
+
+				<!-- ACTIVITIES PANEL (shown after Enter) -->
+				<section class="activities-panel" id="activities-panel" aria-labelledby="activities-title"
+					style="display: none;">
+					<div class="activities-header">
+						<button type="button" class="activities-back-btn" id="activitiesBack"
+							aria-label="Volver a Información de la Práctica">
+							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+						</button>
+						<h2 id="activities-title" class="activities-title">Activities</h2>
+						
+					</div>
+					<div id="activities-list-container"></div>
+				</section>
+
+				<!-- EVIDENCE PANEL (shown after entering an Activity) -->
+				<section class="evidences-panel" id="evidences-panel" aria-labelledby="evidences-title"
+					style="display: none;">
+					<div class="evidences-header">
+						<button type="button" class="evidences-back-btn" id="evidencesBack"
+							aria-label="Volver a Activityes">
+							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+						</button>
+						<h2 id="evidences-title" class="evidences-title">Activity</h2>
+
+						<!-- Menú de la actividad -->
+						
+					</div>
+
+					<!-- Activity Details Card -->
+					<div class="act-details-card">
+						<div class="act-details-left" id="act-left-panel">
+							<div class="act-details-header-row">
+								<h3 class="act-details-title">Activity Information</h3>
+							</div>
+							<div class="act-field">
+								<span class="act-label">Activity Name</span>
+								<div class="act-value-box" id="act-name-display">-</div>
+							</div>
+							<div class="act-row" id="act-grid-row">
+								<div class="act-field act-field--date">
+									<span class="act-label" id="lbl-assigned-date">Assignment Date</span>
+									<div class="act-value-box"><span id="act-start-display">-</span><i
+											class="fa-regular fa-calendar" id="act-calendar-icon" aria-hidden="true"
+											style="display: none;"></i></div>
+								</div>
+								<div class="act-field act-field--date" id="act-deadline-container">
+									<span class="act-label">Deadline</span>
+									<div class="act-value-box" id="act-end-display">without limit</div>
+								</div>
+								<div class="act-field" id="act-nota-container">
+									<span class="act-label" id="lbl-grade">Grade:</span>
+									<div class="act-value-box" id="act-grade-display">0</div>
+									
+								</div>
+								<div class="act-field">
+									<span class="act-label" id="lbl-hours">Hours Completed</span>
+									<div class="act-value-box" id="act-hours-display">0</div>
+								</div>
+							</div>
+							
+							<div class="act-field" id="act-desc-container">
+								<span class="act-label">Description</span>
+								<div class="act-desc-box" id="act-desc-display">-</div>
+							</div>
+						</div>
+						<div class="act-details-right" id="act-right-panel">
+							<div class="am-file-list" id="act-files-display"></div>
+						</div>
+					</div>
+
+					<h3 class="feedback-title" style="margin: 10px 0 20px 0;">Activity Evidence</h3>
+
+					<!-- SECCIÓN DE RETROALIMENTACIONES -->
+					<div class="feedback-section">
+						<h3 class="feedback-title">Feedback</h3>
+
+
+						<!-- Evidence Template (Hidden) -->
+						<div class="ev-card" style="display: none;">
+							<div class="ev-card-body">
+								<p class="ev-card-title"></p>
+								<p class="ev-card-desc"></p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Evidence options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem">
+										<i class="fa-solid fa-eye" aria-hidden="true"></i> View
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Feedback Template (Hidden) -->
+						<div class="feedback-card" style="display: none;">
+							<div class="feedback-card-body">
+								<div class="feedback-header">
+									<span class="feedback-role"></span>
+									<span class="feedback-date"></span>
+								</div>
+								<p class="feedback-content"></p>
+							</div>
+							<div class="ev-menu-wrapper">
+								<button type="button" class="ev-menu-btn" aria-label="Feedback options"
+									aria-expanded="false">
+									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+								</button>
+								<div class="ev-dropdown" role="menu">
+									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem">
+										<i class="fa-solid fa-eye" aria-hidden="true"></i> View
+									</button>
+									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem">
+										<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit
+									</button>
+									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem">
+										<i class="fa-solid fa-trash" aria-hidden="true"></i> Delete
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="feedback-form-section">
+							<h4 class="feedback-form-title">Add Comment:</h4>
+							<div class="feedback-input-wrapper">
+								<textarea class="feedback-textarea" placeholder="Enter the text..."></textarea>
+								<button type="button" class="feedback-btn-submit"
+									aria-label="Enviar Retroalimentación"><i
+										class="fa-solid fa-paper-plane"></i></button>
+							</div>
+							<div class="feedback-actions">
+								<button type="button" class="feedback-btn-cancel"><i class="fa-solid fa-trash-can"></i>
+									Cancel</button>
+							</div>
+						</div>
+					</div>
+				</section>
+
+			</div>
+		</section>
+
+
+		<!-- TAB - PROFILE-->
+		<section class="app-content" id="profile" style="display: none;">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggleProfile" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Open advisor menu"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Advisor Name</strong><small>Advisor</small></span></button>
+			</header>
+
+			<div class="practice-content-wrapper">
+				<h2 class="profile-title" id="profile-title">Profile</h2>
+				<section class="profile-panel" aria-labelledby="profile-title">
+					<div class="profile-info-list">
+						<div class="profile-info-item">
+							<div class="profile-info-icon"><i class="fa-solid fa-id-badge"></i></div>
+							<div class="profile-info-text">
+								<span class="profile-info-label">Full Name:</span>
+								<span class="profile-info-value">Full Name</span>
+							</div>
+						</div>
+						<div class="profile-info-item">
+							<div class="profile-info-icon"><i class="fa-solid fa-address-card"></i></div>
+							<div class="profile-info-text">
+								<span class="profile-info-label">ID:</span>
+								<span class="profile-info-value">Document - ID</span>
+							</div>
+						</div>
+						<div class="profile-info-item">
+							<div class="profile-info-icon"><i class="fa-solid fa-envelope"></i></div>
+							<div class="profile-info-text">
+								<span class="profile-info-label">Email:</span>
+								<span class="profile-info-value">Email</span>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</section>
+		<!-- Modal: Success Modal -->
+	<div id="success-modal" class="am-modal-overlay" style="display: none; align-items: center; justify-content: center; z-index: 10000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4);">
+		<div class="am-modal" role="dialog" aria-modal="true" style="max-width: 450px; width: 90%; text-align: center; padding: 40px 30px; border-radius: 20px; position: relative;">
+			<button type="button" class="am-modal-close" id="successModalCloseX" aria-label="Close" style="position: absolute; top: 15px; right: 15px; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+				<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+			</button>
+			
+			<h3 id="success-modal-title" class="am-modal-title" style="margin-top: 0; margin-bottom: 20px; font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700;">Assignment Submitted</h3>
+			
+			<div style="margin-bottom: 20px;">
+				<i class="fa-solid fa-check" style="font-size: 3rem; color: #6e8b7c;"></i>
+			</div>
+
+			<div id="success-modal-message" class="am-modal-text" style="font-size: 1.1rem; margin-bottom: 30px; line-height: 1.4; font-family: 'Inter', sans-serif;">
+				Your task has been successfully uploaded.
+			</div>
+
+			<div style="display: flex; justify-content: center;">
+				<button type="button" id="successModalAcceptBtn" style="background-color: #901010; color: white; border: none; border-radius: 8px; padding: 12px 30px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; min-width: 150px; transition: background-color 0.2s;">Aceptar</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal: student credential (practice) -->
+	<div id="lb-modal-credential" class="modal-overlay" style="display: none;">
+		<div class="um-modal-card">
+			<div id="lb-modal-credential-body"></div>
+		</div>
+	</div>
+	<script>
+		window.onerror = function (msg, url, line, col, error) {
+			alert("Error: " + msg + "\nLine: " + line + "\nCol: " + col);
+			return false;
+		};
+		window.addEventListener("unhandledrejection", function (e) {
+			alert("Unhandled Rejection: " + e.reason);
+		});
+	</script>
+	<script src="../js/core/api.js"></script>
+	<script src="../js/core/session.js"></script>
+	<script src="../js/core/shell.js"></script>
+	<script src="../js/core/panels.js"></script>
+	<script src="../js/core/credential.js"></script>
+	<script src="../js/core/custom-select.js"></script>
+	<script src="../js/pages/advisor.js"></script>
+	<script src="../js/pages/teacher.api.js"></script>
+	
+</body>
+
+</html>
