@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showPractice(target);
         const practiceTab = document.querySelector('a[href="#practice"]');
         if (practiceTab) practiceTab.click();
-        window.scrollTo(0, 0);
+        SPP.panels.resetScroll();
     }
 
     /** Switches to the list tab and flashes the card of `id` (create / edit feedback). */
@@ -133,7 +133,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tab) tab.click();
         const card = root.querySelector(cardSelector + '[data-id="' + String(id).replace(/"/g, '') + '"]');
         if (!card) return;
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        const shell = document.querySelector('.app-shell');
+        const isMobile = window.innerWidth <= 900 || window.innerHeight <= 500;
+
+        if (isMobile && shell) {
+            // On mobile ONLY .app-shell scrolls. scrollIntoView would also move body/html,
+            // which hides the title under the fixed top bar and cannot be undone by the user.
+            const topbar = root.querySelector('.app-topbar');
+            const topbarHeight = topbar ? topbar.offsetHeight : 0;
+            const cardTop = card.getBoundingClientRect().top - shell.getBoundingClientRect().top + shell.scrollTop;
+            shell.scrollTo({ top: Math.max(0, cardTop - topbarHeight - 24), behavior: 'smooth' });
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+        } else {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
         card.classList.add('spp-card-highlight');
         setTimeout(() => card.classList.remove('spp-card-highlight'), 2400);
     }

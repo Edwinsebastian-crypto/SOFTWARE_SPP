@@ -271,4 +271,16 @@ document.addEventListener('DOMContentLoaded', () => {
             closeMobileMenu();
         }
     });
+
 });
+
+// On mobile only .app-shell may scroll. If anything (scrollIntoView, focus, autofill...)
+// scrolls the window/body, put it back so the fixed top bar never covers the page title.
+window.addEventListener('scroll', () => {
+    if (!isMobileLayout()) return;
+    if (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop) {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    }
+}, { passive: true });
