@@ -21,8 +21,8 @@ class FeedbackController {
 
   /** PUT/PATCH /api/activities/:activityId/feedback/:feedbackId */
   update = async (req, res) => {
-    const { text } = parseFeedbackUpdate(req.body);
-    const feedback = await this.feedbackService.update(req.user, textId(req.params.activityId, 'activityId'), textId(req.params.feedbackId, 'feedbackId'), text);
+    const { text, date } = parseFeedbackUpdate(req.body);
+    const feedback = await this.feedbackService.update(req.user, textId(req.params.activityId, 'activityId'), textId(req.params.feedbackId, 'feedbackId'), { text, date });
     res.json({ feedback: toFeedbackDto(feedback) });
   };
 

@@ -13,10 +13,15 @@
     /** Scrolls every scrollable ancestor back to the top (the page, the wrapper and the shell). */
     function resetScroll() {
         window.scrollTo(0, 0);
-        const wrapper = document.querySelector('.practice-content-wrapper');
-        if (wrapper) wrapper.scrollTop = 0;
-        const shell = document.querySelector('.app-shell');
-        if (shell) shell.scrollTop = 0;
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+        document.querySelectorAll('.app-shell, .practice-content-wrapper, .reports-wrapper, .ptm-panel, .inst-panel, .um-panel, .logbook-panel, .activities-panel, .questions-panel, .evidences-panel').forEach((el) => {
+            el.scrollTop = 0;
+        });
+        if (window.SPP && typeof window.SPP.updateAppTopbarOffset === 'function') {
+            window.SPP.updateAppTopbarOffset();
+            requestAnimationFrame(window.SPP.updateAppTopbarOffset);
+        }
     }
 
     /** Hides `from`, shows `to` and scrolls to the top. */
@@ -160,6 +165,7 @@
                 buttons.forEach((b) => b.classList.remove('active'));
                 button.classList.add('active');
                 panels.forEach((panel) => { panel.style.display = panel.id === target ? '' : 'none'; });
+                resetScroll();
             });
         });
     }

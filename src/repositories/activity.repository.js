@@ -2,14 +2,31 @@
 const BaseRepository = require('./base.repository');
 
 function formatLocalTimestamp(d = new Date()) {
-  const pad = (n) => String(n).padStart(2, '0');
-  const year = d.getFullYear();
-  const month = pad(d.getMonth() + 1);
-  const day = pad(d.getDate());
-  const hours = pad(d.getHours());
-  const minutes = pad(d.getMinutes());
-  const seconds = pad(d.getSeconds());
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  try {
+    const timeZone = process.env.TIMEZONE || process.env.TZ || 'America/Bogota';
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const parts = formatter.formatToParts(d).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+    const hour = parts.hour === '24' ? '00' : parts.hour;
+    return `${parts.year}-${parts.month}-${parts.day} ${hour}:${parts.minute}:${parts.second}`;
+  } catch {
+    const pad = (n) => String(n).padStart(2, '0');
+    const year = d.getFullYear();
+    const month = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hours = pad(d.getHours());
+    const minutes = pad(d.getMinutes());
+    const seconds = pad(d.getSeconds());
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
 }
 
 class ActivityRepository extends BaseRepository {
@@ -21,7 +38,10 @@ class ActivityRepository extends BaseRepository {
   listByPractice(practiceId) {
     return this.query(
       `SELECT a."idActividad" AS id, a."idPractica" AS "practiceId",
-              ROW_NUMBER() OVER (PARTITION BY a."idPractica" ORDER BY a."fechaAsignacion", a."idActividad")::int AS number,
+              ROW_NUMBER() OVER (
+                PARTITION BY a."idPractica"
+                ORDER BY COALESCE(substring(a."idActividad" from '-A([0-9]+)$')::int, 0), a."fechaAsignacion", a."idActividad"
+              )::int AS number,
               a.nombre AS title, a.descripcion AS description, a."fechaAsignacion" AS "assignedDate", a."fechaLimite" AS "dueDate",
               a."notaObtenida" AS grade,
               (SELECT COUNT(*)::int FROM evidenciaactividad ev WHERE ev."idActividad" = a."idActividad") AS "evidenceCount",

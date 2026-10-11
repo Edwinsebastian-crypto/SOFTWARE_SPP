@@ -355,7 +355,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (submitBtn) submitBtn.textContent = 'Save Changes';
 
             if (registerTab) registerTab.click();
-            window.scrollTo(0, 0);
+            if (window.SPP && window.SPP.panels && window.SPP.panels.resetScroll) {
+                window.SPP.panels.resetScroll();
+            } else {
+                window.scrollTo(0, 0);
+            }
         },
         delete: async (card) => {
             const type = practiceTypes.find((x) => String(x.id) === card.dataset.id);
@@ -519,7 +523,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (submitBtn) submitBtn.textContent = 'Save Changes';
 
             if (registerTab) registerTab.click();
-            window.scrollTo(0, 0);
+            if (window.SPP && window.SPP.panels && window.SPP.panels.resetScroll) {
+                window.SPP.panels.resetScroll();
+            } else {
+                window.scrollTo(0, 0);
+            }
         },
         delete: async (card) => {
             const institution = institutions.find((x) => String(x.id) === card.dataset.id);
@@ -938,7 +946,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 createPracticeTab.click();
                 isNavigatingToEdit = false;
             }
-            window.scrollTo(0, 0);
+            if (window.SPP && window.SPP.panels && window.SPP.panels.resetScroll) {
+                window.SPP.panels.resetScroll();
+            } else {
+                window.scrollTo(0, 0);
+            }
         });
     }
 

@@ -729,15 +729,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             btnSubmit.disabled = true;
             try {
+                const now = new Date();
+                const pad = (n) => String(n).padStart(2, '0');
+                const localDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
                 if (state.editingFeedbackId) {
-                    await SPP.patch(`/api/activities/${state.activity.id}/feedback/${state.editingFeedbackId}`, { text });
+                    await SPP.patch(`/api/activities/${state.activity.id}/feedback/${state.editingFeedbackId}`, { text, date: localDate });
                     state.editingFeedbackId = null;
                     const title = $('.feedback-form-title', feedbackForm);
                     if (title) title.textContent = 'Add Comment:';
                     showSuccessFeedbackModal('Feedback updated successfully');
                 } else {
                     if (!evidenceSelect.value) { alert('This activity has no evidence to give feedback on yet.'); btnSubmit.disabled = false; return; }
-                    await SPP.post(`/api/activities/${state.activity.id}/feedback`, { text, evidenceId: evidenceSelect.value });
+                    await SPP.post(`/api/activities/${state.activity.id}/feedback`, { text, evidenceId: evidenceSelect.value, date: localDate });
                     showSuccessFeedbackModal('Feedback sent successfully');
                 }
                 currentTextarea.value = '';

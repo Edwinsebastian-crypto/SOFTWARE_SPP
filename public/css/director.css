@@ -712,9 +712,8 @@
     padding: 16px 20px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
-    flex: 1 1 240px;
-    max-width: 340px;
-    min-width: 0;
+    flex: 1 1 0;
+    min-width: 240px;
  }
 
  .profile-info-icon {

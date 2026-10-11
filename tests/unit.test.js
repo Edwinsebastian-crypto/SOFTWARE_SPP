@@ -2,12 +2,12 @@
 // Unit tests for pure logic: no database, no network.
 const assert = require('assert');
 
+const env = require('../src/config/env');
 // Legacy (Spanish) variable names must keep working
 delete process.env.DATABASE_URL_PRACTICE;
 process.env.DATABASE_URL_ESTUDIANTE = 'postgres://legacy';
 process.env.INSTITUTIONAL_DOMAIN = 'example.edu';
 
-const env = require('../src/config/env');
 const legacy = require('../src/repositories/legacy-values');
 const v = require('../src/utils/validators');
 const HttpError = require('../src/utils/http-error');
@@ -16,6 +16,7 @@ const { toInstitutionalEmail } = require('../src/utils/format');
 const { parseCreateUser, parseUpdateUser, parseUserFilters } = require('../src/validators/user.validator');
 const { parsePracticeInput, parseLogbookInput } = require('../src/validators/practice.validator');
 const { parseAnswer } = require('../src/validators/question.validator');
+const { parseFeedback, parseFeedbackUpdate } = require('../src/validators/evidence.validator');
 const { toPracticeDto } = require('../src/presenters');
 const { generateId } = require('../src/utils/id-generator');
 
@@ -97,6 +98,18 @@ test('answer validation: a final submission needs text, a draft does not', () =>
   assert.deepEqual(parseAnswer({ text: '', submit: false }), { submit: false, text: '' });
   throwsBadRequest(() => parseAnswer({ text: '', submit: true }));
   assert.equal(parseAnswer({ text: 'x', submit: true }).submit, true);
+});
+
+test('feedback validation: parses text, evidenceId and optional date', () => {
+  assert.deepEqual(parseFeedback({ evidenceId: 'EV-1', text: 'Good job', date: '2026-10-11 12:00:00' }), {
+    evidenceId: 'EV-1', text: 'Good job', date: '2026-10-11 12:00:00'
+  });
+  assert.deepEqual(parseFeedback({ evidenceId: 'EV-1', text: 'Good job' }), {
+    evidenceId: 'EV-1', text: 'Good job', date: null
+  });
+  assert.deepEqual(parseFeedbackUpdate({ text: 'Updated', date: '2026-10-11 12:05:00' }), {
+    text: 'Updated', date: '2026-10-11 12:05:00'
+  });
 });
 
 console.log('# presenters / storage / ids');

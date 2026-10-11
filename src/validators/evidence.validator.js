@@ -24,20 +24,22 @@ function parseEvidenceUpdate(body = {}) {
   };
 }
 
-/** POST /api/activities/:activityId/feedback  { evidenceId, text } */
+/** POST /api/activities/:activityId/feedback  { evidenceId, text, date } */
 function parseFeedback(body = {}) {
   const input = body || {};
   return {
     evidenceId: v.textId(input.evidenceId, 'evidence'),
-    text: v.text(input.text, { field: 'comment', max: 2000 })
+    text: v.text(input.text, { field: 'comment', max: 2000 }),
+    date: (input.date && String(input.date).trim()) ? String(input.date).trim() : null
   };
 }
 
-/** PATCH /api/activities/:activityId/feedback/:feedbackId  { text } */
+/** PATCH /api/activities/:activityId/feedback/:feedbackId  { text, date } */
 function parseFeedbackUpdate(body = {}) {
   const input = body || {};
   return {
-    text: v.text(input.text, { field: 'comment', max: 2000 })
+    text: v.text(input.text, { field: 'comment', max: 2000 }),
+    date: (input.date && String(input.date).trim()) ? String(input.date).trim() : null
   };
 }
 

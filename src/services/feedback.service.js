@@ -18,25 +18,27 @@ class FeedbackService {
   }
 
   /** The assigned tutor or advisor comments on one piece of evidence of the activity. */
-  async create(user, activityId, { evidenceId, text }) {
+  async create(user, activityId, { evidenceId, text, date }) {
     const { activity, practice } = await this.access.loadAuthorizedActivity(user, activityId);
     const evidence = await this.evidenceRepository.findById(evidenceId);
     if (!evidence || evidence.activityId !== activity.id) throw HttpError.badRequest('The evidence does not belong to this activity');
 
     const feedback = await this.feedbackRepository.create({
-      evidenceId, authorDocument: user.documentNumber, authorRole: user.role, text
+      evidenceId, authorDocument: user.documentNumber, authorRole: user.role, text, date
     });
     this.auditService.record(user, { entity: AUDIT_ENTITIES.FEEDBACK, entityId: feedback.id, practiceId: practice.id, action: AUDIT_ACTIONS.INSERT });
     return feedback;
   }
 
-  async update(user, activityId, feedbackId, text) {
+  async update(user, activityId, feedbackId, data) {
+    const text = (typeof data === 'object' && data !== null) ? data.text : data;
+    const date = (typeof data === 'object' && data !== null) ? data.date : undefined;
     const { practice } = await this.access.loadAuthorizedActivity(user, activityId);
     const feedback = await this.feedbackRepository.findById(feedbackId);
     if (!feedback) throw HttpError.notFound('Feedback not found');
     if (feedback.authorDocument !== user.documentNumber) throw HttpError.forbidden('You can only modify your own feedback');
 
-    const updated = await this.feedbackRepository.update({ id: feedbackId, text });
+    const updated = await this.feedbackRepository.update({ id: feedbackId, text, date });
     this.auditService.record(user, { entity: AUDIT_ENTITIES.FEEDBACK, entityId: feedbackId, practiceId: practice.id, action: AUDIT_ACTIONS.UPDATE });
     return { id: feedbackId, text, date: updated.date, authorDocument: user.documentNumber, role: feedback.role, evidenceId: feedback.evidenceId };
   }

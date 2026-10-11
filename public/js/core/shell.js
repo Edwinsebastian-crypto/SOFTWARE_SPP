@@ -70,10 +70,12 @@ function updateAppTopbarOffset() {
         if (window.getComputedStyle(section).display === 'none') return;
         topbar = section.querySelector('.app-topbar');
     });
-    if (topbar) {
+    if (topbar && topbar.offsetHeight > 0) {
         document.documentElement.style.setProperty('--app-topbar-offset', topbar.offsetHeight + 'px');
     }
 }
+window.SPP = window.SPP || {};
+window.SPP.updateAppTopbarOffset = updateAppTopbarOffset;
 
 function refreshMobileChromeMetrics() {
     setAppViewportHeight();
@@ -148,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show the matching section
             sections.forEach((section) => {
                 if (section.id === targetId) {
-                    section.style.display = 'flex'; // flex because the sections use display: flex on desktop
+                    section.style.display = isMobileLayout() ? 'block' : 'flex';
                     const wrapper = section.querySelector('.practice-content-wrapper');
                     if (wrapper) wrapper.style.display = ''; // restore visibility
                 } else {
@@ -163,7 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // scrolled to the bottom instead of starting at the top.
             window.scrollTo(0, 0);
             if (shell) shell.scrollTop = 0;
+            document.querySelectorAll('.app-shell, .practice-content-wrapper, .reports-wrapper').forEach((el) => {
+                el.scrollTop = 0;
+            });
             updateAppTopbarOffset();
+            requestAnimationFrame(updateAppTopbarOffset);
 
             // On mobile, close the menu after choosing an option
             if (isMobileLayout() && shell.classList.contains('sidebar-open')) {

@@ -109,6 +109,9 @@
             $$('.um-panel').forEach((panel) => {
                 panel.style.display = panel.id === target ? '' : 'none';
             });
+            if (window.SPP && window.SPP.panels && window.SPP.panels.resetScroll) {
+                window.SPP.panels.resetScroll();
+            }
         });
     });
 
@@ -826,6 +829,9 @@
         measurePassword('');
         openTab('um-panel-register');
         showStep(1);
+        if (window.SPP && window.SPP.panels && window.SPP.panels.resetScroll) {
+            window.SPP.panels.resetScroll();
+        }
     }
 
     /* ======================================================================

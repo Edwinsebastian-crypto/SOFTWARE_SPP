@@ -5,14 +5,31 @@ const { generateId } = require('../utils/id-generator');
 const { ROLES } = require('../config/constants');
 
 function formatLocalTimestamp(d = new Date()) {
-  const pad = (n) => String(n).padStart(2, '0');
-  const year = d.getFullYear();
-  const month = pad(d.getMonth() + 1);
-  const day = pad(d.getDate());
-  const hours = pad(d.getHours());
-  const minutes = pad(d.getMinutes());
-  const seconds = pad(d.getSeconds());
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  try {
+    const timeZone = process.env.TIMEZONE || process.env.TZ || 'America/Bogota';
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const parts = formatter.formatToParts(d).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+    const hour = parts.hour === '24' ? '00' : parts.hour;
+    return `${parts.year}-${parts.month}-${parts.day} ${hour}:${parts.minute}:${parts.second}`;
+  } catch {
+    const pad = (n) => String(n).padStart(2, '0');
+    const year = d.getFullYear();
+    const month = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hours = pad(d.getHours());
+    const minutes = pad(d.getMinutes());
+    const seconds = pad(d.getSeconds());
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
 }
 
 /**
@@ -40,9 +57,9 @@ class FeedbackRepository extends BaseRepository {
     );
   }
 
-  /** @param {{evidenceId, authorDocument, authorRole, text}} data */
-  async create({ evidenceId, authorDocument, authorRole, text }) {
-    const now = formatLocalTimestamp();
+  /** @param {{evidenceId, authorDocument, authorRole, text, date}} data */
+  async create({ evidenceId, authorDocument, authorRole, text, date }) {
+    const now = (date && String(date).trim()) ? String(date).trim() : formatLocalTimestamp();
     if (authorRole === ROLES.TUTOR) {
       const id = generateId('RT');
       await this.execute(
@@ -61,8 +78,8 @@ class FeedbackRepository extends BaseRepository {
     return { id, role: ROLES.ADVISOR, text, evidenceId, date: now, authorDocument };
   }
 
-  async update({ id, text }) {
-    const now = formatLocalTimestamp();
+  async update({ id, text, date }) {
+    const now = (date && String(date).trim()) ? String(date).trim() : formatLocalTimestamp();
     if (id.startsWith('RT')) {
       await this.execute(
         `UPDATE retroalimentacion_t SET comentario = $1, fecha = $2 WHERE "idRetroalimentacionT" = $3`,
