@@ -264,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteItem.style.cursor = 'not-allowed';
             deleteItem.title = 'Cannot delete type with active practices';
         }
-
         return card;
     }
 
@@ -303,11 +302,9 @@ document.addEventListener('DOMContentLoaded', () => {
             resetTypeForm();
         });
     }
-
     typeForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const body = { name: $('#ptm-name').value, semester: $('#ptm-semester').value, hours: $('#ptm-hours').value };
-        
         const nameInput = $('#ptm-name');
         const semesterInput = $('#ptm-semester');
         const hoursInput = $('#ptm-hours');

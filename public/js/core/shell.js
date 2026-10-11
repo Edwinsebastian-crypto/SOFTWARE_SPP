@@ -196,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateAppTopbarOffset();
-
     // --- Mobile menu ---
     // .app-shell is the container that scrolls on mobile (see CSS).
     // Instead of changing its "overflow" to block the background scroll

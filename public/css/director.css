@@ -703,7 +703,6 @@
     flex-wrap: wrap;
     gap: 16px;
  }
-
  .profile-info-item {
     display: flex;
     align-items: center;
@@ -870,8 +869,6 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
  }
-
- 
 
  .reports-header {
     margin-bottom: 24px;

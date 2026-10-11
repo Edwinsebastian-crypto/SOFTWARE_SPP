@@ -9,7 +9,6 @@
    Cada HTML de panel debe cargar, en este orden:
      variables.css  → shell.css  → <panel>.css
    ========================================================================= */
-
 :root {
    --shell-bg: #fdfbf8;
    --content-bg: #fdfbf8;
@@ -502,7 +501,6 @@ input:-webkit-autofill:active {
       height: 75px;
    }
 }
-
 /* Fallback for small height screens like 11-inch laptops (scaling down instead of scrolling).
    Se excluyen alturas muy pequeñas (<=500px): esas ya no son un laptop compacto, son un
    celular en horizontal, y deben usar el menú "drawer" de abajo, no este sidebar angosto fijo. */
