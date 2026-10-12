@@ -10,7 +10,7 @@ function parseHours(value, { required }) {
 function parseEvidenceUpload(body = {}) {
   const input = body || {};
   return {
-    description: v.text(input.description, { field: 'description', max: 1000, required: false }),
+    description: v.text(input.description, { field: 'description', max: 4000, required: false }),
     hours: parseHours(input.hours, { required: true })
   };
 }
@@ -19,7 +19,7 @@ function parseEvidenceUpload(body = {}) {
 function parseEvidenceUpdate(body = {}) {
   const input = body || {};
   return {
-    description: v.text(input.description, { field: 'description', max: 1000, required: false }),
+    description: v.text(input.description, { field: 'description', max: 4000, required: false }),
     hours: parseHours(input.hours, { required: false })
   };
 }
@@ -29,7 +29,7 @@ function parseFeedback(body = {}) {
   const input = body || {};
   return {
     evidenceId: v.textId(input.evidenceId, 'evidence'),
-    text: v.text(input.text, { field: 'comment', max: 2000 }),
+    text: v.text(input.text, { field: 'comment', max: 4000 }),
     date: (input.date && String(input.date).trim()) ? String(input.date).trim() : null
   };
 }
@@ -38,7 +38,7 @@ function parseFeedback(body = {}) {
 function parseFeedbackUpdate(body = {}) {
   const input = body || {};
   return {
-    text: v.text(input.text, { field: 'comment', max: 2000 }),
+    text: v.text(input.text, { field: 'comment', max: 4000 }),
     date: (input.date && String(input.date).trim()) ? String(input.date).trim() : null
   };
 }
