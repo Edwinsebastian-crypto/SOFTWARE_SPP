@@ -468,7 +468,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         card.style.display = '';
         $('.feedback-role', card).textContent = feedback.role === 'advisor' ? 'Advisor' : 'Tutor';
         $('.feedback-date', card).textContent = SPP.formatDateTime(feedback.date);
-        $('.feedback-content', card).textContent = feedback.text;
+
+        const words = (feedback.text || '').trim().split(/\s+/).filter(Boolean);
+        const truncatedText = words.length > 10 ? words.slice(0, 10).join(' ') + '...' : (feedback.text || '');
+        $('.feedback-content', card).textContent = truncatedText;
+
+        const cardBody = $('.feedback-card-body', card);
+        if (cardBody) {
+            cardBody.style.cursor = 'pointer';
+            cardBody.title = 'Click to view full feedback';
+            cardBody.addEventListener('click', () => showFeedbackModal(feedback.text));
+        }
+
         SPP.bindMenu(card);
         const viewItem = $('.ev-item--view', card);
         if (viewItem) viewItem.addEventListener('click', () => showFeedbackModal(feedback.text));

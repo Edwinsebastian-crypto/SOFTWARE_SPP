@@ -791,7 +791,17 @@ document.addEventListener('DOMContentLoaded', () => {
                                         card.style.display = 'flex';
                                         $('.feedback-role', card).textContent = fb.role === 'advisor' ? 'Advisor' : 'Tutor';
                                         $('.feedback-date', card).textContent = SPP.formatDateTime(fb.date);
-                                        $('.feedback-content', card).textContent = fb.text;
+
+                                        const words = (fb.text || '').trim().split(/\s+/).filter(Boolean);
+                                        const truncatedText = words.length > 10 ? words.slice(0, 10).join(' ') + '...' : (fb.text || '');
+                                        $('.feedback-content', card).textContent = truncatedText;
+
+                                        const cardBody = $('.feedback-card-body', card);
+                                        if (cardBody) {
+                                            cardBody.style.cursor = 'pointer';
+                                            cardBody.title = 'Click to view full feedback';
+                                            cardBody.addEventListener('click', () => showDirectorFeedbackModal(fb.text));
+                                        }
                                         
                                         const viewItem = $('.ev-item--view', card);
                                         if (viewItem) {
