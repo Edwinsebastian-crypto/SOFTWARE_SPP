@@ -34,25 +34,27 @@ class EvidenceService {
     return this.evidenceRepository.listByActivity(activity.id);
   }
 
-  /** @param {{files: object[], description: string, hours: number}} input */
-  async upload(user, activityId, { files, description, hours }) {
+  /** @param {{files: object[], links: object[], description: string, hours: number}} input */
+  async upload(user, activityId, { files, links = [], description, hours }) {
     const { activity, practice } = await this.access.loadAuthorizedActivity(user, activityId);
     if (user.role === ROLES.STUDENT) {
       this.#assertActivityNotClosed(activity);
     }
-    if (!files || !files.length) throw HttpError.badRequest('No files were received');
+    if ((!files || !files.length) && !links.length) throw HttpError.badRequest('Attach a file or a Google Drive link');
 
-    const uploadedFiles = await Promise.all(files.map(async (file) => {
+    const uploadedFiles = await Promise.all((files || []).map(async (file) => {
       const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8').slice(0, 255);
       const uploaded = await this.fileStorage.upload(file.buffer, { folder: `practice-evidence/${practice.id}` });
       return { id: generateId('AR'), url: uploaded.secure_url, name: originalName, mimeType: file.mimetype, public_id: uploaded.public_id, resource_type: uploaded.resource_type };
     }));
+    const linkedFiles = links.map((link) => ({ id: generateId('AR'), ...link })); // nothing to upload: only the URL is stored
+    const allFiles = [...uploadedFiles, ...linkedFiles];
 
     const id = generateId('EV');
     try {
       await this.evidenceRepository.create({
         id, description, hours, activityId: activity.id,
-        files: uploadedFiles
+        files: allFiles
       });
     } catch (err) {
       await Promise.all(uploadedFiles.map(f => this.fileStorage.destroy(f.public_id, f.resource_type).catch(() => {})));
@@ -69,7 +71,7 @@ class EvidenceService {
     return { evidence, practice };
   }
 
-  async update(user, evidenceId, { description, hours, newFiles, keptFileIds }) {
+  async update(user, evidenceId, { description, hours, newFiles, newLinks = [], keptFileIds }) {
     const { evidence, practice } = await this.#loadAuthorized(user, evidenceId);
     if (user.role === ROLES.STUDENT) {
       this.#assertActivityNotClosed(evidence);
@@ -92,6 +94,10 @@ class EvidenceService {
         return { id: generateId('AR'), url: uploaded.secure_url, name: originalName, mimeType: file.mimetype, public_id: uploaded.public_id, resource_type: uploaded.resource_type };
       }));
       await this.evidenceRepository.addFiles(evidence.id, uploadedFiles);
+    }
+
+    if (newLinks.length) {
+      await this.evidenceRepository.addFiles(evidence.id, newLinks.map((link) => ({ id: generateId('AR'), ...link })));
     }
 
     await this.evidenceRepository.update(evidence.id, description, hours);

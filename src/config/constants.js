@@ -10,6 +10,9 @@ const ROLES = Object.freeze({
 });
 const ROLE_LIST = Object.freeze(Object.values(ROLES));
 
+/** Roles that may self-register (the Director account is never created this way). */
+const REGISTRABLE_ROLES = Object.freeze(['student', 'tutor', 'advisor']);
+
 const USER_STATUS = Object.freeze({ ACTIVE: 'active', PENDING: 'pending', INACTIVE: 'inactive' });
 const USER_STATUS_LIST = Object.freeze(Object.values(USER_STATUS));
 
@@ -41,6 +44,9 @@ const COOKIES = Object.freeze({ ACCESS: 'spp_at', REFRESH: 'spp_rt' });
 /** Anti-CSRF header every state-changing API request must send. */
 const CSRF_HEADER = 'X-SPP';
 
+/** MIME type stored for evidence that is a link to a Google Drive / Docs / Sheets / Slides file. */
+const GOOGLE_LINK_MIME = 'application/vnd.google-apps.link';
+
 const UPLOAD = Object.freeze({
   MAX_BYTES: 10 * 1024 * 1024,
   ALLOWED_MIME_TYPES: Object.freeze([
@@ -52,8 +58,8 @@ const UPLOAD = Object.freeze({
 });
 
 module.exports = {
-  ROLES, ROLE_LIST, USER_STATUS, USER_STATUS_LIST, PRACTICE_STATUS, PRACTICE_STATUS_LIST,
+  ROLES, ROLE_LIST, REGISTRABLE_ROLES, USER_STATUS, USER_STATUS_LIST, PRACTICE_STATUS, PRACTICE_STATUS_LIST,
   QUESTION_TOPICS, QUESTION_TYPES, ANSWER_STATUS, DOCUMENT_TYPES,
   AUDIT_ENTITIES, AUDIT_ACTIONS, NO_PRACTICE, ACTIVITIES_PER_PRACTICE,
-  COOKIES, CSRF_HEADER, UPLOAD
+  COOKIES, CSRF_HEADER, UPLOAD, GOOGLE_LINK_MIME
 };

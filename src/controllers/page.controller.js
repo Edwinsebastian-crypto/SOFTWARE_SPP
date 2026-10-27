@@ -26,6 +26,16 @@ class PageController {
     res.sendFile(path.join(PUBLIC_DIR, 'pages', `${page}.html`));
   };
 
+  /** GET /register.html -> public registration form (signed-in users go to their panel) */
+  register = async (req, res, next) => {
+    try {
+      const user = await this.resolveUser(req, res);
+      if (user) return res.redirect(`/pages/${user.role}.html`);
+      res.set('Cache-Control', 'no-store');
+      res.sendFile(path.join(PUBLIC_DIR, 'register.html'));
+    } catch (err) { next(err); }
+  };
+
   /** GET / and /index.html  -> users with a valid session go straight to their panel */
   home = async (req, res, next) => {
     try {

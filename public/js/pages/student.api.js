@@ -734,13 +734,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // The "Add New Evidence" modal (student.js) validates the form and dispatches this event.
     document.addEventListener('spp:evidence-submit', async (event) => {
-        const { mode, id, newFiles, keptFileIds, hours, description } = event.detail;
+        const { mode, id, newFiles, newLinks = [], keptFileIds, hours, description } = event.detail;
         const modal = SPP.evidenceModal;
         if (modal) modal.setBusy(true);
         try {
             const form = new FormData();
             newFiles.forEach(f => form.append('files', f));
             keptFileIds.forEach(fid => form.append('keptFileIds', fid));
+            if (newLinks.length) form.append('links', JSON.stringify(newLinks.map(l => ({ url: l.url, name: l.name }))));
             form.append('description', description);
             form.append('hours', hours);
 

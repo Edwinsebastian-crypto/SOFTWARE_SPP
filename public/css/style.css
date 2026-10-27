@@ -1150,3 +1150,18 @@ input:-webkit-autofill:active {
     animation: splash-fade-out .3s ease forwards;
   }
 }
+/* ── Account creation / sign-in switch ── */
+.auth-switch { margin: 14px 0 0; text-align: center; font-size: 14px; font-weight: 600; }
+.auth-switch a { color: #1f3d2f; text-decoration: underline; text-underline-offset: 3px; }
+.register-section { overflow-y: auto; max-height: 100vh; }
+.reg-roles { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+.reg-row { display: flex; gap: 12px; }
+.reg-row .input-group { flex: 1; min-width: 0; }
+.reg-row .reg-doctype { flex: 0 0 92px; }
+.register-section select { width: 100%; border: 0; background: transparent; font: inherit; padding: 14px 8px; outline: none; }
+.register-section input[readonly] { background: transparent; opacity: .8; cursor: default; }
+.register-section .login-error { color: #b3261e; font-size: 14px; font-weight: 600; margin: 8px 0 0; min-height: 18px; }
+.reg-done { text-align: center; padding: 24px 8px; }
+.reg-done i { font-size: 48px; color: #2f7d5b; }
+.reg-done[hidden], #reg-form[hidden], #reg-program-box[hidden] { display: none; }
+.reg-back { display: inline-flex; text-decoration: none; margin-top: 16px; }

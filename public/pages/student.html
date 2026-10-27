@@ -459,6 +459,22 @@
 						<div class="am-file-list" id="am-file-list"></div>
 					</div>
 
+					<div class="am-google" id="am-google">
+						<strong class="am-google-title"><i class="fa-brands fa-google" aria-hidden="true"></i> Or use Google</strong>
+						<div class="am-google-actions">
+							<a class="am-google-btn" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-google-drive" aria-hidden="true"></i>Drive</a>
+							<a class="am-google-btn" href="https://docs.new" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>New Doc</a>
+							<a class="am-google-btn" href="https://sheets.new" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-table" aria-hidden="true"></i>New Sheet</a>
+							<a class="am-google-btn" href="https://slides.new" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-display" aria-hidden="true"></i>New Slides</a>
+						</div>
+						<div class="am-google-link">
+							<input type="url" id="am-link-input" maxlength="500" placeholder="Paste the link of your Google Drive / Docs / Sheets / Slides file" aria-label="Google file link">
+							<button type="button" id="am-link-add">Add link</button>
+						</div>
+						<small class="am-google-hint">Open Drive or create a file, then copy its link here. Share it so your tutor can open it (Share &rarr; "Anyone with the link" or add their e-mail).</small>
+						<small class="am-google-error" id="am-link-error" role="alert"></small>
+					</div>
+
 					<div class="am-actions">
 						<button type="button" class="am-btn-cancel" id="amBtnCancel"><i class="fa-solid fa-trash-can" aria-hidden="true"></i>Cancel</button>
 						<button type="submit" class="am-btn-confirm" id="amBtnConfirm">Add Evidence</button>

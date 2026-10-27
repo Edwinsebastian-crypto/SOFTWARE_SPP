@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Login: the server validates username/password with Supabase and the role with the database
+    // Login: the server validates username/password with Supabase and DETECTS the role from the database
     const loginForm = document.querySelector('.login-form');
     if (loginForm) {
         const submitButton = loginForm.querySelector('.btn-submit');
@@ -33,8 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             notice.textContent = '';
-            const checkedRole = document.querySelector('input[name="role"]:checked');
-            if (!checkedRole) { notice.textContent = 'Select your role.'; return; }
 
             submitButton.disabled = true;
             try {
@@ -43,8 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     skipRedirect: true,
                     body: {
                         username: document.getElementById('username').value,
-                        password: document.getElementById('password').value,
-                        role: checkedRole.id // the radio ids are the API role keys
+                        password: document.getElementById('password').value
                     }
                 });
                 window.location.href = result.redirectTo;

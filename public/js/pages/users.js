@@ -34,7 +34,7 @@
 
     const STATUS_DESCRIPTIONS = {
         active: 'The user enters the portal as soon as they receive their credentials.',
-        pending: 'The user must activate the account from the e-mail before signing in.',
+        pending: 'The user registered by themselves and is waiting for the Director to accept the account.',
         inactive: 'The account is created but has no access to the portal.'
     };
 
@@ -508,7 +508,13 @@
             ? 'disabled style="cursor: not-allowed; opacity: 0.5" title="Cannot delete user with active practices"' 
             : 'data-act="delete" title="Delete user"';
 
-        return '<div class="um-row-actions">' +
+        // people who registered by themselves wait here until the Director accepts or rejects them
+        const approval = user.status === 'pending'
+            ? '<button type="button" data-act="approve" data-id="' + user.id + '" title="Accept registration" aria-label="Accept registration" style="color:#2f7d5b"><i class="fa-solid fa-user-check" aria-hidden="true"></i></button>' +
+              '<button type="button" data-act="reject" data-id="' + user.id + '" title="Reject registration" aria-label="Reject registration" style="color:#b3261e"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i></button>'
+            : '';
+
+        return '<div class="um-row-actions">' + approval +
             '<button type="button" data-act="view" data-id="' + user.id + '" title="View credential" aria-label="View credential"><i class="fa-solid fa-id-card" aria-hidden="true"></i></button>' +
             '<button type="button" data-act="edit" data-id="' + user.id + '" title="Edit user" aria-label="Edit user"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>' +
             '<button type="button" ' + deleteAttr + ' data-id="' + user.id + '" aria-label="Delete user"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>' +
@@ -598,7 +604,7 @@
             ['um-kpi-students', count((u) => u.role === 'student')],
             ['um-kpi-tutors', count((u) => u.role === 'tutor')],
             ['um-kpi-advisors', count((u) => u.role === 'advisor')],
-            ['um-kpi-pending', count((u) => u.status !== 'active')]
+            ['um-kpi-pending', count((u) => u.status === 'pending')]
         ];
         data.forEach(([id, value]) => {
             const node = root.querySelector('#' + id);
@@ -688,6 +694,32 @@
             const user = users.find((x) => x.id === button.getAttribute('data-id'));
             if (!user) return;
             const action = button.getAttribute('data-act');
+            if (action === 'approve') {
+                try {
+                    await SPP.patch('/api/users/' + encodeURIComponent(user.id) + '/status', { status: 'active' });
+                    await loadUsers();
+                } catch (err) {
+                    await SPP.modals.alert({ title: 'Could not accept the registration', message: err.message });
+                }
+                return;
+            }
+            if (action === 'reject') {
+                const rejected = await SPP.modals.confirm({
+                    title: 'Reject ' + fullName(user),
+                    message: 'The registration request and its access account will be deleted.',
+                    confirmLabel: 'Yes, reject',
+                    isDestructive: true
+                });
+                if (!rejected) return;
+                try {
+                    await SPP.del('/api/users/' + encodeURIComponent(user.id));
+                    selection.delete(user.id);
+                    await loadUsers();
+                } catch (err) {
+                    await SPP.modals.alert({ title: 'Could not reject the registration', message: err.message });
+                }
+                return;
+            }
             if (action === 'view') return openCredential(user);
             if (action === 'edit') return editUser(user);
             if (action === 'delete') {

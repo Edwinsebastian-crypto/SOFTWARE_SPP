@@ -61,6 +61,28 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(enlaceTemporal);
     }
 
+    const GOOGLE_HOSTS = {
+        'drive.google.com': 'Google Drive', 'docs.google.com': 'Google Docs', 'sheets.google.com': 'Google Sheets',
+        'slides.google.com': 'Google Slides', 'forms.google.com': 'Google Forms'
+    };
+    const GOOGLE_LINK_MIME = 'application/vnd.google-apps.link';
+    const isLinkFile = (f) => !!(f && (f.isLink || f.mimeType === GOOGLE_LINK_MIME));
+    const fileIcon = (f) => (isLinkFile(f) ? 'fa-brands fa-google-drive' : 'fa-solid fa-paperclip');
+
+    /** Same rule as the server: https + Google Workspace host. Returns {url, name} or throws Error(message). */
+    function parseGoogleLink(raw) {
+        let url;
+        try { url = new URL(String(raw || '').trim()); } catch (err) { throw new Error('That is not a valid link.', { cause: err }); }
+        if (url.protocol !== 'https:' || !GOOGLE_HOSTS[url.hostname]) throw new Error('Only links to Google Drive, Docs, Sheets, Slides or Forms are allowed.');
+        let label = GOOGLE_HOSTS[url.hostname];
+        if (url.hostname === 'docs.google.com') {
+            if (url.pathname.startsWith('/spreadsheets')) label = 'Google Sheets';
+            else if (url.pathname.startsWith('/presentation')) label = 'Google Slides';
+            else if (url.pathname.startsWith('/forms')) label = 'Google Forms';
+        }
+        return { url: url.toString(), name: label + ' link', isLink: true };
+    }
+
     function flagError(element) {
         if (!element) return;
         element.classList.add('am-input-error');
@@ -116,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isExisting = f.isExisting;
             if (currentMode === 'view' && isExisting) {
                 span.innerHTML =
-                    '<i class="fa-solid fa-paperclip" aria-hidden="true" style="margin-right: 12px; font-size: 1.1rem; color: var(--clr-primary-dark, #103323);"></i>' +
+                    '<i class="' + fileIcon(f) + '" aria-hidden="true" style="margin-right: 12px; font-size: 1.1rem; color: var(--clr-primary-dark, #103323);"></i>' +
                     `<a href="${f.url}" target="_blank" class="am-file-chip-name" style="text-decoration: none; color: var(--clr-primary-dark, #103323); cursor: pointer; flex: 1; font-weight: 600; font-size: 1rem; text-align: left;">${escapeHtml(f.name)}</a>` +
                     `<button type="button" class="am-file-view am-file-download-btn" title="Download" style="color:var(--clr-primary-dark, #103323); margin-left:8px; font-size: 1.3rem; background:none; border:none; cursor:pointer;"><i class="fa-solid fa-download" aria-hidden="true"></i></button>`;
                 
@@ -126,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             } else {
                 span.innerHTML =
-                    '<i class="fa-solid fa-paperclip" aria-hidden="true"></i>' +
+                    '<i class="' + fileIcon(f) + '" aria-hidden="true"></i>' +
                     '<span class="am-file-chip-name">' + escapeHtml(f.name) + '</span>' +
                     '<button type="button" class="am-file-remove" aria-label="Remove ' + escapeHtml(f.name) + '"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>';
                 
@@ -138,6 +160,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             fileList.appendChild(span);
         });
+    }
+
+    const linkInput = document.getElementById('am-link-input');
+    const linkAddButton = document.getElementById('am-link-add');
+    const linkError = document.getElementById('am-link-error');
+    const googleBox = document.getElementById('am-google');
+
+    function addLink() {
+        if (!linkInput) return;
+        linkError.textContent = '';
+        if (!linkInput.value.trim()) return;
+        try {
+            const link = parseGoogleLink(linkInput.value);
+            if (selectedFiles.some((f) => f.url === link.url)) throw new Error('That link is already attached.');
+            selectedFiles.push(link);
+            linkInput.value = '';
+            renderFiles();
+        } catch (err) {
+            linkError.textContent = err.message;
+        }
+    }
+    if (linkAddButton) linkAddButton.addEventListener('click', addLink);
+    if (linkInput) linkInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
+
+    /** The Google block is only for adding/editing, never for the read-only view. */
+    function toggleGoogle(visible) {
+        if (googleBox) googleBox.style.display = visible ? '' : 'none';
+        if (linkError) linkError.textContent = '';
+        if (linkInput) linkInput.value = '';
     }
 
     function addFiles(files) {
@@ -180,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedFiles = [];
         renderFiles();
         
+        toggleGoogle(true);
         lastFocus = document.activeElement;
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -209,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedFiles = (evidence.files || []).map(f => ({ ...f, isExisting: true }));
         renderFiles();
 
+        toggleGoogle(true);
         lastFocus = document.activeElement;
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -238,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedFiles = (evidence.files || []).map(f => ({ ...f, isExisting: true }));
         renderFiles();
 
+        toggleGoogle(false);
         lastFocus = document.activeElement;
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -303,19 +357,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (hoursInput) hoursInput.focus();
                 return;
             }
-            const newFiles = selectedFiles.filter(f => !f.isExisting);
+            const newFiles = selectedFiles.filter(f => !f.isExisting && !f.isLink);
+            const newLinks = selectedFiles.filter(f => !f.isExisting && f.isLink);
             const keptFileIds = selectedFiles.filter(f => f.isExisting).map(f => f.id);
             
-            if ((currentMode === 'add' || currentMode === 'add-activity') && !newFiles.length && !keptFileIds.length) {
+            if ((currentMode === 'add' || currentMode === 'add-activity') && !newFiles.length && !newLinks.length && !keptFileIds.length) {
                 flagError(dropzone);
                 return;
             }
-            if (currentMode === 'edit' && !newFiles.length && !keptFileIds.length) {
+            if (currentMode === 'edit' && !newFiles.length && !newLinks.length && !keptFileIds.length) {
                 flagError(dropzone);
                 return;
             }
             document.dispatchEvent(new CustomEvent('spp:evidence-submit', {
-                detail: { mode: currentMode, id: editingId, newFiles, keptFileIds, hours, description: descriptionInput ? descriptionInput.value : '' }
+                detail: { mode: currentMode, id: editingId, newFiles, newLinks, keptFileIds, hours, description: descriptionInput ? descriptionInput.value : '' }
             }));
         });
     }

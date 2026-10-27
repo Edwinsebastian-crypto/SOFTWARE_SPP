@@ -87,7 +87,7 @@ function createContainer() {
   // ----- HTTP layer -----
   const authenticate = createAuthenticator(sessionService);
   const controllers = {
-    auth: new AuthController({ authService }),
+    auth: new AuthController({ authService, userService }),
     user: new UserController({ userService }),
     institution: new InstitutionController({ institutionService }),
     practiceType: new PracticeTypeController({ practiceTypeService }),

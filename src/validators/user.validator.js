@@ -73,4 +73,4 @@ function parseUserFilters(query = {}) {
   return { role, status, search: typeof search === 'string' ? search.slice(0, 80) : undefined };
 }
 
-module.exports = { parseCreateUser, parseUpdateUser, parseDocumentParam, parseStatus, parseUserFilters };
+module.exports = { parsePassword, parseCreateUser, parseUpdateUser, parseDocumentParam, parseStatus, parseUserFilters };

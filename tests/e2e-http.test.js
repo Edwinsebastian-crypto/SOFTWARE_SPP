@@ -63,7 +63,7 @@ function uploadForm() {
   r = await dir.request('POST', '/api/auth/login', { username: 'hmancilla1', password: 'dir22', role: 'director' });
   ok(r.status === 401, 'the old plain-text password does NOT work (only Supabase validates)');
   r = await dir.request('POST', '/api/auth/login', { username: 'hmancilla1', password: 'Director123', role: 'tutor' });
-  ok(r.status === 403, 'wrong role -> 403');
+  ok(r.status === 200 && r.data.role === 'director', 'the role is detected from the database; a role sent by the client is ignored');
   r = await new Client().request('POST', '/api/auth/login', { username: 'hmancilla1', password: 'Director123', role: 'director' }, { 'X-SPP': '' });
   ok(r.status === 403, 'missing CSRF header -> 403');
   r = await dir.request('POST', '/api/auth/login', { username: 'hmancilla1', password: 'Director123', role: 'director' });

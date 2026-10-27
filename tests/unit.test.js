@@ -15,6 +15,8 @@ const fileStorage = require('../src/infrastructure/file-storage');
 const { toInstitutionalEmail } = require('../src/utils/format');
 const { parseCreateUser, parseUpdateUser, parseUserFilters } = require('../src/validators/user.validator');
 const { parsePracticeInput, parseLogbookInput } = require('../src/validators/practice.validator');
+const { parseLogin, parseRegister } = require('../src/validators/auth.validator');
+const { parseGoogleLinks } = require('../src/utils/google-links');
 const { parseFeedback, parseFeedbackUpdate } = require('../src/validators/evidence.validator');
 const { toPracticeDto } = require('../src/presenters');
 const { generateId } = require('../src/utils/id-generator');
@@ -64,6 +66,28 @@ test('text / integer / isoDate / textId', () => {
 test('e-mail normalisation appends the institutional domain', () => {
   assert.equal(toInstitutionalEmail('JDoe'), 'jdoe@example.edu');
   assert.equal(toInstitutionalEmail('a@b.co'), 'a@b.co');
+});
+
+test('login no longer needs a role', () => {
+  assert.deepStrictEqual(parseLogin({ username: 'jdoe', password: 'x' }), { username: 'jdoe', password: 'x' });
+});
+test('self-registration: pending status, institutional e-mail, never director', () => {
+  const base = { role: 'student', documentNumber: '123', firstName: 'A', lastName: 'B', program: 'P', email: 'ab', password: 'Password123' };
+  const parsed = parseRegister(base);
+  assert.strictEqual(parsed.status, 'pending');
+  assert.strictEqual(parsed.email, 'ab@example.edu');
+  throwsBadRequest(() => parseRegister({ ...base, role: 'director' }));
+  throwsBadRequest(() => parseRegister({ ...base, email: 'ab@gmail.com' }));
+  throwsBadRequest(() => parseRegister({ ...base, password: 'weak' }));
+});
+test('Google links: only https Google Workspace hosts', () => {
+  const [doc] = parseGoogleLinks([{ url: 'https://docs.google.com/spreadsheets/d/abc/edit' }]);
+  assert.strictEqual(doc.name, 'Google Sheets link');
+  assert.deepStrictEqual(parseGoogleLinks(''), []);
+  assert.strictEqual(parseGoogleLinks(JSON.stringify([{ url: 'https://drive.google.com/file/d/1/view', name: 'Report' }]))[0].name, 'Report');
+  for (const bad of ['http://docs.google.com/x', 'https://evil.com/docs.google.com', 'https://docs.google.com.evil.com/x', 'javascript:alert(1)', 'https://u:p@docs.google.com/x']) {
+    throwsBadRequest(() => parseGoogleLinks([{ url: bad }]));
+  }
 });
 
 test('user validation', () => {

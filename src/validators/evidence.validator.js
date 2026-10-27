@@ -1,5 +1,6 @@
 'use strict';
 const v = require('../utils/validators');
+const { parseGoogleLinks } = require('../utils/google-links');
 
 function parseHours(value, { required }) {
   if ((value === undefined || value === null || value === '') && !required) return null;
@@ -11,7 +12,8 @@ function parseEvidenceUpload(body = {}) {
   const input = body || {};
   return {
     description: v.text(input.description, { field: 'description', max: 4000, required: false }),
-    hours: parseHours(input.hours, { required: true })
+    hours: parseHours(input.hours, { required: true }),
+    links: parseGoogleLinks(input.links) // Google Drive / Docs / Sheets / Slides links (optional)
   };
 }
 
@@ -20,7 +22,8 @@ function parseEvidenceUpdate(body = {}) {
   const input = body || {};
   return {
     description: v.text(input.description, { field: 'description', max: 4000, required: false }),
-    hours: parseHours(input.hours, { required: false })
+    hours: parseHours(input.hours, { required: false }),
+    newLinks: parseGoogleLinks(input.links)
   };
 }
 

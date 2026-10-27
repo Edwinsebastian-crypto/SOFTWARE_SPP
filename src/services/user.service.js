@@ -70,6 +70,16 @@ class UserService {
     return this.userRepository.findByDocument(input.documentNumber);
   }
 
+  /**
+   * Self-registration: same creation flow as the Director's, but the account is born `pending`
+   * and cannot sign in until the Director accepts it. @param {object} input validated by parseRegister
+   */
+  register(input) {
+    // the audit entry is attributed to the person who registered
+    const actor = { documentNumber: input.documentNumber, role: input.role, firstName: input.firstName, lastName: input.lastName, email: input.email };
+    return this.create(actor, { ...input, status: USER_STATUS.PENDING });
+  }
+
   /** The role and e-mail are never changed here. @param {object} input validated by parseUpdateUser */
   async update(actor, documentNumber, input) {
     const current = await this.#requireByDocument(documentNumber);

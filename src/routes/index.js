@@ -36,6 +36,7 @@ function createApiRouter({ controllers, authenticate }) {
 function createPagesRouter({ controllers: { page }, authenticate }) {
   const router = express.Router();
   router.get(['/', '/index.html'], asyncHandler(page.home));
+  router.get('/register.html', asyncHandler(page.register));
   router.get('/pages/:page.html', authenticate.page, page.panel);
   return router;
 }

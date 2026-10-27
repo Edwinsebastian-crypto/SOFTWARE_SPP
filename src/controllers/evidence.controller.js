@@ -34,6 +34,7 @@ class EvidenceController {
     const evidence = await this.evidenceService.update(req.user, textId(req.params.evidenceId, 'evidenceId'), {
       ...updateData,
       newFiles: req.files || [],
+      newLinks: updateData.newLinks,
       keptFileIds: parsedKeptIds
     });
     res.json({ evidence: toEvidenceDto(evidence) });

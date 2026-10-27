@@ -2977,3 +2977,15 @@ body.dark-theme .act-empty-msg {
     gap: 14px;
   }
 }
+
+/* ── Evidence modal: Google Drive / Docs / Sheets / Slides ── */
+.am-google { margin-top: 14px; padding: 14px; border: 1px dashed rgba(16,51,35,.35); border-radius: 16px; display: flex; flex-direction: column; gap: 10px; }
+.am-google-title { font-size: .95rem; }
+.am-google-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.am-google-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; border: 1.5px solid #1f3d2f; color: #1f3d2f; font-size: .85rem; font-weight: 600; text-decoration: none; }
+.am-google-btn:hover { background: #1f3d2f; color: #fff; }
+.am-google-link { display: flex; gap: 8px; }
+.am-google-link input { flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid #1f3d2f; border-radius: 12px; font: inherit; }
+.am-google-link button { padding: 10px 14px; border: 0; border-radius: 12px; background: #1f3d2f; color: #fff; font-weight: 600; cursor: pointer; }
+.am-google-hint { opacity: .75; line-height: 1.35; }
+.am-google-error { color: #b3261e; font-weight: 600; min-height: 1em; }

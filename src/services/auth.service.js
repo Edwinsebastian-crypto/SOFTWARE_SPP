@@ -11,10 +11,10 @@ class AuthService {
   }
 
   /**
-   * @param {{username, password, role}} credentials
+   * @param {{username, password}} credentials — the role is detected from the database
    * @returns {Promise<{session: object, user: object}>} the Supabase session and the practicum user
    */
-  async login({ username, password, role }) {
+  async login({ username, password }) {
     // 1) Supabase validates username and password
     const { data, error } = await this.identity.publicClient().auth.signInWithPassword({
       email: toInstitutionalEmail(username),
@@ -27,8 +27,8 @@ class AuthService {
     // 2) The database says who they are and which role they hold (the link is the institutional e-mail)
     const user = await this.userRepository.findByEmail(data.user.email);
     if (!user) throw HttpError.forbidden('Your account is not registered in the practicum system');
+    if (user.status === USER_STATUS.PENDING) throw HttpError.forbidden('Your registration is pending approval by the Director. You will be able to sign in once it is accepted');
     if (user.status !== USER_STATUS.ACTIVE) throw HttpError.forbidden('Your account is not active. Contact the Practicum Directorate');
-    if (user.role !== role) throw HttpError.forbidden('The selected role does not match your account');
 
     return { session: data.session, user };
   }

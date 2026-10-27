@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SPP · Register new user</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/shell.css">
+  <link rel="stylesheet" href="css/director.css">
+  <link rel="stylesheet" href="css/users.css">
+  <link rel="stylesheet" href="css/register.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="reg-page-body">
+
+  <main class="reg-page-container" id="reg-root">
+
+    <!-- Top header with back link -->
+    <div class="reg-top-bar">
+      <header class="reg-header">
+        <h2 id="reg-form-title">Register new user</h2>
+        <p id="reg-form-desc">Complete the four steps to register the user in the institutional software.</p>
+      </header>
+      <a href="index.html" class="reg-back-link" aria-label="Return to login page">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        <span>Back to sign in</span>
+      </a>
+    </div>
+
+    <!-- Success state (shown after successful registration) -->
+    <div id="reg-done" class="reg-done-container" hidden>
+      <div class="reg-done-card">
+        <div class="reg-done-icon">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        </div>
+        <h3>Registration received</h3>
+        <p>Your account request has been registered in the system. The Director will review and accept your account before you can sign in.</p>
+        <a class="cp-btn cp-btn-save" href="index.html">
+          <span>Back to sign in</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- 4-step wizard layout -->
+    <div id="reg-wizard-container" class="um-wizard-layout" data-step="1">
+      <div class="um-wizard-main">
+
+        <!-- Stepper indicator -->
+        <ol class="um-steps">
+          <li class="um-step-item is-current" aria-current="step">
+            <span class="um-step-dot">1</span>
+            <span class="um-step-text"><small>Step 1</small><strong>Identity</strong></span>
+          </li>
+          <li class="um-step-bar" aria-hidden="true"></li>
+          <li class="um-step-item">
+            <span class="um-step-dot">2</span>
+            <span class="um-step-text"><small>Step 2</small><strong>Role</strong></span>
+          </li>
+          <li class="um-step-bar" aria-hidden="true"></li>
+          <li class="um-step-item">
+            <span class="um-step-dot">3</span>
+            <span class="um-step-text"><small>Step 3</small><strong>Access</strong></span>
+          </li>
+          <li class="um-step-bar" aria-hidden="true"></li>
+          <li class="um-step-item">
+            <span class="um-step-dot">4</span>
+            <span class="um-step-text"><small>Step 4</small><strong>Confirmation</strong></span>
+          </li>
+        </ol>
+
+        <form id="reg-form" action="#" method="post" novalidate autocomplete="off">
+
+          <!-- STEP 1: IDENTITY -->
+          <div class="cp-card um-step-panel is-active" data-step="1">
+            <div class="um-step-head">
+              <div>
+                <h3>Personal data and identity</h3>
+                <p>Enter the names and the document exactly as they appear in the official record.</p>
+              </div>
+              <span class="um-tag">Required</span>
+            </div>
+
+            <div class="um-grid">
+              <div class="um-field">
+                <label for="reg-doctype">Document type</label>
+                <div class="cp-input-wrap">
+                  <select id="reg-doctype" name="doctype">
+                    <option value="" disabled selected>Select Document Type</option>
+                    <option value="CC">Citizenship card</option>
+                    <option value="CE">Foreigner ID card</option>
+                    <option value="PA">Passport</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
+                </div>
+                <span class="um-error"></span>
+              </div>
+
+              <div class="um-field">
+                <label for="reg-doc">Document number</label>
+                <div class="um-control um-control--mono">
+                  <i class="fa-solid fa-hashtag" aria-hidden="true"></i>
+                  <input id="reg-doc" name="doc" type="text" inputmode="numeric" autocomplete="off" placeholder="1098234871" maxlength="30" required>
+                </div>
+                <span class="um-error"></span>
+              </div>
+
+              <div class="um-field">
+                <label for="reg-first">First names</label>
+                <div class="um-control">
+                  <i class="fa-solid fa-user" aria-hidden="true"></i>
+                  <input id="reg-first" name="first" type="text" autocomplete="given-name" placeholder="Mariana Sofía" maxlength="80" required>
+                </div>
+                <span class="um-error"></span>
+              </div>
+
+              <div class="um-field">
+                <label for="reg-last">Last names</label>
+                <div class="um-control">
+                  <i class="fa-solid fa-users" aria-hidden="true"></i>
+                  <input id="reg-last" name="last" type="text" autocomplete="family-name" placeholder="Cárdenas Mendoza" maxlength="80" required>
+                </div>
+                <span class="um-error"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: ROLE -->
+          <div class="cp-card um-step-panel" data-step="2">
+            <div class="um-step-head">
+              <div>
+                <h3>Institutional role and affiliation</h3>
+                <p>The role defines which panel the person sees when entering the portal.</p>
+              </div>
+              <span class="um-tag">Permissions</span>
+            </div>
+
+            <div class="um-field">
+              <label>Assigned role</label>
+              <div class="um-roles">
+                <label class="um-role">
+                  <input type="radio" name="role" value="student" checked>
+                  <span class="um-role-box">
+                    <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+                    <span><strong>Student</strong><span>Records evidence and answers the logbook.</span></span>
+                  </span>
+                </label>
+                <label class="um-role">
+                  <input type="radio" name="role" value="tutor">
+                  <span class="um-role-box">
+                    <i class="fa-solid fa-user" aria-hidden="true"></i>
+                    <span><strong>Academic Tutor</strong><span>Reviews activities and leaves feedback.</span></span>
+                  </span>
+                </label>
+                <label class="um-role">
+                  <input type="radio" name="role" value="advisor">
+                  <span class="um-role-box">
+                    <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+                    <span><strong>Pedagogical Advisor</strong><span>Accompanies the practice at the institution.</span></span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="um-grid" id="reg-program-box">
+              <div class="um-field">
+                <label for="reg-program" id="reg-program-label">Academic program</label>
+                <div class="cp-input-wrap">
+                  <select id="reg-program" name="program">
+                    <option value="" disabled selected>Select a program</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
+                </div>
+                <span class="um-error"></span>
+              </div>
+
+              <div class="um-field">
+                <label for="reg-faculty">Faculty or department</label>
+                <div class="um-control um-control--locked">
+                  <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+                  <input id="reg-faculty" name="faculty" type="text" readonly placeholder="Filled in automatically" tabindex="-1">
+                </div>
+                <span class="um-hint"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Filled in according to the chosen program.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: ACCESS -->
+          <div class="cp-card um-step-panel" data-step="3">
+            <div class="um-step-head">
+              <div>
+                <h3>Access credentials</h3>
+                <p>With these details the person signs in to the portal for the first time.</p>
+              </div>
+              <span class="um-tag">Security</span>
+            </div>
+
+            <div class="um-field">
+              <label for="reg-email">Institutional e-mail</label>
+              <div class="um-control">
+                <i class="fa-solid fa-at" aria-hidden="true"></i>
+                <input id="reg-email" name="email" type="text" autocomplete="off" placeholder="first.lastname">
+                <span class="um-suffix" id="reg-domain-suffix">@udi.edu.co</span>
+              </div>
+              <span class="um-error"></span>
+              <span class="um-hint"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> We suggest it from the name, but you can change it.</span>
+            </div>
+
+            <div class="um-field">
+              <label for="reg-pass">Temporary password</label>
+              <div class="um-control um-control--mono">
+                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                <input id="reg-pass" name="pass" type="password" autocomplete="new-password" placeholder="8+ characters, upper, lower and number">
+                <button type="button" class="um-icon-btn" id="reg-pass-toggle" aria-label="Show password">
+                  <i class="fa-regular fa-eye-slash" aria-hidden="true"></i>
+                </button>
+              </div>
+              <span class="um-error"></span>
+              <button type="button" class="um-ghost-btn" id="reg-pass-generate" style="align-self:flex-start;margin-top:4px;">
+                <i class="fa-solid fa-dice" aria-hidden="true"></i> Generate a secure one
+              </button>
+            </div>
+
+            <div class="um-field">
+              <label for="reg-pass2">Confirm password</label>
+              <div class="um-control um-control--mono">
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                <input id="reg-pass2" name="pass2" type="password" autocomplete="new-password" placeholder="Repeat your password">
+              </div>
+              <span class="um-error"></span>
+            </div>
+          </div>
+
+          <!-- STEP 4: CONFIRMATION -->
+          <div class="cp-card um-step-panel" data-step="4">
+            <div class="um-step-head">
+              <div>
+                <h3>Review before saving</h3>
+                <p>This is how the user's credential will look inside the portal.</p>
+              </div>
+              <span class="um-tag">Last step</span>
+            </div>
+
+            <dl class="um-summary" id="reg-summary"></dl>
+          </div>
+
+          <div id="reg-error-banner" class="reg-error-banner" role="alert"></div>
+
+          <!-- Wizard action buttons -->
+          <div class="um-wizard-actions">
+            <span class="um-progress-text" id="reg-progress-text">Step 1 of 4</span>
+            <button type="button" class="cp-btn cp-btn-cancel" id="reg-btn-reset">Clear</button>
+            <button type="button" class="cp-btn cp-btn-cancel" id="reg-btn-prev" style="display:none;">Previous</button>
+            <button type="button" class="cp-btn cp-btn-save" id="reg-btn-next">Next</button>
+            <button type="submit" class="cp-btn cp-btn-save" id="reg-btn-submit" style="display:none;">
+              <i class="fa-solid fa-user-check" aria-hidden="true"></i> Register
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Live credential aside -->
+      <aside class="um-preview" aria-label="Credential preview">
+        <div id="reg-preview-card"></div>
+        <div class="um-checklist">
+          <h4><i class="fa-solid fa-circle-info" aria-hidden="true"></i> How to use this card</h4>
+          <ul>
+            <li class="is-ok">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              <span>It updates as you type in the form.</span>
+            </li>
+            <li class="is-ok">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              <span>Your registration will be submitted to the Director for approval.</span>
+            </li>
+            <li class="is-ok">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              <span>The eye shows the temporary password so you can read it out.</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+
+  <script src="js/core/api.js"></script>
+  <script src="js/core/custom-select.js"></script>
+  <script src="js/pages/register.js"></script>
+</body>
+</html>
