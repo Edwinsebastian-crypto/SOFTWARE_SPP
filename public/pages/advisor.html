@@ -114,30 +114,58 @@
 						<h2 id="logbook-title" class="logbook-title">Practice <span class="lb-student-name"
 								aria-label="Ver credencial del estudiante"></span></h2>
 					</div>
-					<div class="logbook-info-card" id="logbook-info-card" style="cursor: pointer;">
-						<div class="logbook-info-item">
-							<span class="lb-info-label">Final Grade</span>
-							<span class="lb-info-value" id="grade-display">-</span>
-							
+					<!-- BANNER DE CALIFICACIÓN Y OBSERVACIÓN -->
+					<div class="lb-hero-banner" id="lb-hero-banner">
+						<div class="lb-hero-left">
+							<div class="lb-score-ring" id="lb-score-ring">
+								<svg class="lb-ring-svg" viewBox="0 0 88 88" aria-hidden="true">
+									<circle class="lb-ring-bg" cx="44" cy="44" r="36" />
+									<circle class="lb-ring-fill" id="lb-ring-fill" cx="44" cy="44" r="36" />
+								</svg>
+								<div class="lb-ring-content">
+									<span class="lb-score-val" id="lb-score-val">5.0</span>
+									<span class="lb-score-max">OF 5.0</span>
+								</div>
+							</div>
+							<div class="lb-grade-info">
+								<span class="lb-grade-kicker">FINAL GRADE</span>
+								<h3 class="lb-grade-title" id="lb-grade-title">Excellent</h3>
+							</div>
 						</div>
-						<div class="logbook-info-item">
-							<span class="lb-info-label">General Observation</span>
-							<span class="lb-info-value" id="obs-display">-</span>
-							
+
+						<div class="lb-hero-right">
+							<div class="lb-obs-box">
+								<span class="lb-obs-kicker">GENERAL OBSERVATION</span>
+								<div class="lb-obs-text-wrap">
+									<span class="lb-obs-quote" aria-hidden="true">”</span>
+									<p class="lb-obs-text" id="lb-obs-text">Great job on your practice!</p>
+								</div>
+							</div>
 						</div>
 					</div>
-					
 
-					<div class="logbook-action-card">
-						<div class="lb-action-left">
-							<div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
-							<span class="lb-action-label">Activities</span>
+					<!-- ACCIONES (TARJETA DE ACTIVIDADES) -->
+					<div class="lb-cards-grid lb-cards-grid--single">
+						<!-- Tarjeta 1: Actividades -->
+						<div class="lb-card" id="lb-card-activities" role="button" tabindex="0">
+							<div class="lb-card-top">
+								<div class="lb-card-icon" aria-hidden="true">
+									<i class="fa-regular fa-clipboard"></i>
+								</div>
+								<span class="lb-card-pill" id="lb-hours-pill">0 / 0 h</span>
+							</div>
+							<div class="lb-card-body">
+								<h3 class="lb-card-title">Activities</h3>
+								<p class="lb-card-desc">Review assigned tasks and their delivery status.</p>
+							</div>
+							<div class="lb-card-bottom">
+								<span class="lb-card-pill" id="lb-pending-pill">Up to date</span>
+								<button type="button" class="lb-action-btn" id="preguntas-actividades-btn" aria-label="Enter Activities">
+									<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+								</button>
+							</div>
 						</div>
-						<button type="button" class="lb-action-btn" id="preguntas-actividades-btn"><i
-								class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
 					</div>
-
-					
 				</section>
 
 				<!-- ACTIVITIES PANEL (shown after Enter) -->
@@ -149,9 +177,65 @@
 							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
 						</button>
 						<h2 id="activities-title" class="activities-title">Activities</h2>
-						
 					</div>
-					<div id="activities-list-container"></div>
+
+					<!-- Summary KPI Stats Cards -->
+					<div class="act-kpis" id="act-kpis">
+						<div class="act-kpi-card" id="act-kpi-card-pending" role="button" tabindex="0" title="Filter pending tasks">
+							<div class="act-kpi-icon act-kpi-icon--pending">
+								<i class="fa-regular fa-calendar-days" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Pending Tasks:</span>
+								<strong class="act-kpi-val" id="act-kpi-pending">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-review" role="button" tabindex="0" title="Filter activities pending review">
+							<div class="act-kpi-icon act-kpi-icon--review">
+								<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Pending Review:</span>
+								<strong class="act-kpi-val" id="act-kpi-review">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-completed" role="button" tabindex="0" title="Filter completed activities">
+							<div class="act-kpi-icon act-kpi-icon--completed">
+								<i class="fa-solid fa-check" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Completed:</span>
+								<strong class="act-kpi-val" id="act-kpi-completed">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-grade" role="button" tabindex="0" title="Filter graded activities">
+							<div class="act-kpi-icon act-kpi-icon--grade">
+								<i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Average Grade:</span>
+								<strong class="act-kpi-val" id="act-kpi-grade">0.0/5.0</strong>
+							</div>
+						</div>
+					</div>
+
+					<!-- Search & Filter Controls -->
+					<div class="act-controls">
+						<div class="act-search-box">
+							<input type="text" id="act-search-input" class="act-search-input" placeholder="Search" aria-label="Search activities" autocomplete="off" />
+							<i class="fa-solid fa-magnifying-glass act-search-icon" aria-hidden="true"></i>
+						</div>
+						<div class="act-filter-pills" role="tablist" aria-label="Activity Filters">
+							<button type="button" class="act-pill-btn is-active" data-filter="all">All</button>
+							<button type="button" class="act-pill-btn" data-filter="pending">To Do / Pending</button>
+							<button type="button" class="act-pill-btn" data-filter="review"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Pending Review</button>
+							<button type="button" class="act-pill-btn" data-filter="completed">Completed</button>
+							<button type="button" class="act-pill-btn" data-filter="graded">Graded</button>
+						</div>
+					</div>
+
+					<!-- Grid of Activity Cards -->
+					<div id="activities-list-container" class="act-grid"></div>
 				</section>
 
 				<!-- EVIDENCE PANEL (shown after entering an Activity) -->

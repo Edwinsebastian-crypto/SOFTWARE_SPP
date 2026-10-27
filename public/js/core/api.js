@@ -179,4 +179,72 @@
     };
 
     window.SPP = SPP;
+
+    /* =========================================================================
+       EvalAPI — Cliente del servicio de Evaluación (/api/evaluations/* gateway)
+       ========================================================================= */
+    class EvalApiError extends Error {
+        constructor(mensaje, status) { super(mensaje); this.name = 'ApiError'; this.status = status; }
+    }
+
+    function evalReq(metodo, ruta, cuerpo, query) {
+        let url = '/api/evaluations' + ruta;
+        if (query) {
+            const qs = new URLSearchParams(Object.entries(query).filter(([, v]) => v !== undefined && v !== null && v !== ''));
+            if ([...qs].length) url += '?' + qs;
+        }
+        const opciones = { method: metodo };
+        if (cuerpo !== undefined) opciones.body = cuerpo;
+        else if (metodo !== 'GET' && metodo !== 'DELETE') opciones.body = {};
+        return SPP.request(url, opciones).catch((e) => { throw new EvalApiError(e.message, e.status || 0); });
+    }
+
+    const EvalAPI = {
+        modo: 'backend',
+        ApiError: EvalApiError,
+        health: () => evalReq('GET', '/health'),
+
+        tutor: {
+            listarEvaluaciones: (q) => evalReq('GET', '/tutor/evaluaciones', undefined, q),
+            crearEvaluacion: (b) => evalReq('POST', '/tutor/evaluaciones', b),
+            obtenerEvaluacion: (id) => evalReq('GET', `/tutor/evaluaciones/${id}`),
+            editarEvaluacion: (id, b) => evalReq('PATCH', `/tutor/evaluaciones/${id}`, b),
+            eliminarEvaluacion: (id) => evalReq('DELETE', `/tutor/evaluaciones/${id}`),
+            publicar: (id) => evalReq('POST', `/tutor/evaluaciones/${id}/publicar`),
+            despublicar: (id) => evalReq('POST', `/tutor/evaluaciones/${id}/despublicar`),
+            cerrar: (id) => evalReq('POST', `/tutor/evaluaciones/${id}/cerrar`),
+
+            crearPregunta: (idEval, b) => evalReq('POST', `/tutor/evaluaciones/${idEval}/preguntas`, b),
+            editarPregunta: (id, b) => evalReq('PATCH', `/tutor/preguntas/${id}`, b),
+            eliminarPregunta: (id) => evalReq('DELETE', `/tutor/preguntas/${id}`),
+            aprobarPregunta: (id) => evalReq('POST', `/tutor/preguntas/${id}/aprobar`),
+            rechazarPregunta: (id) => evalReq('POST', `/tutor/preguntas/${id}/rechazar`),
+            aprobarTodas: (idEval) => evalReq('POST', `/tutor/evaluaciones/${idEval}/preguntas/aprobar-todas`),
+
+            listarEvidencias: (idPractica) => evalReq('GET', '/tutor/evidencias', undefined, { id_practica: idPractica }),
+            generar: (idEval, b) => evalReq('POST', `/tutor/evaluaciones/${idEval}/generar`, b),
+
+            listarIntentos: (idEval) => evalReq('GET', `/tutor/evaluaciones/${idEval}/intentos`),
+            verIntento: (id) => evalReq('GET', `/tutor/intentos/${id}`),
+            calificar: (idRespuesta, b) => evalReq('POST', `/tutor/respuestas/${idRespuesta}/calificar`, b),
+            comentar: (idRespuesta, comentario) => evalReq('POST', `/tutor/respuestas/${idRespuesta}/retro`, { comentario }),
+        },
+
+        director: {
+            resumen: () => evalReq('GET', '/director/resumen'),
+            listar: (q) => evalReq('GET', '/director/evaluaciones', undefined, q),
+            detalle: (id) => evalReq('GET', `/director/evaluaciones/${id}`),
+        },
+
+        estudiante: {
+            misEvaluaciones: () => evalReq('GET', '/estudiante/evaluaciones'),
+            iniciarIntento: (idEval) => evalReq('POST', `/estudiante/evaluaciones/${idEval}/intentos`),
+            verIntento: (id) => evalReq('GET', `/estudiante/intentos/${id}`),
+            guardarRespuesta: (idIntento, idPregunta, b) => evalReq('PUT', `/estudiante/intentos/${idIntento}/respuestas/${idPregunta}`, b),
+            enviarIntento: (id) => evalReq('POST', `/estudiante/intentos/${id}/enviar`),
+        },
+    };
+
+    SPP.EvalAPI = EvalAPI;
+    window.EvalAPI = EvalAPI;
 })();

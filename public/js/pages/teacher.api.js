@@ -187,50 +187,299 @@ document.addEventListener('DOMContentLoaded', async () => {
             setField('act-grade-display', activity.grade || '0.0');
         }
 
-        async function renderActivitiesList(targetActivityId) {
-            if (!state.practice) return;
+        let activeActivityFilter = 'all';
+        let activitySearchQuery = '';
+        let actControlsInitialized = false;
+
+        function getActivityStatusInfo(activity) {
+            const rawGrade = activity.grade;
+            const gradeNum = (rawGrade !== null && rawGrade !== undefined && rawGrade !== '') ? parseFloat(rawGrade) : null;
+            const hasValidGrade = gradeNum !== null && !isNaN(gradeNum) && gradeNum > 0;
+            const evidenceCount = Number(activity.evidenceCount) || (Array.isArray(activity.files) ? activity.files.length : 0);
+            const feedbackCount = Number(activity.feedbackCount) || 0;
+
+            if (hasValidGrade) {
+                return {
+                    category: 'graded',
+                    badgeClass: 'act-status--graded',
+                    label: `Graded ${gradeNum.toFixed(1)}/5.0`,
+                    icon: null,
+                    gradeValue: gradeNum
+                };
+            }
+
+            // Completed: el tutor añadió retroalimentación (sin nota asignada aún)
+            if (feedbackCount > 0 && !hasValidGrade) {
+                return {
+                    category: 'completed',
+                    badgeClass: 'act-status--submitted',
+                    label: 'Completed',
+                    icon: 'fa-solid fa-check',
+                    gradeValue: null
+                };
+            }
+
+            // Pending Review: tienen evidencias pero no retroalimentación o nota
+            if (evidenceCount > 0 && !hasValidGrade && feedbackCount === 0) {
+                return {
+                    category: 'review',
+                    badgeClass: 'act-status--in-review',
+                    label: 'Pending Review',
+                    icon: 'fa-solid fa-triangle-exclamation',
+                    gradeValue: null
+                };
+            }
+
+            let isOverdue = false;
+            if (activity.dueDate) {
+                const due = new Date(activity.dueDate);
+                if (!isNaN(due.getTime()) && due.getTime() < Date.now()) {
+                    isOverdue = true;
+                }
+            }
+
+            // Pending tasks: no tienen evidencias
+            return {
+                category: 'pending',
+                badgeClass: 'act-status--due',
+                label: isOverdue ? 'Overdue' : 'Due',
+                icon: null,
+                gradeValue: null
+            };
+        }
+
+        function activityMatchesFilter(activity, filter) {
+            if (!filter || filter === 'all') return true;
+
+            const rawGrade = activity.grade;
+            const gradeNum = (rawGrade !== null && rawGrade !== undefined && rawGrade !== '') ? parseFloat(rawGrade) : null;
+            const hasValidGrade = gradeNum !== null && !isNaN(gradeNum) && gradeNum > 0;
+            const evidenceCount = Number(activity.evidenceCount) || (Array.isArray(activity.files) ? activity.files.length : 0);
+            const feedbackCount = Number(activity.feedbackCount) || 0;
+
+            if (filter === 'pending') {
+                // Pending tasks: actividades que no tienen evidencias
+                return evidenceCount === 0;
+            }
+
+            if (filter === 'review') {
+                // Pending review: tienen evidencias pero no retroalimentación o nota
+                return evidenceCount > 0 && !hasValidGrade && feedbackCount === 0;
+            }
+
+            if (filter === 'completed' || filter === 'submitted') {
+                // Completed: tienen retroalimentación pero no tienen nota
+                return feedbackCount > 0 && !hasValidGrade;
+            }
+
+            if (filter === 'graded') {
+                // Graded: solo las que tienen una nota
+                return hasValidGrade;
+            }
+
+            return true;
+        }
+
+        function formatCardDueDate(dueDateStr) {
+            if (!dueDateStr) return 'No due date';
             try {
-                state.activities = (await SPP.get(`/api/practices/${state.practice.id}/activities`)).activities;
-            } catch (e) { SPP.showError(e); return; }
+                const d = new Date(dueDateStr);
+                if (isNaN(d.getTime())) return `Due ${dueDateStr}`;
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = months[d.getUTCMonth()];
+                const day = d.getUTCDate();
+                const year = d.getUTCFullYear();
+                return `Due ${month} ${day}, ${year}`;
+            } catch (_) {
+                return `Due ${dueDateStr}`;
+            }
+        }
 
-            const activitiesListContainer = $('#activities-list-container') || $('#activities-panel');
-            $$('.logbook-action-card', activitiesListContainer).forEach(card => card.remove());
-            $$('.empty-activities-msg', activitiesListContainer).forEach(msg => msg.remove());
+        function formatActivityTitle(activity) {
+            const rawTitle = (activity.title || '').trim();
+            const actNum = activity.number;
+            if (!rawTitle || rawTitle.toLowerCase() === 'activity' || rawTitle.toLowerCase() === `activity #${actNum}` || rawTitle.toLowerCase() === `activity ${actNum}`) {
+                return `Activity #${actNum}`;
+            }
+            if (rawTitle.toLowerCase().startsWith(`activity #${actNum}`) || rawTitle.toLowerCase().startsWith(`activity ${actNum}`)) {
+                return rawTitle;
+            }
+            return `Activity #${actNum} - ${rawTitle}`;
+        }
 
-            if (state.activities.length === 0) {
-                const msg = document.createElement('div');
-                msg.className = 'empty-activities-msg';
-                msg.style.padding = '20px';
-                msg.style.textAlign = 'center';
-                msg.style.color = 'var(--text-secondary, #666)';
-                msg.textContent = 'This practice currently has no activities assigned.';
-                activitiesListContainer.appendChild(msg);
-            } else {
-                state.activities.forEach(activity => {
-                    let labelText = `Activity #${activity.number}`;
-                    if (activity.title && activity.title.toLowerCase() !== 'activity') {
-                        labelText = activity.title;
-                    }
-                    const card = document.createElement('div');
-                    card.className = 'logbook-action-card';
-                    card.innerHTML = `
-                        <div class="lb-action-left">
-                            <div class="stat-icon"><i class="fa-solid fa-file-lines"></i></div>
-                            <span class="lb-action-label">${SPP.escapeHtml(labelText)}</span>
-                        </div>
-                        <button type="button" class="lb-action-btn activity-enter-btn" data-activity="${activity.number}"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
-                    `;
-                    activitiesListContainer.appendChild(card);
+        function updateActivitiesKPIs(activities) {
+            const pendingEl = document.getElementById('act-kpi-pending');
+            const reviewEl = document.getElementById('act-kpi-review');
+            const completedEl = document.getElementById('act-kpi-completed');
+            const gradeEl = document.getElementById('act-kpi-grade');
+            if (!pendingEl && !completedEl && !gradeEl && !reviewEl) return;
+
+            let pendingCount = 0;
+            let reviewCount = 0;
+            let completedCount = 0;
+            let gradedGrades = [];
+
+            (activities || []).forEach(act => {
+                const rawGrade = act.grade;
+                const gradeNum = (rawGrade !== null && rawGrade !== undefined && rawGrade !== '') ? parseFloat(rawGrade) : null;
+                const hasValidGrade = gradeNum !== null && !isNaN(gradeNum) && gradeNum > 0;
+                const evidenceCount = Number(act.evidenceCount) || (Array.isArray(act.files) ? act.files.length : 0);
+                const feedbackCount = Number(act.feedbackCount) || 0;
+
+                // Pending tasks: no tienen evidencias
+                if (evidenceCount === 0) {
+                    pendingCount++;
+                }
+                // Pending review: tienen evidencias pero no retroalimentación o nota
+                if (evidenceCount > 0 && !hasValidGrade && feedbackCount === 0) {
+                    reviewCount++;
+                }
+                // Completed: tienen retroalimentación pero no tienen nota
+                if (feedbackCount > 0 && !hasValidGrade) {
+                    completedCount++;
+                }
+                // Graded: actividades con nota
+                if (hasValidGrade) {
+                    gradedGrades.push(gradeNum);
+                }
+            });
+
+            if (pendingEl) pendingEl.textContent = pendingCount;
+            if (reviewEl) reviewEl.textContent = reviewCount;
+            if (completedEl) completedEl.textContent = completedCount;
+            if (gradeEl) {
+                if (gradedGrades.length > 0) {
+                    const avg = gradedGrades.reduce((sum, g) => sum + g, 0) / gradedGrades.length;
+                    gradeEl.textContent = `${avg.toFixed(1)}/5.0`;
+                } else {
+                    gradeEl.textContent = '0.0/5.0';
+                }
+            }
+        }
+
+        function setupActivitiesControls() {
+            if (actControlsInitialized) return;
+            const searchInput = document.getElementById('act-search-input');
+            const filterButtons = document.querySelectorAll('.act-pill-btn');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    activitySearchQuery = (e.target.value || '').trim().toLowerCase();
+                    renderActivitiesCards();
                 });
             }
 
-            // Bind newly created buttons
-            $$('.activity-enter-btn', activitiesListContainer).forEach((button) => {
-                button.addEventListener('click', async () => {
-                    state.activity = state.activities.find((a) => String(a.number) === button.getAttribute('data-activity'));
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterButtons.forEach(b => b.classList.remove('is-active'));
+                    btn.classList.add('is-active');
+                    activeActivityFilter = btn.getAttribute('data-filter') || 'all';
+                    renderActivitiesCards();
+                });
+            });
+
+            // Quick-filter when clicking KPI cards
+            const bindKpiClick = (cardId, filterKey) => {
+                const card = document.getElementById(cardId);
+                if (card) {
+                    card.addEventListener('click', () => {
+                        const targetBtn = document.querySelector(`.act-pill-btn[data-filter="${filterKey}"]`);
+                        if (targetBtn) targetBtn.click();
+                    });
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            const targetBtn = document.querySelector(`.act-pill-btn[data-filter="${filterKey}"]`);
+                            if (targetBtn) targetBtn.click();
+                        }
+                    });
+                }
+            };
+
+            bindKpiClick('act-kpi-card-pending', 'pending');
+            bindKpiClick('act-kpi-card-review', 'review');
+            bindKpiClick('act-kpi-card-completed', 'completed');
+            bindKpiClick('act-kpi-card-grade', 'graded');
+
+            actControlsInitialized = true;
+        }
+
+        function renderActivitiesCards() {
+            const container = document.getElementById('activities-list-container') || document.getElementById('activities-panel');
+            if (!container) return;
+
+            // Remove existing cards and empty messages
+            container.querySelectorAll('.act-card, .logbook-action-card, .empty-activities-msg, .act-empty-msg').forEach(el => el.remove());
+
+            const activities = state.activities || [];
+            const filtered = activities.filter(activity => {
+                if (!activityMatchesFilter(activity, activeActivityFilter)) {
+                    return false;
+                }
+                if (activitySearchQuery) {
+                    const status = getActivityStatusInfo(activity);
+                    const fullText = `${activity.number} ${activity.title || ''} ${activity.description || ''} ${status.label}`.toLowerCase();
+                    if (!fullText.includes(activitySearchQuery)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'act-empty-msg';
+                empty.innerHTML = `
+                    <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+                    <p>${activities.length === 0 ? 'This practice currently has no activities assigned.' : 'No activities found matching your search or filter.'}</p>
+                `;
+                container.appendChild(empty);
+                return;
+            }
+
+            filtered.forEach(activity => {
+                const status = getActivityStatusInfo(activity);
+                const title = formatActivityTitle(activity);
+                const dueFormatted = formatCardDueDate(activity.dueDate);
+
+                const card = document.createElement('div');
+                card.className = 'act-card';
+                card.setAttribute('data-activity', activity.number);
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `${title}, ${dueFormatted}, Status: ${status.label}`);
+
+                card.innerHTML = `
+                    <div class="act-card-header">
+                        <div class="act-card-icon" aria-hidden="true">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <h3 class="act-card-title" title="${SPP.escapeHtml(title)}">${SPP.escapeHtml(title)}</h3>
+                    </div>
+                    <div class="act-card-body">
+                        <div class="act-doc-thumb" aria-hidden="true">
+                            <div class="act-doc-head"></div>
+                            <div class="act-doc-line"></div>
+                            <div class="act-doc-line"></div>
+                            <div class="act-doc-line short"></div>
+                            <div class="act-doc-line"></div>
+                            <div class="act-doc-line short"></div>
+                        </div>
+                        <div class="act-card-info">
+                            <span class="act-card-due">${SPP.escapeHtml(dueFormatted)}</span>
+                            <span class="act-status-badge ${status.badgeClass}">${status.icon ? `<i class="${status.icon}" style="margin-right: 5px;" aria-hidden="true"></i>` : ''}${SPP.escapeHtml(status.label)}</span>
+                        </div>
+                        <button type="button" class="act-arrow-btn activity-enter-btn" data-activity="${activity.number}" aria-label="Open activity">
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                `;
+
+                const openActivity = async (e) => {
+                    if (e) e.stopPropagation();
+                    state.activity = state.activities.find((a) => String(a.number) === String(activity.number));
                     if (!state.activity) return;
 
-                    // Switch panel manually since the static ones lost the event listener
                     const actividadesPanel = document.getElementById('activities-panel');
                     const evidenciasPanel = document.getElementById('evidences-panel');
                     if (actividadesPanel && evidenciasPanel) {
@@ -244,9 +493,80 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
 
                     displayActivity(state.activity);
-                    try { await loadEvidence(); } catch (e) { SPP.showError(e); }
+                    try { await loadEvidence(); } catch (err) { SPP.showError(err); }
+                };
+
+                card.addEventListener('click', openActivity);
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openActivity(e);
+                    }
                 });
+
+                container.appendChild(card);
             });
+        }
+
+        async function renderActivitiesList(targetActivityId) {
+            if (!state.practice) return;
+            try {
+                state.activities = (await SPP.get(`/api/practices/${state.practice.id}/activities`)).activities || [];
+            } catch (e) { SPP.showError(e); return; }
+
+            // Ensure feedbackCount reflects specifically the reviewer's feedback and calculate real hours
+            if (state.activities && state.activities.length > 0) {
+                const currentUser = await getCurrentUser();
+                const targetRole = (currentUser && currentUser.role === 'advisor') ? 'advisor' : 'tutor';
+                await Promise.all(state.activities.map(async (act) => {
+                    try {
+                        const [res, evRes] = await Promise.all([
+                            SPP.get(`/api/activities/${act.id}/feedback`),
+                            SPP.get(`/api/activities/${act.id}/evidences`)
+                        ]);
+                        const roleComments = Array.isArray(res?.feedback)
+                            ? res.feedback.filter(item => item.role === targetRole)
+                            : [];
+                        act.feedbackCount = roleComments.length;
+                        act.roleFeedbackCount = roleComments.length;
+                        if (Array.isArray(evRes?.evidences)) {
+                            act.hours = evRes.evidences.reduce((sum, e) => sum + (Number(e.hours) || 0), 0);
+                            act.evidenceCount = evRes.evidences.length;
+                        }
+                    } catch (_) {
+                        act.feedbackCount = Number(act.feedbackCount) || 0;
+                        act.roleFeedbackCount = Number(act.roleFeedbackCount) || 0;
+                    }
+                }));
+            }
+
+            setupActivitiesControls();
+            updateActivitiesKPIs(state.activities);
+            renderActivitiesCards();
+
+            // Update card badges on logbook-panel
+            // Actividades: solo aparece 'Up to date' si no tiene nada por revisar.
+            // Si tiene actividades por retroalimentar (categoría 'review'), muestra "X pending review" en amarillo.
+            const reviewCount = (state.activities || []).filter((a) => getActivityStatusInfo(a).category === 'review').length;
+            const pendingPill = document.getElementById('lb-pending-pill');
+            if (pendingPill) {
+                if (reviewCount > 0) {
+                    pendingPill.textContent = `${reviewCount} pending review`;
+                    pendingPill.className = 'lb-card-pill lb-card-pill--warning';
+                } else {
+                    pendingPill.textContent = 'Up to date';
+                    pendingPill.className = 'lb-card-pill lb-card-pill--uptodate';
+                }
+            }
+
+            const hoursPill = document.getElementById('lb-hours-pill');
+            if (hoursPill) {
+                const targetHours = (state.practice?.hours != null && !isNaN(state.practice.hours)) ? state.practice.hours : 0;
+                const totalWorked = (state.activities || []).reduce((sum, act) => sum + (Number(act.hours) || 0), 0);
+                hoursPill.textContent = `${totalWorked} / ${targetHours} h`;
+            }
+
+            await updateTeacherQuestionsPill();
 
             if (targetActivityId) {
                 const updated = state.activities.find(a => String(a.id) === String(targetActivityId));
@@ -263,12 +583,169 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        async function updateTeacherQuestionsPill() {
+            const qPill = document.getElementById('lb-questions-pill');
+            if (!qPill) return;
+
+            const setPill = (text, isWarning) => {
+                qPill.textContent = text;
+                qPill.className = isWarning ? 'lb-card-pill lb-card-pill--warning' : 'lb-card-pill lb-card-pill--uptodate';
+            };
+
+            if (!state.practice) {
+                setPill('Up to date', false);
+                return;
+            }
+
+            try {
+                const evalApi = window.EvalAPI || (window.SPP && window.SPP.EvalAPI);
+                if (!evalApi || !evalApi.tutor || typeof evalApi.tutor.listarEvaluaciones !== 'function') {
+                    setPill('Up to date', false);
+                    return;
+                }
+
+                const practiceId = String(state.practice.id || state.practice.code || '');
+                if (!practiceId) {
+                    setPill('Up to date', false);
+                    return;
+                }
+
+                const evs = await evalApi.tutor.listarEvaluaciones({ id_practica: practiceId });
+                if (!Array.isArray(evs) || evs.length === 0) {
+                    setPill('Up to date', false);
+                    return;
+                }
+
+                // 1. Evaluaciones en estado BORRADOR
+                const draftsCount = evs.filter((ev) => ev.estado === 'BORRADOR').length;
+
+                // 2. Evaluaciones con respuestas sin calificar
+                let toGradeCount = 0;
+                const evsWithAttempts = evs.filter((ev) => Number(ev.intentos_presentados) > 0);
+
+                if (evsWithAttempts.length > 0) {
+                    await Promise.all(evsWithAttempts.map(async (ev) => {
+                        try {
+                            const intentos = await evalApi.tutor.listarIntentos(ev.id_evaluacion);
+                            if (Array.isArray(intentos)) {
+                                const pendingAttempts = intentos.filter(
+                                    (i) => i.estado === 'ENVIADO' || Number(i.respuestas_pendientes) > 0
+                                );
+                                toGradeCount += pendingAttempts.length;
+                            }
+                        } catch (_) {}
+                    }));
+                }
+
+                if (draftsCount > 0 && toGradeCount > 0) {
+                    const draftText = `${draftsCount} ${draftsCount === 1 ? 'draft' : 'drafts'}`;
+                    setPill(`${draftText}, ${toGradeCount} to grade`, true);
+                } else if (draftsCount > 0) {
+                    setPill(`${draftsCount} ${draftsCount === 1 ? 'draft' : 'drafts'}`, true);
+                } else if (toGradeCount > 0) {
+                    setPill(`${toGradeCount} to grade`, true);
+                } else {
+                    setPill('Up to date', false);
+                }
+            } catch (_) {
+                setPill('Up to date', false);
+            }
+        }
+
         window.SPP_TEACHER.refreshActivities = renderActivitiesList;
         window.SPP_TEACHER.displayActivity = displayActivity;
+        window.SPP_TEACHER.updateQuestionsPill = updateTeacherQuestionsPill;
+
+        const evidencesBackBtn = document.getElementById('evidencesBack');
+        if (evidencesBackBtn && !evidencesBackBtn.dataset.refreshBound) {
+            evidencesBackBtn.addEventListener('click', () => {
+                if (window.SPP_TEACHER?.refreshActivities) {
+                    window.SPP_TEACHER.refreshActivities();
+                }
+            });
+            evidencesBackBtn.dataset.refreshBound = 'true';
+        }
 
         await renderActivitiesList();
         document.dispatchEvent(new CustomEvent('spp:practice', { detail: practice }));
     }
+
+    // Bind cards to trigger navigation buttons when whole card is clicked
+    const cardActivities = document.getElementById('lb-card-activities');
+    const actBtn = document.getElementById('preguntas-actividades-btn');
+    if (cardActivities && actBtn) {
+        cardActivities.addEventListener('click', (e) => {
+            if (!e.target.closest('#preguntas-actividades-btn')) actBtn.click();
+        });
+        cardActivities.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                actBtn.click();
+            }
+        });
+    }
+
+    const cardQuestions = document.getElementById('lb-card-questions');
+    const qBtn = document.getElementById('preguntas-preguntas-btn');
+    if (cardQuestions && qBtn) {
+        cardQuestions.addEventListener('click', (e) => {
+            if (!e.target.closest('#preguntas-preguntas-btn')) qBtn.click();
+        });
+        cardQuestions.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                qBtn.click();
+            }
+        });
+    }
+
+    function updateLogbookHero(logbook) {
+        const lb = logbook || {};
+        const scoreValEl = document.getElementById('lb-score-val');
+        const scoreTitleEl = document.getElementById('lb-grade-title');
+        const ringFillEl = document.getElementById('lb-ring-fill');
+        const obsTextEl = document.getElementById('lb-obs-text');
+
+        let gradeNum = lb.finalGrade != null && lb.finalGrade !== '' ? parseFloat(lb.finalGrade) : null;
+        if (gradeNum === null || isNaN(gradeNum)) {
+            gradeNum = 5.0;
+        }
+
+        if (scoreValEl) scoreValEl.textContent = gradeNum.toFixed(1);
+
+        let gradeTitle = 'Excelente';
+        if (gradeNum >= 4.5) gradeTitle = 'Excelente';
+        else if (gradeNum >= 4.0) gradeTitle = 'Sobresaliente';
+        else if (gradeNum >= 3.0) gradeTitle = 'Aprobado';
+        else if (gradeNum > 0) gradeTitle = 'Reprobado';
+        else gradeTitle = 'Sin calificar';
+
+        if (scoreTitleEl) scoreTitleEl.textContent = gradeTitle;
+
+        if (ringFillEl) {
+            const circumference = 226.2;
+            const pct = Math.max(0, Math.min(1, gradeNum / 5.0));
+            ringFillEl.style.strokeDasharray = `${circumference}`;
+            ringFillEl.style.strokeDashoffset = `${circumference * (1 - pct)}`;
+        }
+
+        if (obsTextEl) {
+            const obsText = lb.generalObservation && lb.generalObservation.trim()
+                ? lb.generalObservation
+                : '¡Qué buen trabajo realizaste!';
+            obsTextEl.textContent = obsText;
+            obsTextEl.title = obsText;
+        }
+
+        const notaDisplay = document.getElementById('grade-display');
+        if (notaDisplay) notaDisplay.textContent = lb.finalGrade != null ? Number(lb.finalGrade).toFixed(1) : 'Not graded';
+        const obsDisplay = document.getElementById('obs-display');
+        if (obsDisplay) {
+            obsDisplay.textContent = lb.generalObservation || 'No observations';
+            obsDisplay.dataset.fullObs = lb.generalObservation || '';
+        }
+    }
+    window.SPP_TEACHER.updateLogbookHero = updateLogbookHero;
 
     function updateObsDisplay(obsElement, obsText) {
         const isMobile = window.matchMedia("(max-width: 600px)").matches;
@@ -294,17 +771,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderLogbook() {
         if (!state.practice || !state.practice.logbook) return;
-        const logbook = state.practice.logbook;
-        const values = $$('#logbook-panel .lb-info-value');
-        if (values.length === 2) {
-            values[0].textContent = logbook.finalGrade != null ? Number(logbook.finalGrade).toFixed(1) : 'Not graded';
-            updateObsDisplay(values[1], logbook.generalObservation);
-        } else if (values.length >= 4) {
-            values[0].textContent = SPP.formatDate(logbook.createdAt);
-            values[1].textContent = logbook.finalGrade != null ? Number(logbook.finalGrade).toFixed(1) : 'Not graded';
-            updateObsDisplay(values[2], logbook.generalObservation);
-            values[3].textContent = logbook.status === 'active' ? 'Active' : 'Closed';
-        }
+        updateLogbookHero(state.practice.logbook);
     }
 
     window.addEventListener('resize', () => {
@@ -675,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!evidenceResult.evidences.length) {
             const empty = document.createElement('p');
             empty.className = 'ev-empty';
-            empty.style.cssText = 'padding:16px;opacity:.7';
+            empty.style.cssText = 'padding:16px 0;opacity:.7;text-align:left;';
             empty.textContent = 'The student has not uploaded evidence for this activity yet.';
             feedbackSection.insertAdjacentElement('beforebegin', empty);
             feedbackForm.style.display = 'none';
@@ -691,7 +1158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!feedbackResult.feedback.length) {
             const emptyFeedback = document.createElement('p');
             emptyFeedback.className = 'ev-empty';
-            emptyFeedback.style.cssText = 'padding:16px;opacity:.7';
+            emptyFeedback.style.cssText = 'padding:16px 0;opacity:.7;text-align:left;';
             emptyFeedback.textContent = 'There is no feedback yet.';
             feedbackForm.insertAdjacentElement('beforebegin', emptyFeedback);
         }
@@ -756,6 +1223,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 currentTextarea.value = '';
                 currentTextarea.style.height = 'auto';
                 await loadEvidence();
+                if (window.SPP_TEACHER?.refreshActivities) {
+                    await window.SPP_TEACHER.refreshActivities();
+                }
             } catch (e) {
                 SPP.showError(e);
             } finally {

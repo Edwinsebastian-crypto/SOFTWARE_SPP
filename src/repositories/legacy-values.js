@@ -27,11 +27,8 @@ module.exports = {
   /** Role tables / user status are stored as 'activo', 'pendiente', 'inactivo'. */
   userStatus: createMapping({ active: 'activo', pending: 'pendiente', inactive: 'inactivo' }),
   practiceStatus: createMapping({ active: 'activa', completed: 'finalizada', cancelled: 'cancelada' }),
-  questionTopic: createMapping({ pedagogy: 'pedagogia', didactics: 'didactica', assessment: 'evaluacion' }),
-  questionType: createMapping({ open: 'abierta', 'multiple-choice': 'opcion-multiple', 'true-false': 'verdadero-falso' }),
-  answerStatus: createMapping({ pending: 'pendiente', draft: 'borrador', answered: 'respondida' }),
   auditEntity: createMapping({
-    practice: 'Practica', logbook: 'Bitacora', activity: 'Actividad', evidence: 'Evidencia', feedback: 'Retroalimentacion', answer: 'Respuesta', user: 'Usuario'
+    practice: 'Practica', logbook: 'Bitacora', activity: 'Actividad', evidence: 'Evidencia', feedback: 'Retroalimentacion', user: 'Usuario'
   }),
   auditAction: createMapping({ insert: 'Insertar', update: 'Modificar', delete: 'Eliminar' })
 };

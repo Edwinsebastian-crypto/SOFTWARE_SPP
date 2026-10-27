@@ -114,8 +114,8 @@ Rule: the views never talk to a database; they only call `/api/*` through `SPP.r
 | `npm run test:e2e` | the full HTTP API with Supabase and Cloudinary faked |
 | `npm run lint` | ESLint for the server and the browser code |
 
-The DB-backed tests **drop the `public` schema** of two local databases (`spp_est`, `spp_eva`). They refuse to run
-against a non-local host. Override the URLs with `DATABASE_URL_PRACTICE_TEST` / `DATABASE_URL_EVALUATION_TEST`.
+The DB-backed tests **drop the `public` schema** of the local database (`spp_est`). They refuse to run
+against a non-local host. Override the URL with `DATABASE_URL_PRACTICE_TEST`.
 
 ## Scaling notes
 

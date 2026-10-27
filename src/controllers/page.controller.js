@@ -3,6 +3,8 @@ const path = require('path');
 const { ROLE_LIST } = require('../config/constants');
 
 const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
+/** Pages that are not a role panel, mapped to the only role allowed to see them. */
+const EXTRA_PAGES = new Map([['director-evaluations', 'director']]);
 
 /** Serves the HTML pages. Each panel is only delivered to the role it belongs to. */
 class PageController {
@@ -15,8 +17,11 @@ class PageController {
   /** GET /pages/:page.html  (runs after the `page` authentication middleware) */
   panel = (req, res) => {
     const { page } = req.params;
-    if (!ROLE_LIST.includes(page)) return res.status(404).send('Not found');
-    if (req.user.role !== page) return res.redirect(`/pages/${req.user.role}.html`);
+    if (page === 'evaluaciones-tutor') return res.redirect('/pages/tutor.html');
+    if (page === 'evaluaciones-estudiante') return res.redirect('/pages/student.html');
+    const requiredRole = ROLE_LIST.includes(page) ? page : EXTRA_PAGES.get(page);
+    if (!requiredRole) return res.status(404).send('Not found');
+    if (req.user.role !== requiredRole) return res.redirect(`/pages/${req.user.role}.html`);
     res.set('Cache-Control', 'no-store');
     res.sendFile(path.join(PUBLIC_DIR, 'pages', `${page}.html`));
   };

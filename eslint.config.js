@@ -7,7 +7,7 @@ module.exports = [
   js.configs.recommended,
   {
     // Server code, scripts and tests run on Node (CommonJS)
-    files: ['src/**/*.js', 'tests/**/*.js', 'eslint.config.js'],
+    files: ['src/**/*.js', 'scripts/**/*.js', 'tests/**/*.js', 'eslint.config.js'],
     languageOptions: { ecmaVersion: 'latest', sourceType: 'commonjs', globals: { ...globals.node } },
     rules: {
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', caughtErrors: 'none' }],

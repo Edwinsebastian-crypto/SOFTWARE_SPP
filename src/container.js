@@ -8,6 +8,7 @@
  * Everything below depends on abstractions it receives through its constructor, which keeps each
  * layer replaceable and unit-testable.
  */
+const env = require('./config/env');
 const identity = require('./infrastructure/supabase');
 const fileStorage = require('./infrastructure/file-storage');
 const { createAuthenticator } = require('./middlewares/authenticate.middleware');
@@ -19,8 +20,6 @@ const EvidenceRepository = require('./repositories/evidence.repository');
 const FeedbackRepository = require('./repositories/feedback.repository');
 const InstitutionRepository = require('./repositories/institution.repository');
 const PracticeTypeRepository = require('./repositories/practice-type.repository');
-const QuestionRepository = require('./repositories/question.repository');
-const AnswerRepository = require('./repositories/answer.repository');
 const IndicatorRepository = require('./repositories/indicator.repository');
 const AuditRepository = require('./repositories/audit.repository');
 const NotificationRepository = require('./repositories/notification.repository');
@@ -36,9 +35,9 @@ const PracticeTypeService = require('./services/practice-type.service');
 const PracticeService = require('./services/practice.service');
 const EvidenceService = require('./services/evidence.service');
 const FeedbackService = require('./services/feedback.service');
-const QuestionService = require('./services/question.service');
-const AnswerService = require('./services/answer.service');
 const ReportService = require('./services/report.service');
+const EvaluationGatewayService = require('./services/evaluation-gateway.service');
+const EvaluationServiceClient = require('./infrastructure/evaluation-service');
 
 const AuthController = require('./controllers/auth.controller');
 const UserController = require('./controllers/user.controller');
@@ -47,9 +46,8 @@ const PracticeTypeController = require('./controllers/practice-type.controller')
 const PracticeController = require('./controllers/practice.controller');
 const EvidenceController = require('./controllers/evidence.controller');
 const FeedbackController = require('./controllers/feedback.controller');
-const QuestionController = require('./controllers/question.controller');
-const AnswerController = require('./controllers/answer.controller');
 const ReportController = require('./controllers/report.controller');
+const EvaluationController = require('./controllers/evaluation.controller');
 const PageController = require('./controllers/page.controller');
 
 function createContainer() {
@@ -61,8 +59,6 @@ function createContainer() {
   const feedbackRepository = new FeedbackRepository();
   const institutionRepository = new InstitutionRepository();
   const practiceTypeRepository = new PracticeTypeRepository();
-  const questionRepository = new QuestionRepository();
-  const answerRepository = new AnswerRepository();
   const indicatorRepository = new IndicatorRepository();
   const auditRepository = new AuditRepository();
   const notificationRepository = new NotificationRepository();
@@ -78,13 +74,15 @@ function createContainer() {
   const practiceTypeService = new PracticeTypeService({ practiceTypeRepository });
   const practiceService = new PracticeService({
     practiceRepository, activityRepository, userRepository, practiceTypeRepository, institutionRepository,
-    answerRepository, practiceAccessService, auditService, notificationService, fileStorage
+    practiceAccessService, auditService, notificationService, fileStorage
   });
   const evidenceService = new EvidenceService({ evidenceRepository, practiceAccessService, fileStorage, auditService });
   const feedbackService = new FeedbackService({ feedbackRepository, evidenceRepository, practiceAccessService, auditService });
-  const questionService = new QuestionService({ questionRepository });
-  const answerService = new AnswerService({ answerRepository, questionRepository, practiceAccessService, auditService });
   const reportService = new ReportService({ indicatorRepository, auditService });
+  const evaluationGatewayService = new EvaluationGatewayService({
+    client: new EvaluationServiceClient({ url: env.evaluationServiceUrl, secret: env.evaluationServiceSecret }),
+    practiceAccessService, practiceRepository
+  });
 
   // ----- HTTP layer -----
   const authenticate = createAuthenticator(sessionService);
@@ -96,9 +94,8 @@ function createContainer() {
     practice: new PracticeController({ practiceService }),
     evidence: new EvidenceController({ evidenceService }),
     feedback: new FeedbackController({ feedbackService }),
-    question: new QuestionController({ questionService }),
-    answer: new AnswerController({ answerService }),
     report: new ReportController({ reportService }),
+    evaluation: new EvaluationController({ evaluationGatewayService }),
     page: new PageController({ resolveUser: authenticate.resolveUser })
   };
 
@@ -107,11 +104,11 @@ function createContainer() {
     controllers,
     services: {
       auditService, authService, sessionService, userService, institutionService, practiceTypeService, practiceService,
-      evidenceService, feedbackService, questionService, answerService, reportService
+      evidenceService, feedbackService, reportService, evaluationGatewayService
     },
     repositories: {
       userRepository, practiceRepository, activityRepository, evidenceRepository, feedbackRepository, institutionRepository,
-      practiceTypeRepository, questionRepository, answerRepository, indicatorRepository, auditRepository, notificationRepository
+      practiceTypeRepository, indicatorRepository, auditRepository, notificationRepository
     }
   };
 }

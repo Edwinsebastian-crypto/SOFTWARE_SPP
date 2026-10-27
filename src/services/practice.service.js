@@ -6,14 +6,13 @@ const { ROLES, USER_STATUS, AUDIT_ENTITIES, AUDIT_ACTIONS } = require('../config
 class PracticeService {
   constructor({
     practiceRepository, activityRepository, userRepository, practiceTypeRepository, institutionRepository,
-    answerRepository, practiceAccessService, auditService, notificationService, fileStorage
+    practiceAccessService, auditService, notificationService, fileStorage
   }) {
     this.practiceRepository = practiceRepository;
     this.activityRepository = activityRepository;
     this.userRepository = userRepository;
     this.practiceTypeRepository = practiceTypeRepository;
     this.institutionRepository = institutionRepository;
-    this.answerRepository = answerRepository;
     this.access = practiceAccessService;
     this.auditService = auditService;
     this.notificationService = notificationService;
@@ -169,7 +168,6 @@ class PracticeService {
   async remove(actor, id) {
     if (!(await this.practiceRepository.findById(id))) throw HttpError.notFound('Practice not found');
     await this.practiceRepository.delete(id);
-    await this.answerRepository.deleteByPractice(id).catch((err) => console.warn('[evaluation] could not clean up:', err.message));
     this.auditService.record(actor, { entity: AUDIT_ENTITIES.PRACTICE, entityId: id, practiceId: id, action: AUDIT_ACTIONS.DELETE });
   }
 

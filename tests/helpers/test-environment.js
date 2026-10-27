@@ -6,7 +6,6 @@ const { Module } = require('module');
 
 const ROOT = path.join(__dirname, '..', '..');
 const PRACTICE_SCHEMA = path.join(ROOT, 'database', 'fixtures', 'practice-legacy-schema.sql');
-const EVALUATION_SCHEMA = path.join(ROOT, 'database', 'schema', 'evaluation.sql');
 
 /**
  * Points the application at LOCAL test databases. The tests DROP the `public` schema, so this refuses to
@@ -14,27 +13,20 @@ const EVALUATION_SCHEMA = path.join(ROOT, 'database', 'schema', 'evaluation.sql'
  */
 function configureTestDatabases() {
   const practiceUrl = process.env.DATABASE_URL_PRACTICE_TEST || 'postgres://spp:spp@localhost/spp_est';
-  const evaluationUrl = process.env.DATABASE_URL_EVALUATION_TEST || 'postgres://spp:spp@localhost/spp_eva';
-  for (const url of [practiceUrl, evaluationUrl]) {
-    const { hostname } = new URL(url);
-    if (!['localhost', '127.0.0.1', '::1', '[::1]'].includes(hostname)) {
-      throw new Error(`Refusing to run destructive tests against a non-local database (${hostname})`);
-    }
+  const { hostname } = new URL(practiceUrl);
+  if (!['localhost', '127.0.0.1', '::1', '[::1]'].includes(hostname)) {
+    throw new Error(`Refusing to run destructive tests against a non-local database (${hostname})`);
   }
   process.env.DATABASE_URL_PRACTICE = practiceUrl;
-  process.env.DATABASE_URL_EVALUATION = evaluationUrl;
   process.env.DB_SSL = 'false';
   // never let a developer's real credentials leak into a test run
-  for (const legacy of ['DATABASE_URL_ESTUDIANTE', 'DATABASE_URL_EVALUACION']) delete process.env[legacy];
+  delete process.env.DATABASE_URL_ESTUDIANTE;
 }
 
-/** Drops and recreates both schemas with the legacy practicum tables and the evaluation tables. */
+/** Drops and recreates the practice schema with the legacy practicum tables. */
 async function resetDatabases(postgres) {
-  for (const database of ['practice', 'evaluation']) {
-    await postgres.pool(database).query('DROP SCHEMA public CASCADE; CREATE SCHEMA public');
-  }
+  await postgres.pool('practice').query('DROP SCHEMA public CASCADE; CREATE SCHEMA public');
   await postgres.pool('practice').query(fs.readFileSync(PRACTICE_SCHEMA, 'utf8'));
-  await postgres.pool('evaluation').query(fs.readFileSync(EVALUATION_SCHEMA, 'utf8'));
 }
 
 /**

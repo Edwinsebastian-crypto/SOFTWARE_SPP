@@ -6,23 +6,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     SPP.panels.wireStandardFlow({ questions: 'student' });
 
-    const myQuestionsPanel = document.getElementById('my-questions-panel');
-    SPP.panels.link(document.getElementById('mqDetailBack'), document.getElementById('mq-detail-panel'), myQuestionsPanel);
-
-    // Tabs: All / To Answer / Answered. Only the active state is toggled here; the cards are
-    // filtered in student.api.js because the cards are rendered from the API data.
-    const tabs = myQuestionsPanel ? myQuestionsPanel.querySelectorAll('.mq-tab') : [];
-    tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-            tabs.forEach((t) => {
-                t.classList.remove('mq-tab--active');
-                t.setAttribute('aria-selected', 'false');
-            });
-            tab.classList.add('mq-tab--active');
-            tab.setAttribute('aria-selected', 'true');
-        });
-    });
-
     // "..." menus of the template evidence / feedback cards (rendered cards bind themselves)
     document.querySelectorAll('.ev-card, .feedback-card').forEach(SPP.panels.bindMenu);
 });

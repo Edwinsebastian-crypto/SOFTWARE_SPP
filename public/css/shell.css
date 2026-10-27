@@ -1455,3 +1455,399 @@ html.spp-waiting,
 html.spp-waiting * {
    cursor: wait !important;
 }
+
+/* =========================================================================
+   LOGBOOK PANEL — Hero banner de calificación y tarjetas compartido
+   ========================================================================= */
+
+.lb-hero-banner {
+  background: radial-gradient(circle at 92% 35%, rgba(28, 88, 62, 0.75) 0%, rgba(16, 56, 39, 0.96) 50%, #0d3524 100%);
+  border-radius: 20px;
+  padding: 26px 36px;
+  box-shadow: 0 10px 28px rgba(10, 38, 26, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lb-hero-banner::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(163, 230, 205, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.lb-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  flex-shrink: 0;
+}
+
+.lb-score-ring {
+  width: 88px;
+  height: 88px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lb-ring-svg {
+  width: 88px;
+  height: 88px;
+  transform: rotate(-90deg);
+}
+
+.lb-ring-bg {
+  fill: none;
+  stroke: rgba(163, 230, 205, 0.2);
+  stroke-width: 6;
+}
+
+.lb-ring-fill {
+  fill: none;
+  stroke: #86efac;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 226.2;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lb-ring-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-score-val,
+.lb-hero-banner .lb-score-val {
+  font-family: var(--font-sans) !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  line-height: 1 !important;
+  letter-spacing: -0.5px !important;
+}
+
+.lb-score-max,
+.lb-hero-banner .lb-score-max {
+  font-family: var(--font-sans) !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  color: #a7f3d0 !important;
+  letter-spacing: 0.8px !important;
+  margin-top: 3px !important;
+  text-transform: uppercase !important;
+}
+
+.lb-grade-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lb-grade-kicker,
+.lb-hero-banner .lb-grade-kicker {
+  font-family: var(--font-sans) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: #8ec3ab !important;
+  letter-spacing: 1.2px !important;
+  text-transform: uppercase !important;
+}
+
+.lb-grade-title,
+.lb-hero-banner .lb-grade-title {
+  font-family: var(--font-serif) !important;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+  line-height: 1.15 !important;
+}
+
+.lb-hero-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.lb-obs-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  padding: 16px 22px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.lb-obs-kicker,
+.lb-hero-banner .lb-obs-kicker {
+  font-family: var(--font-sans) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: #8ec3ab !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+}
+
+.lb-obs-text-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.lb-obs-quote,
+.lb-hero-banner .lb-obs-quote {
+  font-family: Georgia, serif !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+  color: #86efac !important;
+  font-weight: bold !important;
+  flex-shrink: 0 !important;
+  margin-top: -2px !important;
+  user-select: none !important;
+}
+
+.lb-obs-text,
+.lb-hero-banner .lb-obs-text,
+.lb-hero-banner .lb-info-value {
+  font-family: var(--font-sans) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+  line-height: 1.45 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+}
+
+/* ---------- Grid de tarjetas ---------- */
+.lb-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.lb-cards-grid--single {
+  grid-template-columns: 1fr;
+}
+
+.lb-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 26px 28px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 205px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  outline: none;
+}
+
+.lb-card:hover,
+.lb-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.lb-card:focus-visible {
+  border-color: #86efac;
+}
+
+.lb-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.lb-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #e0f2ea;
+  color: #154d36;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.lb-card-pill {
+  background: #e0f2ea;
+  color: #154d36;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 12px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.lb-card-pill--warning,
+.lb-card-pill--pending {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.lb-card-pill--uptodate,
+.lb-card-pill--success {
+  background: #e0f2ea !important;
+  color: #154d36 !important;
+}
+
+body.dark-theme .lb-card-pill--warning,
+body.dark-theme .lb-card-pill--pending {
+  background: rgba(251, 191, 36, 0.2) !important;
+  color: #fde047 !important;
+}
+
+body.dark-theme .lb-card-pill--uptodate,
+body.dark-theme .lb-card-pill--success {
+  background: rgba(163, 230, 205, 0.16) !important;
+  color: #86efac !important;
+}
+
+.lb-card-body {
+  margin: 16px 0 20px 0;
+}
+
+.lb-card-title {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: #103323;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+}
+
+.lb-card-desc {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: #53685e;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.lb-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.lb-action-btn {
+  background: #192c24;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.lb-action-btn:hover {
+  background: #0f1c17;
+  transform: scale(1.06);
+}
+
+.lb-action-btn:active {
+  transform: scale(0.98);
+}
+
+body.dark-theme .lb-hero-banner {
+  background: radial-gradient(circle at 92% 35%, rgba(22, 70, 50, 0.8) 0%, rgba(11, 40, 28, 0.98) 50%, #092419 100%);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .lb-card {
+  background: #143527;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-theme .lb-card:hover,
+body.dark-theme .lb-card:focus-visible {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .lb-card-title {
+  color: #ffffff;
+}
+
+body.dark-theme .lb-card-desc {
+  color: #a8c7b9;
+}
+
+body.dark-theme .lb-card-icon,
+body.dark-theme .lb-card-pill {
+  background: rgba(163, 230, 205, 0.16);
+  color: #86efac;
+}
+
+body.dark-theme .lb-action-btn {
+  background: #86efac;
+  color: #0d2b1d;
+}
+
+@media (max-width: 900px) {
+  .lb-hero-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    padding: 22px 24px;
+  }
+  .lb-hero-right {
+    justify-content: stretch;
+  }
+  .lb-obs-box {
+    max-width: 100%;
+  }
+  .lb-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

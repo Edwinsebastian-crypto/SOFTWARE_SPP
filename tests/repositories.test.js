@@ -15,8 +15,6 @@ const EvidenceRepository = require('../src/repositories/evidence.repository');
 const FeedbackRepository = require('../src/repositories/feedback.repository');
 const InstitutionRepository = require('../src/repositories/institution.repository');
 const PracticeTypeRepository = require('../src/repositories/practice-type.repository');
-const QuestionRepository = require('../src/repositories/question.repository');
-const AnswerRepository = require('../src/repositories/answer.repository');
 const IndicatorRepository = require('../src/repositories/indicator.repository');
 
 (async () => {
@@ -34,8 +32,6 @@ const IndicatorRepository = require('../src/repositories/indicator.repository');
   const feedback = new FeedbackRepository();
   const institutions = new InstitutionRepository();
   const practiceTypes = new PracticeTypeRepository();
-  const questions = new QuestionRepository();
-  const answers = new AnswerRepository();
   const indicators = new IndicatorRepository();
   const practiceDb = postgres.pool('practice');
 
@@ -115,22 +111,6 @@ const IndicatorRepository = require('../src/repositories/indicator.repository');
   await practices.updateLogbook(practiceId, { finalGrade: null, generalObservation: 'text only' });
   assert.equal(Number((await practices.findById(practiceId)).finalGrade), 4.5); // COALESCE keeps the grade
   console.log('Evidence/File/Tutor+advisor feedback/Grade OK');
-
-  const question = await questions.create({
-    statement: 'Inclusion?', topic: 'pedagogy', practiceType: 'observacion', questionType: 'open', value: 2, authorDocument: '222'
-  });
-  assert.equal(question.topic, 'pedagogy');
-  assert.equal(question.questionType, 'open');
-  const assigned = await answers.assignQuestion(practiceId, question.id);
-  await answers.assignQuestion(practiceId, question.id); // idempotent
-  await answers.save(assigned.id, 'answer', 'answered');
-  await answers.createFeedback(assigned.id, '222', 'Excellent');
-  const answerList = await answers.listByPractice(practiceId);
-  assert.equal(answerList.length, 1);
-  assert.equal(answerList[0].observation, 'Excellent');
-  assert.equal(answerList[0].status, 'answered');
-  assert.equal((await answers.findById(assigned.id)).practiceId, practiceId);
-  console.log('Questions/Answers (text practice id) OK');
 
   const computed = await indicators.calculate(2026);
   const indicator = computed.find((i) => i.programId === 'PRG-1');

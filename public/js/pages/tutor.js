@@ -77,121 +77,73 @@ function initTutorUI() {
     }
 
     // ── Edición de Nota y Observación en Bitácora ─────────────────────────
-    const practicaInfoCard = document.getElementById('logbook-info-card');
-    const notaDisplay = document.getElementById('grade-display');
+    const heroBanner = document.getElementById('lb-hero-banner');
+    const editForm = document.getElementById('tutor-logbook-edit-form');
     const notaInput = document.getElementById('grade-input');
-    const obsDisplay = document.getElementById('obs-display');
     const obsInput = document.getElementById('obs-input');
-    const editActions = document.getElementById('edit-actions');
     const cancelEditBtn = document.getElementById('cancel-edit-btn');
     const saveEditBtn = document.getElementById('save-edit-btn');
 
-    if (practicaInfoCard && notaDisplay && notaInput && obsDisplay && obsInput && editActions) {
-        practicaInfoCard.addEventListener('click', () => {
-            // Solo habilitar si no están ya en modo edición
-            if (notaInput.style.display === 'none') {
-                const isGradePlaceholder = notaDisplay.textContent === 'Nota' || notaDisplay.textContent === 'Not graded';
-                notaInput.value = isGradePlaceholder ? '' : notaDisplay.textContent;
-                
-                const currentObs = obsDisplay.dataset.fullObs || obsDisplay.textContent;
-                const isObsPlaceholder = currentObs === 'Observación' || currentObs === 'No observations';
-                obsInput.value = isObsPlaceholder ? '' : currentObs;
-                
-                notaDisplay.style.display = 'none';
-                obsDisplay.style.display = 'none';
-                notaInput.style.display = 'block';
-                obsInput.style.display = 'block';
-                editActions.style.display = 'flex';
-                
-                notaInput.focus();
-            }
-        });
-
-        cancelEditBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            notaDisplay.style.display = 'block';
-            obsDisplay.style.display = 'block';
-            notaInput.style.display = 'none';
-            obsInput.style.display = 'none';
-            editActions.style.display = 'none';
-        });
-
-        saveEditBtn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const nuevaNota = notaInput.value.trim();
-            const nuevaObs = obsInput.value.trim();
+    if (heroBanner && editForm && notaInput && obsInput) {
+        heroBanner.addEventListener('click', () => {
             const practice = window.SPP_TEACHER?.state?.practice;
-            if (!practice) { alert('No practice selected'); return; }
-            
-            try {
-                await SPP.patch('/api/practices/' + practice.id + '/logbook', {
-                    finalGrade: nuevaNota || null,
-                    generalObservation: nuevaObs || null
-                });
-                notaDisplay.textContent = nuevaNota || 'Not graded';
-                
-                if (nuevaObs) {
-                    obsDisplay.dataset.fullObs = nuevaObs;
-                    obsDisplay.removeAttribute('title'); 
-                } else {
-                    obsDisplay.dataset.fullObs = '';
-                    obsDisplay.removeAttribute('title');
-                }
-                updateObsDisplay();
-                
-                notaDisplay.style.display = 'block';
-                obsDisplay.style.display = 'block';
-                notaInput.style.display = 'none';
-                obsInput.style.display = 'none';
-                editActions.style.display = 'none';
-                const modal = document.getElementById('success-modal');
-                const titleEl = document.getElementById('success-modal-title');
-                const msgEl = document.getElementById('success-modal-message');
-                if (modal && titleEl && msgEl) {
-                    titleEl.textContent = 'Success';
-                    msgEl.textContent = 'Logbook updated successfully!';
-                    modal.style.display = 'flex';
-                }
-                if (window.SPP_TEACHER?.reloadLogbook) {
-                    await window.SPP_TEACHER.reloadLogbook();
-                }
-            } catch (err) {
-                SPP.showError(err);
-            }
-        });
-        
-        function updateObsDisplay() {
-            const isMobile = window.matchMedia("(max-width: 600px)").matches;
-            const obsText = obsDisplay.dataset.fullObs || '';
-            if (!obsText) {
-                obsDisplay.textContent = 'No observations';
-                obsDisplay.removeAttribute('data-tooltip');
-                return;
-            }
-            
-            if (isMobile) {
-                obsDisplay.textContent = obsText;
-                obsDisplay.removeAttribute('data-tooltip');
-            } else {
-                const words = obsText.split(/\s+/);
-                if (words.length > 10) {
-                    obsDisplay.textContent = words.slice(0, 10).join(' ') + '...';
-                    obsDisplay.setAttribute('data-tooltip', obsText);
-                } else {
-                    obsDisplay.textContent = obsText;
-                    obsDisplay.removeAttribute('data-tooltip');
-                }
-            }
-        }
-        
-        window.addEventListener('resize', updateObsDisplay);
-        // Llamado inicial
-        updateObsDisplay();
-        
-        notaInput.addEventListener('click', (e) => e.stopPropagation());
-        obsInput.addEventListener('click', (e) => e.stopPropagation());
-    }
+            const currentGrade = practice?.logbook?.finalGrade;
+            const currentObs = practice?.logbook?.generalObservation;
 
+            notaInput.value = (currentGrade != null && currentGrade !== '') ? currentGrade : '';
+            obsInput.value = currentObs || '';
+
+            editForm.style.display = 'block';
+            notaInput.focus();
+        });
+
+        if (cancelEditBtn) {
+            cancelEditBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                editForm.style.display = 'none';
+            });
+        }
+
+        if (saveEditBtn) {
+            saveEditBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const nuevaNota = notaInput.value.trim();
+                const nuevaObs = obsInput.value.trim();
+                const practice = window.SPP_TEACHER?.state?.practice;
+                if (!practice) { alert('No practice selected'); return; }
+
+                try {
+                    await SPP.patch('/api/practices/' + practice.id + '/logbook', {
+                        finalGrade: nuevaNota || null,
+                        generalObservation: nuevaObs || null
+                    });
+                    if (!practice.logbook) practice.logbook = {};
+                    practice.logbook.finalGrade = nuevaNota || null;
+                    practice.logbook.generalObservation = nuevaObs || null;
+
+                    if (window.SPP_TEACHER?.updateLogbookHero) {
+                        window.SPP_TEACHER.updateLogbookHero(practice.logbook);
+                    }
+
+                    editForm.style.display = 'none';
+
+                    const modal = document.getElementById('success-modal');
+                    const titleEl = document.getElementById('success-modal-title');
+                    const msgEl = document.getElementById('success-modal-message');
+                    if (modal && titleEl && msgEl) {
+                        titleEl.textContent = 'Success';
+                        msgEl.textContent = 'Logbook updated successfully!';
+                        modal.style.display = 'flex';
+                    }
+                    if (window.SPP_TEACHER?.reloadLogbook) {
+                        await window.SPP_TEACHER.reloadLogbook();
+                    }
+                } catch (err) {
+                    SPP.showError(err);
+                }
+            });
+        }
+    }
     // ── Entrar a Actividades desde Bitácora o Preguntas ───────────────────────────────
     if (actividadesEntrarpractica && practicaPanel && actividadesPanel) {
         actividadesEntrarpractica.addEventListener('click', () => {
@@ -252,6 +204,19 @@ function initTutorUI() {
             practicaPanel.style.display = 'none';
             preguntasPanel.style.display = 'flex';
             resetScroll();
+        });
+    }
+
+    const cardTutorQuestions = document.getElementById('lb-card-tutor-questions');
+    if (cardTutorQuestions && preguntasBtn) {
+        cardTutorQuestions.addEventListener('click', (e) => {
+            if (!e.target.closest('#preguntas-preguntas-btn')) preguntasBtn.click();
+        });
+        cardTutorQuestions.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                preguntasBtn.click();
+            }
         });
     }
 

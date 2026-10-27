@@ -8,7 +8,6 @@ require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
  */
 const LEGACY_ALIASES = Object.freeze({
   DATABASE_URL_PRACTICE: 'DATABASE_URL_ESTUDIANTE',
-  DATABASE_URL_EVALUATION: 'DATABASE_URL_EVALUACION',
   MONGO_URI_PRIMARY: 'MONGO_URI_BASE1',
   MONGO_URI_NOTIFICATIONS: 'MONGO_URI_BASE2',
   INSTITUTIONAL_DOMAIN: 'DOMINIO_INSTITUCIONAL',
@@ -50,6 +49,16 @@ class Env {
   /** Domain appended to bare usernames ("jdoe" -> "jdoe@<domain>"). */
   get institutionalDomain() {
     return this.get('INSTITUTIONAL_DOMAIN', 'university.edu');
+  }
+
+  /** Evaluation microservice (FastAPI). Empty = the Evaluations feature is disabled. */
+  get evaluationServiceUrl() {
+    return this.get('EVALUATION_SERVICE_URL', '');
+  }
+
+  /** Secret shared with the evaluation service (its JWT_SECRET). */
+  get evaluationServiceSecret() {
+    return this.get('EVALUATION_SERVICE_SECRET', '');
   }
 }
 

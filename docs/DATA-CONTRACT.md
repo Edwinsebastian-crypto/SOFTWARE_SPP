@@ -35,21 +35,13 @@ Irregular column names resolved at runtime by `SchemaResolver`: `correInst` / `c
 `notaFinal = 0` and `observacionFinal = ''` mean *not graded* (the columns are NOT NULL).
 Users carry the marker `GESTIONADA_POR_SUPABASE` in the legacy `contrasena` column: real passwords live in Supabase.
 
-## PostgreSQL — evaluation database (`DATABASE_URL_EVALUATION`)
-
-`pregunta` (question bank), `evaluacion` (one per practice), `respuesta` (answer slot), `retropregunta`
-(feedback on an answer). Created by `npm run schema:apply` from `database/schema/evaluation.sql`.
-
 ## Stored values ⇄ API values
 
 | Concept | Stored in the database | API / code |
 |---|---|---|
 | user status | `activo` / `pendiente` / `inactivo` (capitalised on write: `Activo`…) | `active` / `pending` / `inactive` |
 | practice status | `activa` / `finalizada` / `cancelada` | `active` / `completed` / `cancelled` |
-| question topic | `pedagogia` / `didactica` / `evaluacion` | `pedagogy` / `didactics` / `assessment` |
-| question type | `abierta` / `opcion-multiple` / `verdadero-falso` | `open` / `multiple-choice` / `true-false` |
-| answer status | `pendiente` / `borrador` / `respondida` | `pending` / `draft` / `answered` |
-| audit entity | `Practica` `Bitacora` `Evidencia` `Retroalimentacion` `Respuesta` `Usuario` | `practice` `logbook` `evidence` `feedback` `answer` `user` |
+| audit entity | `Practica` `Bitacora` `Evidencia` `Retroalimentacion` `Usuario` | `practice` `logbook` `evidence` `feedback` `user` |
 | audit action | `Insertar` / `Modificar` / `Eliminar` | `insert` / `update` / `delete` |
 | notification type | `PracticaAsignada` | (internal) |
 
@@ -80,7 +72,6 @@ Canonical names are English; the old Spanish names remain valid aliases (see `.e
 | Canonical | Legacy alias |
 |---|---|
 | `DATABASE_URL_PRACTICE` | `DATABASE_URL_ESTUDIANTE` |
-| `DATABASE_URL_EVALUATION` | `DATABASE_URL_EVALUACION` |
 | `MONGO_URI_PRIMARY` | `MONGO_URI_BASE1` |
 | `MONGO_URI_NOTIFICATIONS` | `MONGO_URI_BASE2` |
 | `INSTITUTIONAL_DOMAIN` | `DOMINIO_INSTITUCIONAL` |

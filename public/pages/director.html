@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="../css/shell.css">
 	<link rel="stylesheet" href="../css/director.css">
 	<link rel="stylesheet" href="../css/users.css">
+	<link rel="stylesheet" href="../css/evaluacion.css">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link
@@ -82,11 +83,6 @@
 									<option value="1">Pedagogical Observation Practice</option>
 									<option value="2">Teaching Deepening Practice</option>
 									<option value="3">Immersion or Intervention Practice</option>
-									<option value="3">Immersion or Intervention Practice</option>
-									<option value="3">Immersion or Intervention Practice</option>
-									<option value="3">Immersion or Intervention Practice</option>
-									<option value="3">Immersion or Intervention Practice</option>
-									<option value="3">Immersion or Intervention Practice</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
 							</div>
@@ -98,12 +94,6 @@
 								<select>
 									<option value="" disabled selected>Select the Institution</option>
 									<option value="1">Bucaramanga Higher Normal School</option>
-									<option value="2">San Jose School</option>
-									<option value="2">San Jose School</option>
-									<option value="2">San Jose School</option>
-									<option value="2">San Jose School</option>
-									<option value="2">San Jose School</option>
-									<option value="2">San Jose School</option>
 									<option value="2">San Jose School</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
@@ -159,11 +149,6 @@
 								<select>
 									<option value="" disabled selected>Select the Advisor</option>
 									<option value="1">Claudia Patricia Rueda Pardo</option>
-									<option value="2">Luisa Fernanda Rodriguez</option>
-									<option value="2">Luisa Fernanda Rodriguez</option>
-									<option value="2">Luisa Fernanda Rodriguez</option>
-									<option value="2">Luisa Fernanda Rodriguez</option>
-									<option value="2">Luisa Fernanda Rodriguez</option>
 									<option value="2">Luisa Fernanda Rodriguez</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
@@ -267,33 +252,76 @@
 						<h2 id="logbook-title" class="logbook-title">Practice <span class="lb-student-name"
 								aria-label="View student credential">- Test Student</span></h2>
 					</div>
-					<div class="logbook-info-card">
-						<div class="logbook-info-item">
-							<span class="lb-info-label">Final Grade</span>
-							<span class="lb-info-value">Not graded</span>
+					<!-- BANNER DE CALIFICACIÓN Y OBSERVACIÓN -->
+					<div class="lb-hero-banner" id="lb-hero-banner">
+						<div class="lb-hero-left">
+							<div class="lb-score-ring" id="lb-score-ring">
+								<svg class="lb-ring-svg" viewBox="0 0 88 88" aria-hidden="true">
+									<circle class="lb-ring-bg" cx="44" cy="44" r="36" />
+									<circle class="lb-ring-fill" id="lb-ring-fill" cx="44" cy="44" r="36" />
+								</svg>
+								<div class="lb-ring-content">
+									<span class="lb-score-val" id="lb-score-val">5.0</span>
+									<span class="lb-score-max">OF 5.0</span>
+								</div>
+							</div>
+							<div class="lb-grade-info">
+								<span class="lb-grade-kicker">FINAL GRADE</span>
+								<h3 class="lb-grade-title" id="lb-grade-title">Excellent</h3>
+							</div>
 						</div>
-						<div class="logbook-info-item">
-							<span class="lb-info-label">General Observation</span>
-							<span class="lb-info-value">No observations</span>
+
+						<div class="lb-hero-right">
+							<div class="lb-obs-box">
+								<span class="lb-obs-kicker">GENERAL OBSERVATION</span>
+								<div class="lb-obs-text-wrap">
+									<span class="lb-obs-quote" aria-hidden="true">”</span>
+									<p class="lb-obs-text" id="lb-obs-text">Great job on your practice!</p>
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<div class="logbook-action-card">
-						<div class="lb-action-left">
-							<div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
-							<span class="lb-action-label">Activities</span>
+					<!-- ACCIONES (TARJETAS DE ACTIVIDADES Y PREGUNTAS) -->
+					<div class="lb-cards-grid">
+						<!-- Tarjeta 1: Actividades -->
+						<div class="lb-card" id="lb-card-activities" role="button" tabindex="0">
+							<div class="lb-card-top">
+								<div class="lb-card-icon" aria-hidden="true">
+									<i class="fa-regular fa-clipboard"></i>
+								</div>
+								<span class="lb-card-pill" id="lb-hours-pill">0 / 0 h</span>
+							</div>
+							<div class="lb-card-body">
+								<h3 class="lb-card-title">Activities</h3>
+								<p class="lb-card-desc">Review assigned tasks and their delivery status.</p>
+							</div>
+							<div class="lb-card-bottom">
+								<span class="lb-card-pill" id="lb-pending-pill">Up to date</span>
+								<button type="button" class="lb-action-btn" id="activities-btn" aria-label="Enter Activities">
+									<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+								</button>
+							</div>
 						</div>
-						<button type="button" class="lb-action-btn" id="activities-btn"><i
-								class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
-					</div>
 
-					<div class="logbook-action-card">
-						<div class="lb-action-left">
-							<div class="stat-icon"><i class="fa-solid fa-circle-question"></i></div>
-							<span class="lb-action-label">Questions Section</span>
+						<!-- Tarjeta 2: Sección de preguntas -->
+						<div class="lb-card" id="lb-card-questions" role="button" tabindex="0">
+							<div class="lb-card-top">
+								<div class="lb-card-icon" aria-hidden="true">
+									<i class="fa-regular fa-circle-question"></i>
+								</div>
+							</div>
+							<div class="lb-card-body">
+								<h3 class="lb-card-title">Questions Section</h3>
+								<p class="lb-card-desc">Review the questionnaire.</p>
+							</div>
+							<div class="lb-card-bottom">
+								<span class="lb-card-pill" id="lb-questions-pill">Up to date</span>
+								<button type="button" class="lb-action-btn" id="questions-btn" aria-label="Enter Questions Section">
+									<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+								</button>
+							</div>
 						</div>
-						<button type="button" class="lb-action-btn" id="questions-btn"><i
-								class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
 					</div>
 				</section>
 
@@ -307,7 +335,64 @@
 						</button>
 						<h2 id="activities-title" class="activities-title">Activities</h2>
 					</div>
-					<div id="activities-list-container"></div>
+
+					<!-- Summary KPI Stats Cards -->
+					<div class="act-kpis" id="act-kpis">
+						<div class="act-kpi-card" id="act-kpi-card-pending" role="button" tabindex="0" title="Filter pending tasks">
+							<div class="act-kpi-icon act-kpi-icon--pending">
+								<i class="fa-regular fa-calendar-days" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Pending Tasks:</span>
+								<strong class="act-kpi-val" id="act-kpi-pending">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-review" role="button" tabindex="0" title="Filter activities pending review">
+							<div class="act-kpi-icon act-kpi-icon--review">
+								<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Pending Review:</span>
+								<strong class="act-kpi-val" id="act-kpi-review">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-completed" role="button" tabindex="0" title="Filter completed activities">
+							<div class="act-kpi-icon act-kpi-icon--completed">
+								<i class="fa-solid fa-check" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Completed:</span>
+								<strong class="act-kpi-val" id="act-kpi-completed">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-grade" role="button" tabindex="0" title="Filter graded activities">
+							<div class="act-kpi-icon act-kpi-icon--grade">
+								<i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Average Grade:</span>
+								<strong class="act-kpi-val" id="act-kpi-grade">0.0/5.0</strong>
+							</div>
+						</div>
+					</div>
+
+					<!-- Search & Filter Controls -->
+					<div class="act-controls">
+						<div class="act-search-box">
+							<input type="text" id="act-search-input" class="act-search-input" placeholder="Search" aria-label="Search activities" autocomplete="off" />
+							<i class="fa-solid fa-magnifying-glass act-search-icon" aria-hidden="true"></i>
+						</div>
+						<div class="act-filter-pills" role="tablist" aria-label="Activity Filters">
+							<button type="button" class="act-pill-btn is-active" data-filter="all">All</button>
+							<button type="button" class="act-pill-btn" data-filter="pending">To Do / Pending</button>
+							<button type="button" class="act-pill-btn" data-filter="review"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Pending Review</button>
+							<button type="button" class="act-pill-btn" data-filter="completed">Completed</button>
+							<button type="button" class="act-pill-btn" data-filter="graded">Graded</button>
+						</div>
+					</div>
+
+					<!-- Grid of Activity Cards -->
+					<div id="activities-list-container" class="act-grid"></div>
 				</section>
 
 				<!-- QUESTIONS PANEL (shown after Enter) -->
@@ -1218,17 +1303,18 @@
 							Name</strong><small>Director</small></span></button>
 			</header>
 			<div class="reports-wrapper">
-				<header class="reports-header">
+				<header class="reports-header" id="reports-header">
 					<h2>Reports and Statistics</h2>
 					<p>Overview of the status of the professional practices</p>
 				</header>
 
-				<nav class="reports-tabs" aria-label="Report navigation">
-					<button class="reports-tab-btn active"><i class="fa-solid fa-chart-line"></i> General</button>
-					<button class="reports-tab-btn"><i class="fa-solid fa-clipboard-list"></i> Types</button>
-					<button class="reports-tab-btn"><i class="fa-regular fa-book"></i> Practice</button>
-					<button class="reports-tab-btn"><i class="fa-regular fa-comment"></i> Feedback</button>
-					<button class="reports-tab-btn"><i class="fa-solid fa-building"></i> Institutions</button>
+				<nav class="reports-tabs" id="reports-tabs" aria-label="Report navigation">
+					<button type="button" class="reports-tab-btn active"><i class="fa-solid fa-chart-line"></i> General</button>
+					<button type="button" class="reports-tab-btn"><i class="fa-solid fa-clipboard-list"></i> Types</button>
+					<button type="button" class="reports-tab-btn"><i class="fa-regular fa-book"></i> Practice</button>
+					<button type="button" class="reports-tab-btn"><i class="fa-regular fa-comment"></i> Feedback</button>
+					<button type="button" class="reports-tab-btn"><i class="fa-solid fa-building"></i> Institutions</button>
+					<button type="button" class="reports-tab-btn" id="btn-evaluations-tab"><i class="fa-solid fa-clipboard-question"></i> Evaluations</button>
 				</nav>
 
 				<!-- ===== TAB: GENERAL ===== -->
@@ -1457,6 +1543,54 @@
 						<div class="types-cards" id="rep-inst-details-cards" aria-label="Institution details (mobile)"></div>
 					</article>
 				</div>
+
+				<!-- ===== TAB: EVALUATIONS ===== -->
+				<div class="report-panel" id="tab-evaluations" style="display:none;">
+					<div class="ev-wrapper dv-wrapper" style="padding: 0; max-width: 100%; overflow-y: visible;">
+						<div id="ev-banner"></div>
+
+						<!-- ===== PANEL GENERAL ===== -->
+						<section class="ev-view" id="view-panel" aria-labelledby="panel-title">
+							<header class="dv-head">
+								<button type="button" class="ev-back" id="btn-eval-back-reports" aria-label="Back to Reports options" title="Back to Reports options">
+									<i class="fa-solid fa-arrow-left"></i>
+								</button>
+								<div class="dv-head-text">
+									<h2 id="panel-title">Evaluations</h2>
+									<p class="ev-sub">Query view of all program evaluations. <span id="panel-actualizado"></span></p>
+								</div>
+								<span class="dv-readonly" title="The director queries; does not create, edit or grade evaluations.">
+									<i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura
+								</span>
+								<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="btn-actualizar">
+									<i class="fa-solid fa-rotate" aria-hidden="true"></i>Actualizar
+								</button>
+							</header>
+
+							<details class="dv-help">
+								<summary><i class="fa-solid fa-circle-info" aria-hidden="true"></i>¿Cómo se leen estas cifras?</summary>
+								<dl id="dv-glosario"></dl>
+							</details>
+
+							<div id="panel-contenido"><p class="ev-loading">Cargando…</p></div>
+						</section>
+
+						<!-- ===== DETALLE DE UNA EVALUACIÓN ===== -->
+						<section class="ev-view" id="view-detalle" aria-labelledby="detalle-title" hidden>
+							<div class="ev-panel">
+								<div class="ev-head">
+									<button type="button" class="ev-back" id="btn-volver" aria-label="Volver al panel"><i class="fa-solid fa-arrow-left"></i></button>
+									<div class="dv-head-text">
+										<h2 id="detalle-title"></h2>
+										<div class="ev-badges" id="detalle-badges"></div>
+									</div>
+									<span class="dv-readonly"><i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura</span>
+								</div>
+								<div id="detalle-contenido"></div>
+							</div>
+						</section>
+					</div>
+				</div>
 			</div><!-- /.reports-wrapper -->
 			<!-- The reports tag closes here -->
 		</section>
@@ -1512,6 +1646,8 @@
 		</section>
 	</main>
 
+	<div class="dv-tip" id="dv-tip" role="tooltip" hidden></div>
+
 	<!-- Success modal (Create Practice) -->
 	<div id="successModal" class="modal-overlay" style="display: none;">
 		<div class="modal-content">
@@ -1548,6 +1684,7 @@
 	<script src="../js/core/panels.js"></script>
 	<script src="../js/core/modals.js"></script>
 	<script src="../js/core/credential.js"></script>
+	<script src="../js/core/ui.js"></script>
 	<script src="../js/pages/director.js"></script>
 	<script src="../js/pages/users.js"></script>
 	<script src="../js/pages/director.api.js"></script>

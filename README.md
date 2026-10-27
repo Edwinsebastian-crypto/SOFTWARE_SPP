@@ -74,7 +74,7 @@ See `.env.example` for the full, commented list. Groups:
 |---|---|
 | Server | `PORT`, `NODE_ENV`, `TZ` |
 | Supabase | `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (server only), `INSTITUTIONAL_DOMAIN` |
-| PostgreSQL | `DATABASE_URL_PRACTICE`, `DATABASE_URL_EVALUATION`, `DB_SSL` |
+| PostgreSQL | `DATABASE_URL_PRACTICE`, `DB_SSL` |
 | MongoDB | `MONGO_URI_PRIMARY` (audit log + indicators), `MONGO_URI_NOTIFICATIONS` (mail queue) |
 | Cloudinary | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` |
 | Director bootstrap | `DIRECTOR_FIRST_NAMES`, `DIRECTOR_LAST_NAMES`, `DIRECTOR_DOCUMENT`, `DIRECTOR_USERNAME`, `DIRECTOR_PASSWORD` |
@@ -87,7 +87,7 @@ The former Spanish variable names still work as aliases, so an existing `.env` k
 | Command | Purpose |
 |---|---|
 | `npm start` / `npm run dev` | run the server |
-| `npm run schema:verify` / `schema:apply` | check / create database tables |
+| `npm run schema:verify` | check database tables |
 | `npm run users:migrate` / `director:create` | create Supabase access accounts |
 | `npm test` | unit + repository + HTTP end-to-end tests |
 | `npm run test:unit` / `test:repositories` / `test:e2e` | run one suite |
@@ -95,9 +95,9 @@ The former Spanish variable names still work as aliases, so an existing `.env` k
 
 ## Testing
 
-`npm test` runs three suites. The last two need a **local** PostgreSQL with two empty databases `spp_est` and
-`spp_eva` (user/password `spp`) and **drop their contents**: they refuse to run against a non-local host.
-Use `DATABASE_URL_PRACTICE_TEST` / `DATABASE_URL_EVALUATION_TEST` to point at another local instance.
+`npm test` runs three suites. The last two need a **local** PostgreSQL with an empty database `spp_est`
+(user/password `spp`) and **drop its contents**: they refuse to run against a non-local host.
+Use `DATABASE_URL_PRACTICE_TEST` to point at another local instance.
 
 ## How it connects to your database
 
@@ -138,8 +138,6 @@ Use `DATABASE_URL_PRACTICE_TEST` / `DATABASE_URL_EVALUATION_TEST` to point at an
 
 ## Notes
 
-* **Evaluation database** (`pregunta`, `evaluacion`, `respuesta`, `retropregunta`) uses the schema in
-  `database/schema/evaluation.sql`. If your tables have different columns, `npm run schema:verify` will say so.
 * In Mongo, `idPractica` and `idPrograma` are strings because they are varchar in PostgreSQL.
 * There is no "last access" column, so the user list does not show it.
 * Your schema does not validate `fechaFinal >= fechaInicio`; the application does.

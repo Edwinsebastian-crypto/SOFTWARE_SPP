@@ -134,8 +134,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.app-nav-link');
     const sections = document.querySelectorAll('.app-content');
 
+    // Activate item on page load if marked data-active or data-activo
+    const preActive = document.querySelector('.app-nav-link[data-active], .app-nav-link[data-activo]');
+    if (preActive) {
+        navLinks.forEach((nav) => {
+            nav.classList.remove('app-nav-link--active');
+            nav.removeAttribute('aria-current');
+        });
+        preActive.classList.add('app-nav-link--active');
+        preActive.setAttribute('aria-current', 'page');
+    }
+
     navLinks.forEach((link) => {
         link.addEventListener('click', (e) => {
+            if (link.hasAttribute('data-externo') || link.hasAttribute('data-external')) return; // real link to another page: let the browser navigate
             e.preventDefault();
             const targetId = link.getAttribute('href').substring(1);
 

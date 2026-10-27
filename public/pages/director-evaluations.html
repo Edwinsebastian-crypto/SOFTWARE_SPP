@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<title>SPP-Director · Evaluations</title>
+	<link rel="stylesheet" href="../css/variables.css">
+	<link rel="stylesheet" href="../css/shell.css">
+	<link rel="stylesheet" href="../css/evaluacion.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+	<main class="app-shell">
+		<aside class="app-sidebar">
+			<div>
+				<header class="app-brand">
+					<div>
+						<h1>SPP</h1>
+						<p>Pedagogical Practice<br>Software</p><span aria-hidden="true"></span>
+					</div>
+					<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+						<i class="fa-solid fa-bars hamburger-icon"></i>
+						<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+					</button>
+				</header>
+				<nav class="app-navigation" aria-label="Main navigation">
+					<a class="app-nav-link" href="/pages/director.html" data-external><i class="fa-solid fa-book-open"
+							aria-hidden="true"></i><span>Practices</span></a>
+					<a class="app-nav-link app-nav-link--active" href="#evaluaciones" data-active aria-current="page"><i
+							class="fa-solid fa-clipboard-question" aria-hidden="true"></i><span>Evaluations</span></a>
+				</nav>
+			</div>
+			<a class="app-logout" href="../index.html"><i class="fa-solid fa-door-open"
+					aria-hidden="true"></i><span>Log out</span></a>
+		</aside>
+
+		<section class="app-content" id="evaluaciones">
+			<header class="app-topbar">
+				<button class="sidebar-toggle mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
+					<i class="fa-solid fa-bars hamburger-icon"></i>
+					<i class="fa-solid fa-graduation-cap overlay-cap"></i>
+				</button>
+				<button class="topbar-icon" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"
+						aria-hidden="true"></i></button>
+				<button class="topbar-option theme-toggle-btn" type="button" aria-label="Change theme"><i
+						class="fa-regular fa-sun" aria-hidden="true"></i><span>Light</span></button>
+				<button class="app-account" type="button" aria-label="Account"><i
+						class="fa-solid fa-circle-user" aria-hidden="true"></i><span><strong>Director
+							Name</strong><small>Director</small></span></button>
+			</header>
+
+			<div class="ev-wrapper dv-wrapper">
+				<div id="ev-banner"></div>
+
+				<!-- ===== PANEL GENERAL ===== -->
+				<section class="ev-view" id="view-panel" aria-labelledby="panel-title">
+					<header class="dv-head">
+						<div class="dv-head-text">
+							<h2 id="panel-title">Evaluaciones</h2>
+							<p class="ev-sub">Vista de consulta de todas las evaluaciones del programa. <span id="panel-actualizado"></span></p>
+						</div>
+						<span class="dv-readonly" title="El director consulta; no crea, edita ni califica evaluaciones.">
+							<i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura
+						</span>
+						<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="btn-actualizar">
+							<i class="fa-solid fa-rotate" aria-hidden="true"></i>Actualizar
+						</button>
+					</header>
+
+					<details class="dv-help">
+						<summary><i class="fa-solid fa-circle-info" aria-hidden="true"></i>¿Cómo se leen estas cifras?</summary>
+						<dl id="dv-glosario"></dl>
+					</details>
+
+					<div id="panel-contenido"><p class="ev-loading">Cargando…</p></div>
+				</section>
+
+				<!-- ===== DETALLE DE UNA EVALUACIÓN ===== -->
+				<section class="ev-view" id="view-detalle" aria-labelledby="detalle-title" hidden>
+					<div class="ev-panel">
+						<div class="ev-head">
+							<button type="button" class="ev-back" id="btn-volver" aria-label="Volver al panel"><i class="fa-solid fa-arrow-left"></i></button>
+							<div class="dv-head-text">
+								<h2 id="detalle-title"></h2>
+								<div class="ev-badges" id="detalle-badges"></div>
+							</div>
+							<span class="dv-readonly"><i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura</span>
+						</div>
+						<div id="detalle-contenido"></div>
+					</div>
+				</section>
+			</div>
+		</section>
+	</main>
+
+	<div class="dv-tip" id="dv-tip" role="tooltip" hidden></div>
+
+	<!-- Núcleo del monolito: cliente HTTP (SPP.request), sesión, shell y UI -->
+	<script src="../js/core/api.js"></script>
+	<script src="../js/core/session.js"></script>
+	<script src="../js/core/shell.js"></script>
+	<script src="../js/core/custom-select.js"></script>
+	<script src="../js/core/ui.js"></script>
+	<script src="../js/pages/director.js"></script>
+</body>
+
+</html>

@@ -9,8 +9,8 @@ const createUsersRoutes = require('./users.routes');
 const createCatalogRoutes = require('./catalog.routes');
 const createPracticesRoutes = require('./practices.routes');
 const createActivitiesRoutes = require('./activities.routes');
-const createQuestionsRoutes = require('./questions.routes');
 const createReportsRoutes = require('./reports.routes');
+const createEvaluationsRoutes = require('./evaluations.routes');
 
 /**
  * JSON API mounted at /api.
@@ -27,8 +27,8 @@ function createApiRouter({ controllers, authenticate }) {
   router.use('/practices', createPracticesRoutes(deps));
   router.use(createCatalogRoutes(deps));
   router.use(createActivitiesRoutes(deps));
-  router.use(createQuestionsRoutes(deps));
   router.use(createReportsRoutes(deps));
+  router.use('/evaluations', createEvaluationsRoutes(deps));
   return router;
 }
 

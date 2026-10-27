@@ -10,15 +10,14 @@ types.setTypeParser(1184, (value) => value);
 
 /** Environment variable holding the connection string of each logical database. */
 const DATABASE_VARIABLES = Object.freeze({
-  practice: 'DATABASE_URL_PRACTICE', // students, practices, activities, evidence, feedback...
-  evaluation: 'DATABASE_URL_EVALUATION' // questions, evaluations, answers, answer feedback
+  practice: 'DATABASE_URL_PRACTICE' // students, practices, activities, evidence, feedback...
 });
 
 /** Owns one lazily created connection pool per logical PostgreSQL database. */
 class PostgresPools {
   #pools = new Map();
 
-  /** @param {'practice'|'evaluation'} database */
+  /** @param {'practice'} database */
   pool(database) {
     const variable = DATABASE_VARIABLES[database];
     if (!variable) throw new Error(`Unknown database: ${database}`);

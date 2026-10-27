@@ -140,19 +140,18 @@
         link(logbookButtons[1], logbookPanel, questionsPanel);
         link(byId('questionsBack'), questionsPanel, logbookPanel);
 
-        const underConstruction = () => alert('Section under construction');
-        if (questionButtons[0]) questionButtons[0].addEventListener('click', underConstruction);
-
         if (o.questions === 'student') {
             const myQuestions = byId('my-questions-panel');
-            link(questionButtons[1], questionsPanel, myQuestions);
-            link(byId('myQuestionsBack'), myQuestions, questionsPanel);
+            if (myQuestions && questionButtons[1]) {
+                link(questionButtons[1], questionsPanel, myQuestions);
+                link(byId('myQuestionsBack'), myQuestions, questionsPanel);
+            }
         } else if (o.questions === 'tutor') {
             const questionBank = byId('question-bank-panel');
-            link(questionButtons[1], questionsPanel, questionBank);
-            link(byId('questionBankBack'), questionBank, questionsPanel);
-        } else if (questionButtons[1]) {
-            questionButtons[1].addEventListener('click', underConstruction);
+            if (questionBank && questionButtons[1]) {
+                link(questionButtons[1], questionsPanel, questionBank);
+                link(byId('questionBankBack'), questionBank, questionsPanel);
+            }
         }
     }
 

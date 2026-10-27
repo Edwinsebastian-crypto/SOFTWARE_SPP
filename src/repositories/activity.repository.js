@@ -45,6 +45,8 @@ class ActivityRepository extends BaseRepository {
               a.nombre AS title, a.descripcion AS description, a."fechaAsignacion" AS "assignedDate", a."fechaLimite" AS "dueDate",
               a."notaObtenida" AS grade,
               (SELECT COUNT(*)::int FROM evidenciaactividad ev WHERE ev."idActividad" = a."idActividad") AS "evidenceCount",
+              (SELECT COUNT(*)::int FROM retroalimentacion_t rt JOIN evidenciaactividad ev ON ev."idEvidencia" = rt."idEvidencia" WHERE ev."idActividad" = a."idActividad") AS "feedbackCount",
+              (SELECT COALESCE(SUM(ev."horasRealizadas"), 0)::int FROM evidenciaactividad ev WHERE ev."idActividad" = a."idActividad") AS hours,
               COALESCE(
                 (SELECT json_agg(json_build_object('id', f."idArchivoAct", 'url', f."rutaArchivo", 'name', f."nombreArchivo", 'mimeType', f."tipoMine"))
                  FROM archivosactividad f WHERE f."idActividad" = a."idActividad"),
@@ -57,7 +59,9 @@ class ActivityRepository extends BaseRepository {
 
   findById(id) {
     return this.queryOne(
-      'SELECT "idActividad" AS id, "idPractica" AS "practiceId", nombre AS title, "fechaLimite" AS "dueDate", "notaObtenida" AS grade FROM actividad WHERE "idActividad" = $1',
+      `SELECT a."idActividad" AS id, a."idPractica" AS "practiceId", a.nombre AS title, a."fechaLimite" AS "dueDate", a."notaObtenida" AS grade,
+              (SELECT COALESCE(SUM(ev."horasRealizadas"), 0)::int FROM evidenciaactividad ev WHERE ev."idActividad" = a."idActividad") AS hours
+         FROM actividad a WHERE a."idActividad" = $1`,
       [id]
     );
   }

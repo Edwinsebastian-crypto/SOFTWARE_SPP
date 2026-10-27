@@ -73,6 +73,36 @@ Practice `status`: `active` \| `completed` \| `cancelled`. `logbook.finalGrade` 
 `topic`: `pedagogy` \| `didactics` \| `assessment`. `questionType`: `open` \| `multiple-choice` \| `true-false`.
 Answer `status`: `pending` \| `draft` \| `answered`.
 
+## Evaluations — tutor, student and director (microservice)
+
+`/api/evaluations/*` is a gateway to the Python evaluation service (`servicio-evaluacion/`). The monolith checks the
+session and the role, authorizes the practice with `PracticeAccessService`, and forwards the call with a 2-minute
+token signed with `EVALUATION_SERVICE_SECRET` (`sub` = document number, `rol`). Only the routes below exist
+(anything else is **404**). Field names of bodies and responses are the service's own (Spanish: `id_evaluacion`, `titulo`…);
+see the service's OpenAPI at `<EVALUATION_SERVICE_URL>/docs`. Errors are `{ "error": "message" }` like everywhere else.
+`503` = service not configured, `502` = unreachable or failed, `504` = timed out.
+
+| Method | Path (after `/api/evaluations`) | Who | Notes |
+|---|---|---|---|
+| GET | `/health` | tutor | service status and AI provider |
+| GET / POST | `/tutor/evaluaciones` | tutor | `?id_practica=`; POST needs `id_practica` of **your** practice — the student is always the practice's student |
+| GET / PATCH / DELETE | `/tutor/evaluaciones/:id` | tutor | |
+| POST | `/tutor/evaluaciones/:id/{publicar,despublicar,cerrar}` | tutor | |
+| POST | `/tutor/evaluaciones/:id/generar` | tutor | generate questions with AI from a topic and/or evidence of the practice |
+| POST / PUT | `/tutor/evaluaciones/:id/preguntas[/aprobar-todas \| /orden]` | tutor | |
+| PATCH / DELETE / POST | `/tutor/preguntas/:id[/aprobar \| /rechazar]` | tutor | AI questions are drafts until approved |
+| GET | `/tutor/evaluaciones/:id/intentos`, `/tutor/intentos/:id` | tutor | results |
+| POST | `/tutor/respuestas/:id/{calificar,retro}` | tutor | grade an open answer / comment |
+| GET | `/tutor/evidencias?id_practica=` | tutor | evidence of **your** practice, to use as AI context |
+| GET | `/student/evaluaciones` | student | assigned, published evaluations |
+| POST | `/student/evaluaciones/:id/intentos` | student | start or continue an attempt |
+| GET | `/student/intentos/:id` | student | |
+| PUT | `/student/intentos/:id/respuestas/:idPregunta` | student | save an answer |
+| POST | `/student/intentos/:id/enviar` | student | submit |
+| GET | `/director/resumen` | director | **read only.** Figures, notes distribution, AI usage, monthly activity, per-tutor table and alerts, plus `directorio` (names) |
+| GET | `/director/evaluaciones` | director | `?estado=&id_tutor=&id_practica=&q=&solo_alertas=true&limite=&desplazamiento=` → `{ total, limite, desplazamiento, items, directorio }` |
+| GET | `/director/evaluaciones/:id` | director | per-question hit rates, attempts and AI generations. Never the students' answers |
+
 ## Reports — director
 
 | Method | Path | Notes |
@@ -88,4 +118,5 @@ Answer `status`: `pending` \| `draft` \| `answered`.
 |---|---|
 | `/` and `/index.html` | login; users with a session are redirected to their panel |
 | `/pages/<role>.html` | role panel; wrong role → redirect to own panel; no session → `/index.html` |
+| `/pages/tutor-evaluations.html`, `/pages/student-evaluations.html`, `/pages/director-evaluations.html` | evaluations screens (same rules as the panels) |
 | `/js/config.js` | public config for the views (`window.SPP_DOMAIN`) |

@@ -15,7 +15,6 @@ const fileStorage = require('../src/infrastructure/file-storage');
 const { toInstitutionalEmail } = require('../src/utils/format');
 const { parseCreateUser, parseUpdateUser, parseUserFilters } = require('../src/validators/user.validator');
 const { parsePracticeInput, parseLogbookInput } = require('../src/validators/practice.validator');
-const { parseAnswer } = require('../src/validators/question.validator');
 const { parseFeedback, parseFeedbackUpdate } = require('../src/validators/evidence.validator');
 const { toPracticeDto } = require('../src/presenters');
 const { generateId } = require('../src/utils/id-generator');
@@ -40,9 +39,6 @@ test('stored <-> English values round-trip', () => {
   assert.equal(legacy.userStatus.fromStored(' Activo '), 'active');
   assert.equal(legacy.userStatus.toStored('inactive'), 'inactivo');
   assert.equal(legacy.practiceStatus.fromStored('Finalizada'), 'completed');
-  assert.equal(legacy.questionTopic.toStored('assessment'), 'evaluacion');
-  assert.equal(legacy.questionType.fromStored('opcion-multiple'), 'multiple-choice');
-  assert.equal(legacy.answerStatus.fromStored('respondida'), 'answered');
   assert.equal(legacy.auditEntity.fromStored('Retroalimentacion'), 'feedback');
   assert.equal(legacy.auditAction.toStored('delete'), 'Eliminar');
   assert.equal(legacy.capitalize(legacy.userStatus.toStored('pending')), 'Pendiente');
@@ -92,12 +88,6 @@ test('practice validation', () => {
   assert.deepEqual(parseLogbookInput({ finalGrade: '4.5', generalObservation: ' ok ' }), { finalGrade: 4.5, generalObservation: 'ok' });
   assert.deepEqual(parseLogbookInput({}), { finalGrade: null, generalObservation: null });
   throwsBadRequest(() => parseLogbookInput({ finalGrade: 6 }));
-});
-
-test('answer validation: a final submission needs text, a draft does not', () => {
-  assert.deepEqual(parseAnswer({ text: '', submit: false }), { submit: false, text: '' });
-  throwsBadRequest(() => parseAnswer({ text: '', submit: true }));
-  assert.equal(parseAnswer({ text: 'x', submit: true }).submit, true);
 });
 
 test('feedback validation: parses text, evidenceId and optional date', () => {

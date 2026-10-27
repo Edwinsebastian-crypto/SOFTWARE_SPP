@@ -6,13 +6,14 @@
   "private": true,
   "scripts": {
     "start": "node src/server.js",
+    "start:all": "node scripts/start-all.js",
     "dev": "node --watch src/server.js",
-    "schema:apply": "node src/scripts/apply-schema.js",
     "schema:verify": "node src/scripts/verify-schema.js",
     "director:create": "node src/scripts/create-director.js",
     "users:migrate": "node src/scripts/migrate-users.js",
     "test": "npm run test:unit && npm run test:repositories && npm run test:e2e",
-    "test:unit": "node tests/unit.test.js",
+    "test:unit": "node tests/unit.test.js && node tests/evaluation-gateway.test.js",
+    "test:evaluations": "node tests/evaluation-gateway.test.js",
     "test:repositories": "node tests/repositories.test.js",
     "test:e2e": "node tests/e2e-http.test.js",
     "lint": "eslint ."

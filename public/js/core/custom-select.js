@@ -122,7 +122,9 @@
     }
 
     function fieldLabel(select) {
-        const field = select.closest('.cp-field, .practice-field');
+        const ariaLabel = select.getAttribute('aria-label');
+        if (ariaLabel) return ariaLabel;
+        const field = select.closest('.cp-field, .practice-field, .cp-input-wrap, .dv-filter-wrap');
         const label = field?.querySelector('label');
         if (label?.textContent) return label.textContent.trim();
         const first = select.options[0];
@@ -181,7 +183,7 @@
 
     // ---------------------------------------------------------------- public API
     function init(rootSelector) {
-        const root = document.querySelector(rootSelector);
+        const root = typeof rootSelector === 'string' ? document.querySelector(rootSelector) : rootSelector;
         if (!root) return;
 
         ensureOptionHeight();

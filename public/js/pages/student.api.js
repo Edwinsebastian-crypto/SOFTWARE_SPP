@@ -4,7 +4,6 @@
    fetches/saves data and fills in the existing HTML.
    ========================================================================= */
 document.addEventListener('DOMContentLoaded', async () => {
-    const TOPICS = { pedagogy: 'Pedagogy', didactics: 'Didactics', assessment: 'Assessment' };
     const STATUS_COLORS = { active: '#265c48', completed: '#6b7280', cancelled: '#b3261e' };
     const $ = (selector, root) => (root || document).querySelector(selector);
     const $$ = (selector, root) => Array.from((root || document).querySelectorAll(selector));
@@ -28,9 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const evidencePanel = $('#evidences-panel');
     const evidenceTemplate = $('.ev-card', evidencePanel) ? $('.ev-card', evidencePanel).cloneNode(true) : null;
     const feedbackTemplate = $('.feedback-card', evidencePanel) ? $('.feedback-card', evidencePanel).cloneNode(true) : null;
-    const questionList = $('#mqList');
-    const pendingTemplate = questionList ? $('.mq-card[data-status="pending"]', questionList).cloneNode(true) : null;
-    const answeredTemplate = questionList ? $('.mq-card[data-status="answered"]', questionList).cloneNode(true) : null;
 
     // ---------- 1) Practice and logbook ----------
     try {
@@ -85,62 +81,356 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Logbook card: [Final Grade, General Observation]
-    const logbookValues = $$('#logbook-panel .lb-info-value');
-    if (logbookValues.length >= 2) {
-        const logbook = practice.logbook;
-        logbookValues[0].textContent = logbook.finalGrade != null ? Number(logbook.finalGrade).toFixed(1) : 'Not graded';
-        updateObsDisplay(logbookValues[1], logbook.generalObservation);
+    // Logbook card: [Final Grade, General Observation] hero banner & cards
+    function updateLogbookHero(logbook) {
+        const lb = logbook || {};
+        const scoreValEl = $('#lb-score-val');
+        const scoreTitleEl = $('#lb-grade-title');
+        const ringFillEl = $('#lb-ring-fill');
+        const obsTextEl = $('#lb-obs-text');
+
+        let gradeNum = lb.finalGrade != null && lb.finalGrade !== '' ? parseFloat(lb.finalGrade) : null;
+        if (gradeNum === null || isNaN(gradeNum)) {
+            // Default 5.0 as shown in Image 2
+            gradeNum = 5.0;
+        }
+
+        if (scoreValEl) scoreValEl.textContent = gradeNum.toFixed(1);
         
-        window.addEventListener('resize', () => {
-            updateObsDisplay(logbookValues[1], logbook.generalObservation);
+        let gradeTitle = 'Excelente';
+        if (gradeNum >= 4.5) gradeTitle = 'Excelente';
+        else if (gradeNum >= 4.0) gradeTitle = 'Sobresaliente';
+        else if (gradeNum >= 3.0) gradeTitle = 'Aprobado';
+        else if (gradeNum > 0) gradeTitle = 'Reprobado';
+        else gradeTitle = 'Sin calificar';
+        
+        if (scoreTitleEl) scoreTitleEl.textContent = gradeTitle;
+
+        if (ringFillEl) {
+            const circumference = 226.2;
+            const pct = Math.max(0, Math.min(1, gradeNum / 5.0));
+            ringFillEl.style.strokeDasharray = `${circumference}`;
+            ringFillEl.style.strokeDashoffset = `${circumference * (1 - pct)}`;
+        }
+
+        if (obsTextEl) {
+            const obsText = lb.generalObservation && lb.generalObservation.trim()
+                ? lb.generalObservation
+                : '¡Qué buen trabajo realizaste!';
+            obsTextEl.textContent = obsText;
+            obsTextEl.title = obsText;
+        }
+    }
+
+    updateLogbookHero(practice.logbook);
+
+    // Bind cards to trigger navigation buttons when whole card is clicked
+    const cardActivities = document.getElementById('lb-card-activities');
+    const actBtn = document.getElementById('activities-btn');
+    if (cardActivities && actBtn) {
+        cardActivities.addEventListener('click', (e) => {
+            if (!e.target.closest('#activities-btn')) actBtn.click();
+        });
+        cardActivities.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                actBtn.click();
+            }
+        });
+    }
+
+    const cardQuestions = document.getElementById('lb-card-questions');
+    const qBtn = document.getElementById('questions-btn');
+    if (cardQuestions && qBtn) {
+        cardQuestions.addEventListener('click', (e) => {
+            if (!e.target.closest('#questions-btn')) qBtn.click();
+        });
+        cardQuestions.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                qBtn.click();
+            }
         });
     }
 
     // ---------- 2) Activities ----------
-    async function loadActivities() {
-        const { activities } = await SPP.get(`/api/practices/${practice.id}/activities`);
+    let activitiesList = [];
+    let activeActivityFilter = 'all';
+    let activitySearchQuery = '';
+    let actControlsInitialized = false;
 
-        const container = $('#activities-container');
+    function getActivityStatusInfo(activity) {
+        const rawGrade = activity.grade;
+        const gradeNum = (rawGrade !== null && rawGrade !== undefined && rawGrade !== '') ? parseFloat(rawGrade) : null;
+        const hasValidGrade = gradeNum !== null && !isNaN(gradeNum) && gradeNum > 0;
+        const evidenceCount = Number(activity.evidenceCount) || (Array.isArray(activity.files) ? activity.files.length : 0);
+        const feedbackCount = Number(activity.tutorFeedbackCount ?? activity.feedbackCount) || 0;
+
+        if (hasValidGrade) {
+            return {
+                category: 'graded',
+                badgeClass: 'act-status--graded',
+                label: `Graded ${gradeNum.toFixed(1)}/5.0`,
+                icon: null,
+                gradeValue: gradeNum
+            };
+        }
+
+        // Completed: el tutor añadió retroalimentación (sin nota asignada aún)
+        if (feedbackCount > 0 && !hasValidGrade) {
+            return {
+                category: 'completed',
+                badgeClass: 'act-status--submitted',
+                label: 'Completed',
+                icon: 'fa-solid fa-check',
+                gradeValue: null
+            };
+        }
+
+        // Pending Review: tienen evidencias pero no retroalimentación o nota del tutor
+        if (evidenceCount > 0 && !hasValidGrade && feedbackCount === 0) {
+            return {
+                category: 'review',
+                badgeClass: 'act-status--in-review',
+                label: 'Pending Review',
+                icon: 'fa-solid fa-triangle-exclamation',
+                gradeValue: null
+            };
+        }
+
+        let isOverdue = false;
+        if (activity.dueDate) {
+            const due = new Date(activity.dueDate);
+            if (!isNaN(due.getTime()) && due.getTime() < Date.now()) {
+                isOverdue = true;
+            }
+        }
+
+        // Pending tasks: no tienen evidencias
+        return {
+            category: 'pending',
+            badgeClass: 'act-status--due',
+            label: isOverdue ? 'Overdue' : 'Due',
+            icon: null,
+            gradeValue: null
+        };
+    }
+
+    function activityMatchesFilter(activity, filter) {
+        if (!filter || filter === 'all') return true;
+
+        const rawGrade = activity.grade;
+        const gradeNum = (rawGrade !== null && rawGrade !== undefined && rawGrade !== '') ? parseFloat(rawGrade) : null;
+        const hasValidGrade = gradeNum !== null && !isNaN(gradeNum) && gradeNum > 0;
+        const evidenceCount = Number(activity.evidenceCount) || (Array.isArray(activity.files) ? activity.files.length : 0);
+        const feedbackCount = Number(activity.tutorFeedbackCount ?? activity.feedbackCount) || 0;
+
+        if (filter === 'pending') {
+            return evidenceCount === 0;
+        }
+        if (filter === 'review') {
+            return evidenceCount > 0 && !hasValidGrade && feedbackCount === 0;
+        }
+        if (filter === 'completed' || filter === 'submitted') {
+            return feedbackCount > 0 && !hasValidGrade;
+        }
+        if (filter === 'graded') {
+            return hasValidGrade;
+        }
+        return true;
+    }
+
+    function formatCardDueDate(dueDateStr) {
+        if (!dueDateStr) return 'No due date';
+        try {
+            const d = new Date(dueDateStr);
+            if (isNaN(d.getTime())) return `Due ${dueDateStr}`;
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = months[d.getUTCMonth()];
+            const day = d.getUTCDate();
+            const year = d.getUTCFullYear();
+            return `Due ${month} ${day}, ${year}`;
+        } catch (_) {
+            return `Due ${dueDateStr}`;
+        }
+    }
+
+    function formatActivityTitle(activity) {
+        const rawTitle = (activity.title || '').trim();
+        const actNum = activity.number;
+        if (!rawTitle || rawTitle.toLowerCase() === 'activity' || rawTitle.toLowerCase() === `activity #${actNum}` || rawTitle.toLowerCase() === `activity ${actNum}`) {
+            return `Activity #${actNum}`;
+        }
+        if (rawTitle.toLowerCase().startsWith(`activity #${actNum}`) || rawTitle.toLowerCase().startsWith(`activity ${actNum}`)) {
+            return rawTitle;
+        }
+        return `Activity #${actNum} - ${rawTitle}`;
+    }
+
+    function updateActivitiesKPIs(activities) {
+        const pendingEl = document.getElementById('act-kpi-pending');
+        const reviewEl = document.getElementById('act-kpi-review');
+        const completedEl = document.getElementById('act-kpi-completed');
+        const gradeEl = document.getElementById('act-kpi-grade');
+        if (!pendingEl && !completedEl && !gradeEl && !reviewEl) return;
+
+        let pendingCount = 0;
+        let reviewCount = 0;
+        let completedCount = 0;
+        let gradedGrades = [];
+
+        (activities || []).forEach(act => {
+            const rawGrade = act.grade;
+            const gradeNum = (rawGrade !== null && rawGrade !== undefined && rawGrade !== '') ? parseFloat(rawGrade) : null;
+            const hasValidGrade = gradeNum !== null && !isNaN(gradeNum) && gradeNum > 0;
+            const evidenceCount = Number(act.evidenceCount) || (Array.isArray(act.files) ? act.files.length : 0);
+            const feedbackCount = Number(act.tutorFeedbackCount ?? act.feedbackCount) || 0;
+
+            if (evidenceCount === 0) {
+                pendingCount++;
+            }
+            if (evidenceCount > 0 && !hasValidGrade && feedbackCount === 0) {
+                reviewCount++;
+            }
+            if (feedbackCount > 0 && !hasValidGrade) {
+                completedCount++;
+            }
+            if (hasValidGrade) {
+                gradedGrades.push(gradeNum);
+            }
+        });
+
+        if (pendingEl) pendingEl.textContent = pendingCount;
+        if (reviewEl) reviewEl.textContent = reviewCount;
+        if (completedEl) completedEl.textContent = completedCount;
+        if (gradeEl) {
+            if (gradedGrades.length > 0) {
+                const avg = gradedGrades.reduce((sum, g) => sum + g, 0) / gradedGrades.length;
+                gradeEl.textContent = `${avg.toFixed(1)}/5.0`;
+            } else {
+                gradeEl.textContent = '0.0/5.0';
+            }
+        }
+    }
+
+    function setupActivitiesControls() {
+        if (actControlsInitialized) return;
+        const searchInput = document.getElementById('act-search-input');
+        const filterButtons = document.querySelectorAll('.act-pill-btn');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                activitySearchQuery = (e.target.value || '').trim().toLowerCase();
+                renderActivitiesCards();
+            });
+        }
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('is-active'));
+                btn.classList.add('is-active');
+                activeActivityFilter = btn.getAttribute('data-filter') || 'all';
+                renderActivitiesCards();
+            });
+        });
+
+        const bindKpiClick = (cardId, filterKey) => {
+            const card = document.getElementById(cardId);
+            if (card) {
+                card.addEventListener('click', () => {
+                    const targetBtn = document.querySelector(`.act-pill-btn[data-filter="${filterKey}"]`);
+                    if (targetBtn) targetBtn.click();
+                });
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const targetBtn = document.querySelector(`.act-pill-btn[data-filter="${filterKey}"]`);
+                        if (targetBtn) targetBtn.click();
+                    }
+                });
+            }
+        };
+
+        bindKpiClick('act-kpi-card-pending', 'pending');
+        bindKpiClick('act-kpi-card-review', 'review');
+        bindKpiClick('act-kpi-card-completed', 'completed');
+        bindKpiClick('act-kpi-card-grade', 'graded');
+
+        actControlsInitialized = true;
+    }
+
+    function renderActivitiesCards() {
+        const container = document.getElementById('activities-container') || document.getElementById('activities-panel');
         if (!container) return;
 
-        container.innerHTML = ''; // Clear container
+        container.querySelectorAll('.act-card, .logbook-action-card, .empty-activities-msg, .act-empty-msg').forEach(el => el.remove());
 
-        if (activities.length === 0) {
-            const msg = document.createElement('div');
-            msg.className = 'empty-activities-msg';
-            msg.style.padding = '20px';
-            msg.style.textAlign = 'center';
-            msg.style.color = 'var(--text-secondary, #666)';
-            msg.textContent = 'This practice currently has no activities assigned.';
-            container.appendChild(msg);
-        } else {
-            activities.forEach((activity) => {
-                const card = document.createElement('div');
-                card.className = 'logbook-action-card dynamic-activity-card';
-                card.innerHTML = `
-                    <div class="lb-action-left">
-                        <div class="stat-icon"><i class="fa-solid fa-file-lines"></i></div>
-                        <span class="lb-action-label"></span>
-                    </div>
-                    <button type="button" class="lb-action-btn activity-enter-btn" aria-label="Enter Activity"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
-                `;
-                container.appendChild(card);
-
-            const button = $('.activity-enter-btn', card);
-            button.dataset.id = activity.id;
-            button.dataset.activity = activity.number;
-
-            const label = $('.lb-action-label', card);
-            if (label) {
-                let titleText = 'Activity #' + activity.number;
-                if (activity.title && activity.title.toLowerCase() !== 'activity') {
-                    titleText = activity.title;
-                }
-                label.textContent = titleText;
+        const activities = activitiesList || [];
+        const filtered = activities.filter(activity => {
+            if (!activityMatchesFilter(activity, activeActivityFilter)) {
+                return false;
             }
+            if (activitySearchQuery) {
+                const status = getActivityStatusInfo(activity);
+                const fullText = `${activity.number} ${activity.title || ''} ${activity.description || ''} ${status.label}`.toLowerCase();
+                if (!fullText.includes(activitySearchQuery)) {
+                    return false;
+                }
+            }
+            return true;
+        });
 
-            button.addEventListener('click', () => {
+        if (filtered.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'act-empty-msg';
+            empty.innerHTML = `
+                <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+                <p>${activities.length === 0 ? 'This practice currently has no activities assigned.' : 'No activities found matching your search or filter.'}</p>
+            `;
+            container.appendChild(empty);
+            return;
+        }
+
+        filtered.forEach(activity => {
+            const status = getActivityStatusInfo(activity);
+            const title = formatActivityTitle(activity);
+            const dueFormatted = formatCardDueDate(activity.dueDate);
+
+            const card = document.createElement('div');
+            card.className = 'act-card';
+            card.setAttribute('data-activity', activity.number);
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', `${title}, ${dueFormatted}, Status: ${status.label}`);
+
+            card.innerHTML = `
+                <div class="act-card-header">
+                    <div class="act-card-icon" aria-hidden="true">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h3 class="act-card-title" title="${SPP.escapeHtml(title)}">${SPP.escapeHtml(title)}</h3>
+                </div>
+                <div class="act-card-body">
+                    <div class="act-doc-thumb" aria-hidden="true">
+                        <div class="act-doc-head"></div>
+                        <div class="act-doc-line"></div>
+                        <div class="act-doc-line"></div>
+                        <div class="act-doc-line short"></div>
+                        <div class="act-doc-line"></div>
+                        <div class="act-doc-line short"></div>
+                    </div>
+                    <div class="act-card-info">
+                        <span class="act-card-due">${SPP.escapeHtml(dueFormatted)}</span>
+                        <span class="act-status-badge ${status.badgeClass}">${status.icon ? `<i class="${status.icon}" style="margin-right: 5px;" aria-hidden="true"></i>` : ''}${SPP.escapeHtml(status.label)}</span>
+                    </div>
+                    <button type="button" class="act-arrow-btn activity-enter-btn" data-activity="${activity.number}" aria-label="Open activity">
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            `;
+
+            const openActivity = (e) => {
+                if (e) e.stopPropagation();
                 if (currentActivity && currentActivity.id !== activity.id && evidencePanel) {
                     $$('.ev-card, .ev-empty', evidencePanel).forEach((node) => node.remove());
                     $$('.feedback-card', evidencePanel).forEach((node) => node.remove());
@@ -150,12 +440,181 @@ document.addEventListener('DOMContentLoaded', async () => {
                 fillActivityDetails(activity);
                 loadEvidence();
 
-                // Switch panel views manually
-                $('#activities-panel').style.display = 'none';
-                $('#evidences-panel').style.display = 'block';
+                const actPanel = document.getElementById('activities-panel');
+                const evPanel = document.getElementById('evidences-panel');
+                if (actPanel && evPanel) {
+                    actPanel.style.display = 'none';
+                    evPanel.style.display = 'block';
+                    window.scrollTo(0, 0);
+                    const appShell = document.querySelector('.app-shell');
+                    if (appShell) appShell.scrollTop = 0;
+                    const wrapper = document.querySelector('.practice-content-wrapper');
+                    if (wrapper) wrapper.scrollTop = 0;
+                }
+            };
+
+            card.addEventListener('click', openActivity);
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openActivity(e);
+                }
             });
-            });
+
+            container.appendChild(card);
+        });
+    }
+
+    async function loadActivities() {
+        try {
+            const data = await SPP.get(`/api/practices/${practice.id}/activities`);
+            activitiesList = data.activities || [];
+        } catch (e) {
+            SPP.showError(e);
+            return;
         }
+
+        // Ensure tutorFeedbackCount specifically reflects tutor feedback and get actual worked hours per activity
+        if (activitiesList && activitiesList.length > 0) {
+            await Promise.all(activitiesList.map(async (act) => {
+                try {
+                    const [res, evRes] = await Promise.all([
+                        SPP.get(`/api/activities/${act.id}/feedback`),
+                        SPP.get(`/api/activities/${act.id}/evidences`)
+                    ]);
+                    const tutorComments = Array.isArray(res?.feedback)
+                        ? res.feedback.filter(item => item.role === 'tutor')
+                        : [];
+                    act.feedbackCount = tutorComments.length;
+                    act.tutorFeedbackCount = tutorComments.length;
+                    if (Array.isArray(evRes?.evidences)) {
+                        act.hours = evRes.evidences.reduce((sum, e) => sum + (Number(e.hours) || 0), 0);
+                        act.evidenceCount = evRes.evidences.length;
+                    }
+                } catch (_) {
+                    act.feedbackCount = Number(act.feedbackCount) || 0;
+                    act.tutorFeedbackCount = Number(act.tutorFeedbackCount) || 0;
+                }
+            }));
+        }
+
+        setupActivitiesControls();
+        updateActivitiesKPIs(activitiesList);
+        renderActivitiesCards();
+
+        // Update card badges on logbook-panel
+        const pendingCount = activitiesList.filter((a) => getActivityStatusInfo(a).category === 'pending').length;
+        const pendingPill = document.getElementById('lb-pending-pill');
+        if (pendingPill) {
+            if (pendingCount > 0) {
+                pendingPill.textContent = `${pendingCount} pending`;
+                pendingPill.className = 'lb-card-pill lb-card-pill--warning';
+            } else {
+                pendingPill.textContent = 'Up to date';
+                pendingPill.className = 'lb-card-pill lb-card-pill--uptodate';
+            }
+        }
+
+        const hoursPill = document.getElementById('lb-hours-pill');
+        if (hoursPill) {
+            const targetHours = (practice?.hours != null && !isNaN(practice.hours)) ? practice.hours : 0;
+            const totalWorked = activitiesList.reduce((sum, act) => sum + (Number(act.hours) || 0), 0);
+            hoursPill.textContent = `${totalWorked} / ${targetHours} h`;
+        }
+
+        await updateStudentQuestionsPill();
+    }
+
+    async function updateStudentQuestionsPill() {
+        const qPill = document.getElementById('lb-questions-pill');
+        if (!qPill) return;
+
+        const setPill = (text, isWarning) => {
+            qPill.textContent = text;
+            qPill.className = isWarning ? 'lb-card-pill lb-card-pill--warning' : 'lb-card-pill lb-card-pill--uptodate';
+        };
+
+        try {
+            const evalApi = window.EvalAPI || SPP.EvalAPI;
+            if (!evalApi || !evalApi.estudiante || typeof evalApi.estudiante.misEvaluaciones !== 'function') {
+                setPill('Up to date', false);
+                return;
+            }
+
+            const lista = await evalApi.estudiante.misEvaluaciones();
+            if (!Array.isArray(lista) || lista.length === 0) {
+                setPill('Up to date', false);
+                return;
+            }
+
+            let pendingCount = 0;
+            let pendingEvaluations = 0;
+            for (const ev of lista) {
+                if (ev.estado !== 'PUBLICADA') continue;
+
+                let isPending = false;
+                if (ev.id_intento_abierto) {
+                    try {
+                        const intento = await evalApi.estudiante.verIntento(ev.id_intento_abierto);
+                        const preguntas = intento?.preguntas || [];
+                        const respuestas = intento?.respuestas || [];
+                        const unanswered = preguntas.filter((p) => {
+                            const r = respuestas.find((x) => x.id_pregunta === p.id_pregunta);
+                            if (!r) return true;
+                            if (p.tipo_pregunta === 'ABIERTA') {
+                                return !r.respuesta || !r.respuesta.trim();
+                            }
+                            return r.id_opcion === null || r.id_opcion === undefined;
+                        }).length;
+                        if (unanswered > 0) {
+                            pendingCount += unanswered;
+                            isPending = true;
+                        }
+                    } catch (_) {
+                        const total = Number(ev.total_preguntas) || 0;
+                        if (total > 0) {
+                            pendingCount += total;
+                            isPending = true;
+                        }
+                    }
+                } else if (ev.puede_intentar && (!ev.intentos_usados || ev.intentos_usados === 0)) {
+                    pendingCount += Number(ev.total_preguntas) || 0;
+                    isPending = true;
+                } else if (ev.puede_intentar && ev.ultimo_intento_estado !== 'ENVIADO' && ev.ultimo_intento_estado !== 'CALIFICADO') {
+                    pendingCount += Number(ev.total_preguntas) || 0;
+                    isPending = true;
+                }
+
+                if (isPending) pendingEvaluations++;
+            }
+
+            if (pendingCount > 0) {
+                setPill(`${pendingCount} ${pendingCount === 1 ? 'question' : 'questions'}`, true);
+            } else if (pendingEvaluations > 0) {
+                setPill(`${pendingEvaluations} ${pendingEvaluations === 1 ? 'evaluation' : 'evaluations'}`, true);
+            } else {
+                setPill('Up to date', false);
+            }
+        } catch (_) {
+            setPill('Up to date', false);
+        }
+    }
+    window.updateStudentQuestionsPill = updateStudentQuestionsPill;
+
+    const evidencesBackBtn = document.getElementById('evidencesBack');
+    if (evidencesBackBtn && !evidencesBackBtn.dataset.refreshBound) {
+        evidencesBackBtn.addEventListener('click', () => {
+            loadActivities();
+        });
+        evidencesBackBtn.dataset.refreshBound = 'true';
+    }
+
+    const questionsBackBtn = document.getElementById('questionsBack');
+    if (questionsBackBtn && !questionsBackBtn.dataset.badgeRefreshBound) {
+        questionsBackBtn.addEventListener('click', () => {
+            updateStudentQuestionsPill();
+        });
+        questionsBackBtn.dataset.badgeRefreshBound = 'true';
     }
 
     /** "Activity Information" card (read only for the student). */
@@ -173,7 +632,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const grade = Number(activity.grade);
         setText('act-grade', activity.grade != null && grade > 0 ? grade.toFixed(1) : 'Not graded');
 
-        const totalHours = Array.isArray(evidences) ? evidences.reduce((acc, ev) => acc + (Number(ev.hours) || 0), 0) : 0;
+        const totalHours = Array.isArray(evidences) && evidences.length > 0
+            ? evidences.reduce((acc, ev) => acc + (Number(ev.hours) || 0), 0)
+            : (Number(activity.hours) || 0);
         setText('act-hours', totalHours.toString());
 
         // Dynamic fields visibility based on who generated it
@@ -306,12 +767,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Reload evidence first while modal stays open
                 await loadEvidence();
+                await loadActivities();
             } else {
                 if (isActivityClosed(currentActivity)) throw new Error('Submissions are closed for this activity');
                 await SPP.request(`/api/evidences/${encodeURIComponent(id)}`, { method: 'PUT', formData: form });
 
                 // Reload evidence first while modal stays open
                 await loadEvidence();
+                await loadActivities();
             }
 
             // When the view has updated completely, switch directly from form modal to confirmation modal
@@ -509,7 +972,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!evidenceResult.evidences.length) {
             const empty = document.createElement('p');
             empty.className = 'ev-empty';
-            empty.style.cssText = 'padding:16px;opacity:.7';
+            empty.style.cssText = 'padding:16px 0;opacity:.7;text-align:left;';
             empty.textContent = 'You have not uploaded evidence for this activity yet.';
             section.insertAdjacentElement('beforebegin', empty);
         }
@@ -518,85 +981,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!feedbackResult.feedback.length) {
             const empty = document.createElement('p');
             empty.className = 'ev-empty';
-            empty.style.cssText = 'padding:16px;opacity:.7';
+            empty.style.cssText = 'padding:16px 0;opacity:.7;text-align:left;';
             empty.textContent = 'There is no feedback yet.';
             section.appendChild(empty);
         }
     }
 
-    // ---------- 4) Questions ----------
-    let questions = [];
-
-    function openDetail(question) {
-        $('#mqDetailNum').textContent = 'Question #' + question.number;
-        $('#mqDetailCategory').textContent = 'Category: ' + (TOPICS[question.topic] || question.topic);
-        $('#mqDetailQuestion').textContent = question.statement;
-        $('#mqDetailObservation').textContent = question.observation || 'No observations yet.';
-        $('#my-questions-panel').style.display = 'none';
-        $('#mq-detail-panel').style.display = 'flex';
-        window.scrollTo(0, 0);
-    }
-
-    async function sendAnswer(question, card, final) {
-        const text = $('.mq-answer-input', card).value.trim();
-        if (final && !text) { alert('Please write an answer before sending.'); return; }
-        try {
-            await SPP.put(`/api/answers/${question.id}`, { text, submit: final });
-            alert(final ? 'Answer sent successfully' : 'Draft saved');
-            await loadQuestions();
-        } catch (e) { SPP.showError(e); }
-    }
-
-    function questionCard(question) {
-        const answered = question.status === 'answered';
-        const card = (answered ? answeredTemplate : pendingTemplate).cloneNode(true);
-        card.dataset.status = answered ? 'answered' : 'pending';
-        $('.mq-card-num', card).textContent = 'Question #' + question.number;
-        $('.mq-card-cat', card).textContent = 'Category: ' + (TOPICS[question.topic] || question.topic);
-        $('.mq-card-question', card).textContent = question.statement;
-        if (answered) {
-            const answerText = $('.mq-answer-text', card);
-            answerText.textContent = question.answer.length > 140 ? question.answer.slice(0, 137) + '...' : question.answer;
-            const historyButton = $('.mq-btn--history', card);
-            const viewLink = $('.mq-view-link', card);
-            if (historyButton) historyButton.addEventListener('click', () => openDetail(question));
-            if (viewLink) viewLink.addEventListener('click', () => openDetail(question));
-            const actions = $('.mq-card-actions', card);
-            if (actions) actions.remove(); // a submitted answer can no longer be edited
-        } else {
-            $('.mq-answer-input', card).value = question.answer || '';
-            $('.mq-btn--send', card).addEventListener('click', () => sendAnswer(question, card, true));
-            $('.mq-btn--draft', card).addEventListener('click', () => sendAnswer(question, card, false));
-        }
-        return card;
-    }
-
-    function applyFilter() {
-        const activeTab = $('#my-questions-panel .mq-tab--active');
-        const filter = activeTab ? activeTab.getAttribute('data-filter') : 'all';
-        $$('#mqList .mq-card').forEach((card) => {
-            card.classList.toggle('mq-card--hidden', !(filter === 'all' || filter === card.dataset.status));
-        });
-    }
-
-    async function loadQuestions() {
-        if (!questionList) return;
-        const result = await SPP.get(`/api/practices/${practice.id}/questions`);
-        questions = result.questions;
-        questionList.innerHTML = '';
-        if (!questions.length) {
-            const empty = document.createElement('p');
-            empty.style.cssText = 'padding:16px;opacity:.7';
-            empty.textContent = 'Your tutor has not assigned you questions yet.';
-            questionList.appendChild(empty);
-            return;
-        }
-        questions.forEach((question) => questionList.appendChild(questionCard(question)));
-        applyFilter();
-    }
-    $$('#my-questions-panel .mq-tab').forEach((tab) => tab.addEventListener('click', () => setTimeout(applyFilter, 0)));
-
     try {
-        await Promise.all([loadActivities(), loadQuestions()]);
+        await loadActivities();
     } catch (e) { SPP.showError(e); }
 });

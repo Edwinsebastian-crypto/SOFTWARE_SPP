@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="../css/variables.css">
 	<link rel="stylesheet" href="../css/shell.css">
 	<link rel="stylesheet" href="../css/student.css">
+	<link rel="stylesheet" href="../css/evaluacion.css">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -77,31 +78,76 @@
 						</button>
 						<h2 id="logbook-title" class="logbook-title">Practice</h2>
 					</div>
-					<div class="logbook-info-card">
-						<div class="logbook-info-item">
-							<span class="lb-info-label">Final Grade</span>
-							<span class="lb-info-value">Grade</span>
+					<!-- BANNER DE CALIFICACIÓN Y OBSERVACIÓN -->
+					<div class="lb-hero-banner" id="lb-hero-banner">
+						<div class="lb-hero-left">
+							<div class="lb-score-ring" id="lb-score-ring">
+								<svg class="lb-ring-svg" viewBox="0 0 88 88" aria-hidden="true">
+									<circle class="lb-ring-bg" cx="44" cy="44" r="36" />
+									<circle class="lb-ring-fill" id="lb-ring-fill" cx="44" cy="44" r="36" />
+								</svg>
+								<div class="lb-ring-content">
+									<span class="lb-score-val" id="lb-score-val">5.0</span>
+									<span class="lb-score-max">OF 5.0</span>
+								</div>
+							</div>
+							<div class="lb-grade-info">
+								<span class="lb-grade-kicker">FINAL GRADE</span>
+								<h3 class="lb-grade-title" id="lb-grade-title">Excellent</h3>
+							</div>
 						</div>
-						<div class="logbook-info-item">
-							<span class="lb-info-label">General Observation</span>
-							<span class="lb-info-value">Observation</span>
+
+						<div class="lb-hero-right">
+							<div class="lb-obs-box">
+								<span class="lb-obs-kicker">GENERAL OBSERVATION</span>
+								<div class="lb-obs-text-wrap">
+									<span class="lb-obs-quote" aria-hidden="true">”</span>
+									<p class="lb-obs-text" id="lb-obs-text">Great job on your practice!</p>
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<div class="logbook-action-card">
-						<div class="lb-action-left">
-							<div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
-							<span class="lb-action-label">Activities</span>
+					<!-- ACCIONES (TARJETAS DE ACTIVIDADES Y PREGUNTAS) -->
+					<div class="lb-cards-grid">
+						<!-- Tarjeta 1: Actividades -->
+						<div class="lb-card" id="lb-card-activities" role="button" tabindex="0">
+							<div class="lb-card-top">
+								<div class="lb-card-icon" aria-hidden="true">
+									<i class="fa-regular fa-clipboard"></i>
+								</div>
+								<span class="lb-card-pill" id="lb-hours-pill">0 / 0 h</span>
+							</div>
+							<div class="lb-card-body">
+								<h3 class="lb-card-title">Activities</h3>
+								<p class="lb-card-desc">Review assigned tasks and their delivery status.</p>
+							</div>
+							<div class="lb-card-bottom">
+								<span class="lb-card-pill" id="lb-pending-pill">Up to date</span>
+								<button type="button" class="lb-action-btn" id="activities-btn" aria-label="Enter Activities">
+									<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+								</button>
+							</div>
 						</div>
-						<button type="button" class="lb-action-btn" id="activities-btn" aria-label="Enter Activities"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
-					</div>
 
-					<div class="logbook-action-card">
-						<div class="lb-action-left">
-							<div class="stat-icon"><i class="fa-solid fa-circle-question"></i></div>
-							<span class="lb-action-label">Questions Section</span>
+						<!-- Tarjeta 2: Sección de preguntas -->
+						<div class="lb-card" id="lb-card-questions" role="button" tabindex="0">
+							<div class="lb-card-top">
+								<div class="lb-card-icon" aria-hidden="true">
+									<i class="fa-regular fa-circle-question"></i>
+								</div>
+							</div>
+							<div class="lb-card-body">
+								<h3 class="lb-card-title">Questions Section</h3>
+								<p class="lb-card-desc">Review the questionnaire and review your answers.</p>
+							</div>
+							<div class="lb-card-bottom">
+								<span class="lb-card-pill" id="lb-questions-pill">Up to date</span>
+								<button type="button" class="lb-action-btn" id="questions-btn" aria-label="Enter Questions Section">
+									<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+								</button>
+							</div>
 						</div>
-						<button type="button" class="lb-action-btn" id="questions-btn" aria-label="Enter Questions Section"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
 					</div>
 				</section>
 
@@ -117,94 +163,97 @@
 							<span>Upload evidence</span>
 						</button>
 					</div>
-					<div id="activities-container">
+
+					<!-- Summary KPI Stats Cards -->
+					<div class="act-kpis" id="act-kpis">
+						<div class="act-kpi-card" id="act-kpi-card-pending" role="button" tabindex="0" title="Filter pending tasks">
+							<div class="act-kpi-icon act-kpi-icon--pending">
+								<i class="fa-regular fa-calendar-days" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Pending Tasks:</span>
+								<strong class="act-kpi-val" id="act-kpi-pending">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-review" role="button" tabindex="0" title="Filter activities pending review">
+							<div class="act-kpi-icon act-kpi-icon--review">
+								<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Pending Review:</span>
+								<strong class="act-kpi-val" id="act-kpi-review">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-completed" role="button" tabindex="0" title="Filter completed activities">
+							<div class="act-kpi-icon act-kpi-icon--completed">
+								<i class="fa-solid fa-check" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Completed:</span>
+								<strong class="act-kpi-val" id="act-kpi-completed">0</strong>
+							</div>
+						</div>
+						<div class="act-kpi-card" id="act-kpi-card-grade" role="button" tabindex="0" title="Filter graded activities">
+							<div class="act-kpi-icon act-kpi-icon--grade">
+								<i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+							</div>
+							<div class="act-kpi-content">
+								<span class="act-kpi-label">Average Grade:</span>
+								<strong class="act-kpi-val" id="act-kpi-grade">0.0/5.0</strong>
+							</div>
+						</div>
+					</div>
+
+					<!-- Search & Filter Controls -->
+					<div class="act-controls">
+						<div class="act-search-box">
+							<input type="text" id="act-search-input" class="act-search-input" placeholder="Search" aria-label="Search activities" autocomplete="off" />
+							<i class="fa-solid fa-magnifying-glass act-search-icon" aria-hidden="true"></i>
+						</div>
+						<div class="act-filter-pills" role="tablist" aria-label="Activity Filters">
+							<button type="button" class="act-pill-btn is-active" data-filter="all">All</button>
+							<button type="button" class="act-pill-btn" data-filter="pending">To Do / Pending</button>
+							<button type="button" class="act-pill-btn" data-filter="review"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Pending Review</button>
+							<button type="button" class="act-pill-btn" data-filter="completed">Completed</button>
+							<button type="button" class="act-pill-btn" data-filter="graded">Graded</button>
+						</div>
+					</div>
+
+					<div id="activities-container" class="act-grid">
 						<!-- Dynamic activities will be inserted here -->
 					</div>
 				</section>
 
-				<!-- QUESTIONS PANEL (shown after Enter) -->
+				<!-- QUESTIONS & EVALUATIONS PANEL (shown after Enter) -->
 				<section class="questions-panel" id="questions-panel" aria-labelledby="questions-title" style="display: none;">
 					<div class="questions-header">
 						<button type="button" class="questions-back-btn" id="questionsBack" aria-label="Back to Practice">
 							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
 						</button>
-						<h2 id="questions-title" class="questions-title">Questions Section</h2>
-					</div>
-					<p style="padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: 0.95rem;">
-						No content yet
-					</p>
-				</section>
-
-				<!-- MY PRACTICE QUESTIONS PANEL (Answer) -->
-				<section class="my-questions-panel" id="my-questions-panel" aria-labelledby="my-questions-title" style="display: none;">
-					<div class="questions-header">
-						<button type="button" class="questions-back-btn" id="myQuestionsBack" aria-label="Back to Questions Section">
-							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-						</button>
-						<h2 id="my-questions-title" class="questions-title">My Practice Questions - Answer</h2>
+						<h2 id="questions-title" class="questions-title">Questions & Evaluations</h2>
 					</div>
 
-					<div class="mq-tabs" role="tablist" aria-label="Filter questions">
-						<button type="button" class="mq-tab mq-tab--active" data-filter="all" role="tab" aria-selected="true">All</button>
-						<button type="button" class="mq-tab" data-filter="pending" role="tab" aria-selected="false">To Answer</button>
-						<button type="button" class="mq-tab" data-filter="answered" role="tab" aria-selected="false">Answered</button>
+					<div class="ev-wrapper" style="padding: 10px 0;">
+						<div id="ev-banner"></div>
+
+						<!-- ===== MIS EVALUACIONES ===== -->
+						<section class="ev-view" id="view-lista" aria-labelledby="lista-title">
+							<div class="ev-panel">
+								<div class="ev-head"><h3 id="lista-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;">Mis Evaluaciones</h3></div>
+								<div class="ev-stack" id="lista-contenido"><p class="ev-loading">Cargando…</p></div>
+							</div>
+						</section>
+
+						<!-- ===== PRESENTAR LA EVALUACIÓN ===== -->
+						<section class="ev-view" id="view-quiz" aria-label="Evaluación en curso" hidden>
+							<div class="qz" id="quiz-contenido"></div>
+						</section>
+
+						<!-- ===== RESULTADO ===== -->
+						<section class="ev-view" id="view-resultado" aria-label="Resultado" hidden>
+							<div class="qz" id="resultado-contenido"></div>
+						</section>
 					</div>
-
-					<div class="mq-list" id="mqList">
-						<!-- Question #1 - To answer -->
-						<article class="mq-card" data-status="pending">
-							<div class="mq-card-head">
-								<span class="mq-card-num">Question #1</span>
-								<span class="mq-card-sep">|</span>
-								<span class="mq-card-cat">Category: Didactics</span>
-							</div>
-							<p class="mq-card-question">What are the main challenges of inclusive education in Colombia?</p>
-							<textarea class="mq-answer-input" placeholder="Write your answer here..."></textarea>
-							<div class="mq-card-actions">
-								<button type="button" class="mq-btn mq-btn--send">Send Answer</button>
-								<button type="button" class="mq-btn mq-btn--draft">Save Draft</button>
-							</div>
-						</article>
-
-						<!-- Question #2 - Answered -->
-						<article class="mq-card" data-status="answered" data-num="Question #2" data-category="Category: Didactics" data-question="What are the main challenges of inclusive education in Colombia?" data-observation="Excellent focus on the key components. Make sure to detail further how the assessment criteria are integrated into daily activities.">
-							<div class="mq-card-head">
-								<span class="mq-card-num">Question #2</span>
-								<span class="mq-card-sep">|</span>
-								<span class="mq-card-cat">Category: Didactics</span>
-							</div>
-							<p class="mq-card-question">What are the main challenges of inclusive education in Colombia?</p>
-							<div class="mq-answer-row">
-								<p class="mq-answer-text">Weekly planning must integrate clear objectives and structured assessment activities...</p>
-								<button type="button" class="mq-btn mq-btn--history">View History</button>
-							</div>
-							<p class="mq-status-line">Answered (<button type="button" class="mq-view-link">View</button>)</p>
-							<div class="mq-card-actions">
-								<button type="button" class="mq-btn mq-btn--send">Send Answer</button>
-								<button type="button" class="mq-btn mq-btn--draft">Save Draft</button>
-							</div>
-						</article>
-					</div>
-				</section>
-
-				<!-- DETAIL PANEL: TUTOR OBSERVATION -->
-				<section class="mq-detail-panel" id="mq-detail-panel" aria-labelledby="mq-detail-title" style="display: none;">
-					<h2 id="mq-detail-title" class="questions-title">My Practice Questions - Answer</h2>
-					<article class="mq-card">
-						<div class="mq-card-head">
-							<span class="mq-card-num" id="mqDetailNum">Question #2</span>
-							<span class="mq-card-sep">|</span>
-							<span class="mq-card-cat" id="mqDetailCategory">Category: Didactics</span>
-						</div>
-						<p class="mq-card-question" id="mqDetailQuestion">What are the main challenges of inclusive education in Colombia?</p>
-						<div class="mq-observation">
-							<h4>Tutor Observation</h4>
-							<p id="mqDetailObservation">Excellent focus on the key components. Make sure to detail further how the assessment criteria are integrated into daily activities.</p>
-						</div>
-					</article>
-					<button type="button" class="mq-back-circle" id="mqDetailBack" aria-label="Back to My Practice Questions">
-						<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-					</button>
 				</section>
 
 				<!-- EVIDENCE PANEL (shown after entering an Activity) -->
@@ -295,8 +344,6 @@
 					<div class="feedback-section">
 						<h3 class="feedback-title">Feedback</h3>
 
-
-
 						<!-- Feedback Template (Hidden) -->
 						<div class="feedback-card" style="display: none;">
 							<div class="feedback-card-body">
@@ -321,8 +368,6 @@
 				</section>
 			</div>
 		</section>
-
-
 
 		<!-- TAB - PROFILE-->
 		<section class="app-content" id="profile" style="display: none;">
@@ -472,5 +517,7 @@
 	<script src="../js/core/panels.js"></script>
 	<script src="../js/pages/student.js"></script>
 	<script src="../js/pages/student.api.js"></script>
+	<script src="../js/core/ui.js"></script>
+	<script src="../js/pages/evaluacion-estudiante.js"></script>
 </body>
 </html>

@@ -21,13 +21,6 @@ const PRACTICE = {
   tutor_academico: ['numDocumento', 'tipoDocumento', 'nombre', 'apellido', ['correoinst', 'correinst'], 'contrasena', 'googleId', 'estado', 'idprograma']
 };
 
-const EVALUATION = {
-  pregunta: ['idpregunta', 'enunciado', 'tema', 'tipopractica', 'tipopregunta', 'valor', 'docautor', 'fecha'],
-  evaluacion: ['idevaluacion', 'idpractica', 'fecha'],
-  respuesta: ['idrespuesta', 'idevaluacion', 'idpregunta', 'texto', 'estado', 'fecha'],
-  retropregunta: ['idretro', 'idrespuesta', 'docautor', 'texto', 'fecha']
-};
-
 /** Prints every missing table / column of `database` and returns how many problems were found. */
 async function check(database, expected) {
   const { rows } = await postgres.pool(database).query(
@@ -57,10 +50,5 @@ async function check(database, expected) {
   const practiceProblems = await check('practice', PRACTICE);
   if (!practiceProblems) console.log('  ✓ Everything matches the expected schema');
 
-  console.log('EVALUATION database (DATABASE_URL_EVALUATION):');
-  const evaluationProblems = await check('evaluation', EVALUATION);
-  if (!evaluationProblems) console.log('  ✓ Everything matches');
-  else console.log('  → If tables are missing, run: npm run schema:apply. If a table exists with different columns, share its structure.');
-
-  process.exitCode = practiceProblems || evaluationProblems ? 1 : 0;
+  process.exitCode = practiceProblems ? 1 : 0;
 })().catch((err) => { console.error(err.message); process.exitCode = 1; }).finally(() => postgres.close());
