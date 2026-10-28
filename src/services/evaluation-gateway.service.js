@@ -40,7 +40,10 @@ const ROUTES = Object.freeze({
   director: [
     route('GET', '/resumen', undefined, 'addDirectory'),
     route('GET', '/evaluaciones', 'directorQuery', 'addDirectory'),
-    route('GET', `/evaluaciones/${ID}`, undefined, 'addDirectory')
+    route('GET', `/evaluaciones/${ID}`, undefined, 'addDirectory'),
+    route('GET', `/evaluaciones/${ID}/preguntas`, undefined, 'addDirectory'),
+    route('GET', `/evaluaciones/${ID}/intentos`, undefined, 'addDirectory'),
+    route('GET', `/intentos/${ID}`, undefined, 'addDirectory')
   ],
   meta: [route('GET', '/health')]
 });
@@ -192,13 +195,18 @@ class EvaluationGatewayService {
 
     const { byId, tutors, students } = await this.#directory();
     const pick = (ids, source) => Object.fromEntries([...ids].filter((id) => source.has(id)).map((id) => [id, source.get(id)]));
+    const directorio = {
+      practicas: pick(wanted.id_practica, byId),
+      tutores: pick(wanted.id_tutor, tutors),
+      estudiantes: pick(wanted.id_estudiante, students)
+    };
+    if (Array.isArray(body)) {
+      body.directorio = directorio;
+      return body;
+    }
     return {
       ...body,
-      directorio: {
-        practicas: pick(wanted.id_practica, byId),
-        tutores: pick(wanted.id_tutor, tutors),
-        estudiantes: pick(wanted.id_estudiante, students)
-      }
+      directorio
     };
   }
 

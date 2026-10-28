@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     selectorBox.id = 'practice-selector-box';
     selectorBox.className = 'practice-field';
     selectorBox.style.marginBottom = '24px';
-    selectorBox.innerHTML = '<label for="practice-selector">Assigned practice (student)</label>' +
+    selectorBox.innerHTML = '<label for="practice-selector">Assigned student</label>' +
         '<div class="cp-input-wrap">' +
-        '<select id="practice-selector"></select>' +
+        '<select id="practice-selector" aria-label="Assigned student" data-sheet-title="Assigned student"></select>' +
         '<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>' +
         '</div>';
     practiceForm.insertAdjacentElement('beforebegin', selectorBox);

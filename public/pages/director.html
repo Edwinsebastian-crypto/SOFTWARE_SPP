@@ -405,9 +405,109 @@
 						</button>
 						<h2 id="questions-title" class="questions-title">Questions Section</h2>
 					</div>
-					<p style="padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: 0.95rem;">
-						No content yet
-					</p>
+
+					<div class="ev-wrapper" style="padding: 10px 0;">
+						<div id="dir-q-banner"></div>
+
+						<!-- ===== 1. LISTA DE EVALUACIONES DE LA PRÁCTICA ===== -->
+						<section class="ev-view" id="dir-q-view-lista" aria-labelledby="dir-q-lista-title">
+							<div class="ev-panel">
+								<div class="ev-head">
+									<div style="margin-right:auto;min-width:0">
+										<h3 id="dir-q-lista-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;">Evaluaciones de la Práctica</h3>
+										<p class="ev-sub" id="dir-q-lista-contexto">Cargando contexto…</p>
+									</div>
+									<span class="dv-readonly" title="Consulta de solo lectura: el director no crea, modifica ni califica evaluaciones.">
+										<i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura
+									</span>
+									<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="dir-q-btn-recargar" title="Recargar evaluaciones">
+										<i class="fa-solid fa-rotate" aria-hidden="true"></i>Actualizar
+									</button>
+								</div>
+
+								<!-- KPI Summary Cards for Evaluations in this practice -->
+								<div class="ev-stats" id="dir-q-list-stats" style="margin-bottom: 20px;">
+									<div class="ev-stat">
+										<b id="dir-kpi-total-evals">0</b>
+										<span>Evaluaciones</span>
+									</div>
+									<div class="ev-stat">
+										<b id="dir-kpi-assigned">0</b>
+										<span>Asignadas</span>
+									</div>
+									<div class="ev-stat">
+										<b id="dir-kpi-in-progress">0</b>
+										<span>En curso</span>
+									</div>
+									<div class="ev-stat">
+										<b id="dir-kpi-avg-grade">—</b>
+										<span>Promedio</span>
+									</div>
+								</div>
+
+								<div class="ev-stack" id="dir-q-lista-contenido">
+									<p class="ev-loading">Cargando evaluaciones…</p>
+								</div>
+							</div>
+						</section>
+
+						<!-- ===== 2. DETALLE DE EVALUACIÓN (PREGUNTAS DEL TUTOR + INTENTOS DEL ESTUDIANTE) ===== -->
+						<section class="ev-view" id="dir-q-view-eval" aria-labelledby="dir-q-eval-title" hidden>
+							<div class="ev-panel">
+								<div class="ev-head">
+									<button type="button" class="ev-back" id="dir-q-btn-volver-lista" aria-label="Volver a la lista de evaluaciones">
+										<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+									</button>
+									<div style="margin-right:auto;min-width:0">
+										<h3 id="dir-q-eval-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;"></h3>
+										<div class="ev-badges" id="dir-q-eval-badges" style="margin-top:8px"></div>
+									</div>
+									<span class="dv-readonly"><i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura</span>
+								</div>
+
+								<p id="dir-q-eval-desc" class="ev-sub" style="margin:-10px 0 16px 0; font-size: 14px; line-height: 1.5; color: var(--text-primary);"></p>
+
+								<!-- Stats of this evaluation -->
+								<div class="ev-stats" id="dir-q-eval-stats"></div>
+
+								<!-- Tabs: Preguntas del Tutor / Respuestas e Intentos del Estudiante -->
+								<div class="ev-tabs" role="tablist" aria-label="Pestañas de la evaluación">
+									<button type="button" class="ev-tab" role="tab" id="dir-q-tab-preguntas" aria-selected="true">
+										<i class="fa-regular fa-circle-question" style="margin-right:6px"></i>Preguntas del Tutor
+									</button>
+									<button type="button" class="ev-tab" role="tab" id="dir-q-tab-resultados" aria-selected="false">
+										<i class="fa-solid fa-user-graduate" style="margin-right:6px"></i>Respuestas e Intentos
+									</button>
+								</div>
+
+								<!-- Tab Panel: Preguntas creadas por el tutor -->
+								<div id="dir-q-panel-preguntas" role="tabpanel"></div>
+
+								<!-- Tab Panel: Intentos presentados por el estudiante -->
+								<div id="dir-q-panel-resultados" role="tabpanel" hidden></div>
+							</div>
+						</section>
+
+						<!-- ===== 3. DETALLE DE UN INTENTO (RESPUESTAS DEL ESTUDIANTE + NOTA + RETROALIMENTACIÓN) ===== -->
+						<section class="ev-view" id="dir-q-view-intento" aria-labelledby="dir-q-intento-title" hidden>
+							<div class="ev-panel">
+								<div class="ev-head">
+									<button type="button" class="ev-back" id="dir-q-btn-volver-eval" aria-label="Volver a la evaluación">
+										<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+									</button>
+									<div style="margin-right:auto;min-width:0">
+										<h3 id="dir-q-intento-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;"></h3>
+										<div class="ev-badges" id="dir-q-intento-badges" style="margin-top:8px"></div>
+									</div>
+									<span class="dv-readonly"><i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura</span>
+								</div>
+
+								<div class="ev-stack" id="dir-q-intento-contenido">
+									<p class="ev-loading">Cargando respuestas del intento…</p>
+								</div>
+							</div>
+						</section>
+					</div>
 				</section>
 
 				<!-- EVIDENCE PANEL (shown after entering an Activity) -->
@@ -892,6 +992,7 @@
 								<option value="" disabled selected>Select a status</option>
 								<option value="">All</option>
 								<option value="active">Active</option>
+								<option value="pending">Pending</option>
 								<option value="inactive">Inactive</option>
 							</select>
 							<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>
@@ -1688,5 +1789,6 @@
 	<script src="../js/pages/director.js"></script>
 	<script src="../js/pages/users.js"></script>
 	<script src="../js/pages/director.api.js"></script>
+	<script src="../js/pages/evaluacion-director.js"></script>
 </body>
 </html>

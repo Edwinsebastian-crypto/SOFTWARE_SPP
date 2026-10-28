@@ -82,6 +82,9 @@
         root.innerHTML = `
             <div class="cp-select-sheet-backdrop" data-cp-select-dismiss tabindex="-1" aria-hidden="true"></div>
             <div class="cp-select-sheet" role="dialog" aria-modal="true" aria-labelledby="cpSelectSheetTitle" tabindex="-1">
+                <button type="button" class="cp-select-sheet-close" id="cpSelectSheetClose" aria-label="Close">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
                 <div class="cp-select-sheet-handle" aria-hidden="true"></div>
                 <p class="cp-select-sheet-title" id="cpSelectSheetTitle"></p>
                 <div class="cp-select-sheet-list"></div>
@@ -89,6 +92,14 @@
         document.body.appendChild(root);
 
         root.querySelector('[data-cp-select-dismiss]').addEventListener('click', closeSheet);
+        const closeBtn = root.querySelector('.cp-select-sheet-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeSheet();
+            });
+        }
         root.querySelector('.cp-select-sheet').addEventListener('click', (e) => e.stopPropagation());
 
         sheet = {
@@ -122,19 +133,48 @@
     }
 
     function fieldLabel(select) {
+        if (!select) return 'Select';
+        if (select.id === 'practice-selector') return 'Assigned student';
+        const dataTitle = select.getAttribute('data-sheet-title');
+        if (dataTitle) return dataTitle;
         const ariaLabel = select.getAttribute('aria-label');
         if (ariaLabel) return ariaLabel;
-        const field = select.closest('.cp-field, .practice-field, .cp-input-wrap, .dv-filter-wrap');
+        if (select.id) {
+            const forLabel = document.querySelector(`label[for="${select.id}"]`);
+            if (forLabel && forLabel.textContent.trim()) return forLabel.textContent.trim();
+        }
+        const field = select.closest('.cp-field, .practice-field, .dv-filter-wrap');
         const label = field?.querySelector('label');
         if (label?.textContent) return label.textContent.trim();
+        const parentField = select.closest('.cp-input-wrap')?.parentElement;
+        const parentLabel = parentField?.querySelector('label');
+        if (parentLabel?.textContent) return parentLabel.textContent.trim();
         const first = select.options[0];
-        return first ? first.text.trim() : 'Select';
+        return (first && !first.value) ? first.text.trim() : 'Select';
+    }
+
+    function updateSelectedOptions(select) {
+        if (!select) return;
+        const val = String(select.value ?? '');
+        const wrapper = select.closest('.cp-input-wrap') || select.parentElement;
+        const container = wrapper ? wrapper.querySelector('.custom-select-container') : null;
+        if (container) {
+            container.querySelectorAll('.custom-option').forEach((opt) => {
+                opt.classList.toggle('selected', String(opt.dataset.value ?? '') === val);
+            });
+        }
+        if (sheet && !sheet.root.hidden) {
+            sheet.list.querySelectorAll('.custom-option').forEach((opt) => {
+                opt.classList.toggle('selected', String(opt.dataset.value ?? '') === val);
+            });
+        }
     }
 
     function applyValue(select, trigger, option) {
         select.value = option.value;
         trigger.textContent = option.text;
         trigger.classList.toggle('is-placeholder', !!option.disabled);
+        updateSelectedOptions(select);
         closeAll();
         select.dispatchEvent(new Event('change', { bubbles: true }));
     }
@@ -156,7 +196,7 @@
             item.className = 'custom-option';
             item.textContent = option.text;
             item.dataset.value = option.value;
-            if (select.value === option.value) item.classList.add('selected');
+            if (String(select.value) === String(option.value)) item.classList.add('selected');
 
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -220,6 +260,7 @@
                 item.setAttribute('role', 'option');
                 item.textContent = option.text;
                 item.dataset.value = option.value;
+                if (String(select.value) === String(option.value)) item.classList.add('selected');
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
                     applyValue(select, trigger, option);
@@ -253,6 +294,7 @@
                 closeAll();
 
                 if (!wasOpen) {
+                    updateSelectedOptions(select);
                     optionsList.classList.add('open');
                     if (chevron) chevron.style.transform = 'rotate(180deg)';
                     lockBackgroundScroll(optionsList);
@@ -291,6 +333,7 @@
                 trigger.classList.toggle('is-placeholder', !!first.disabled);
             }
             if (chevron) chevron.style.transform = 'rotate(0deg)';
+            updateSelectedOptions(select);
         });
     }
 
@@ -312,9 +355,11 @@
             }
         }
 
-        if (!trigger || !option) return;
-        trigger.textContent = option.text;
-        trigger.classList.toggle('is-placeholder', !!option.disabled);
+        if (trigger && option) {
+            trigger.textContent = option.text;
+            trigger.classList.toggle('is-placeholder', !!option.disabled);
+        }
+        updateSelectedOptions(select);
     }
 
     /** The options changed after init(): redraw the visual list from the <select>. */
@@ -323,9 +368,11 @@
         if (!container) return;
         const trigger = container.querySelector('.custom-select-trigger');
         const list = container.querySelector('.custom-options');
-        const first = select.options[0];
-        trigger.textContent = first ? first.text : '';
-        trigger.classList.toggle('is-placeholder', !!(first && first.disabled));
+        const selectedOption = select.options[select.selectedIndex] || select.options[0];
+        if (trigger && selectedOption) {
+            trigger.textContent = selectedOption.text;
+            trigger.classList.toggle('is-placeholder', !!selectedOption.disabled);
+        }
         
         if (select.disabled) {
             select.parentElement.classList.add('is-disabled');
@@ -343,14 +390,10 @@
             item.setAttribute('role', 'option');
             item.textContent = option.text;
             item.dataset.value = option.value;
+            if (String(select.value) === String(option.value)) item.classList.add('selected');
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
-                select.value = option.value;
-                trigger.textContent = option.text;
-                trigger.classList.remove('is-placeholder');
-                select.dispatchEvent(new Event('change', { bubbles: true }));
-                list.classList.remove('is-open', 'open', 'show');
-                container.classList.remove('is-open', 'open', 'show');
+                applyValue(select, trigger, option);
             });
             list.appendChild(item);
         });
@@ -363,6 +406,7 @@
             empty.textContent = 'No records available';
             list.appendChild(empty);
         }
+        updateSelectedOptions(select);
     }
 
     /** Empties a <select> and fills it with options; keeps the placeholder (first, disabled option). */

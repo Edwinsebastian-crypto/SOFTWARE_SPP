@@ -234,6 +234,9 @@
             resumen: () => evalReq('GET', '/director/resumen'),
             listar: (q) => evalReq('GET', '/director/evaluaciones', undefined, q),
             detalle: (id) => evalReq('GET', `/director/evaluaciones/${id}`),
+            obtenerEvaluacion: (id) => evalReq('GET', `/director/evaluaciones/${id}/preguntas`),
+            listarIntentos: (idEval) => evalReq('GET', `/director/evaluaciones/${idEval}/intentos`),
+            verIntento: (id) => evalReq('GET', `/director/intentos/${id}`),
         },
 
         estudiante: {

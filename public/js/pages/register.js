@@ -391,7 +391,11 @@ document.addEventListener('DOMContentLoaded', () => {
             $('reg-form-desc').textContent = 'Your request has been received by the institutional software.';
             doneBox.hidden = false;
         } catch (err) {
-            errorBanner.textContent = err.message || 'Could not complete registration. Please try again.';
+            let msg = err.message || 'Could not complete registration. Please try again.';
+            if (/already exists|already has an access account|document.*not available/i.test(msg)) {
+                msg = 'The document or email entered is not available for registration';
+            }
+            errorBanner.textContent = msg;
             submitButton.disabled = false;
         }
     });

@@ -580,9 +580,9 @@ document.addEventListener('DOMContentLoaded', () => {
     selectorBox.id = 'practice-selector-box';
     selectorBox.className = 'practice-field';
     selectorBox.style.marginBottom = '24px';
-    selectorBox.innerHTML = '<label for="practice-selector">Assigned practice (student)</label>' +
+    selectorBox.innerHTML = '<label for="practice-selector">Assigned student</label>' +
         '<div class="cp-input-wrap">' +
-        '<select id="practice-selector"></select>' +
+        '<select id="practice-selector" aria-label="Assigned student" data-sheet-title="Assigned student"></select>' +
         '<i class="fa-solid fa-chevron-down right-icon" aria-hidden="true"></i>' +
         '</div>';
     $('.practice-form', practicePanel).insertAdjacentElement('beforebegin', selectorBox);
@@ -640,6 +640,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (badge) { badge.title = practice.status; badge.textContent = practice.status; badge.style.backgroundColor = STATUS_COLORS[practice.status] || ''; }
         
         currentDirectorPractice = practice;
+        window.SPP_DIRECTOR = window.SPP_DIRECTOR || {};
+        window.SPP_DIRECTOR.currentPractice = practice;
+        window.dispatchEvent(new CustomEvent('spp:director-practice-changed', { detail: { practice } }));
         updateDirectorLogbookHero(practice.logbook);
         await refreshDirectorActivities();
 
@@ -655,6 +658,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let currentDirectorPractice = null;
+    window.SPP_DIRECTOR = window.SPP_DIRECTOR || {};
+    window.SPP_DIRECTOR.getCurrentPractice = () => currentDirectorPractice;
     let directorActivitiesList = [];
     let activeDirectorActivityFilter = 'all';
     let directorActivitySearchQuery = '';
@@ -1307,6 +1312,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const questionsPanel = document.getElementById('questions-panel');
             if (questionsPanel) questionsPanel.style.display = 'block';
             window.scrollTo(0, 0);
+            if (window.SPP_EVAL_DIRECTOR && typeof window.SPP_EVAL_DIRECTOR.abrir === 'function') {
+                window.SPP_EVAL_DIRECTOR.abrir();
+            }
         });
         dirQBtn.dataset.directorBound = 'true';
     }
@@ -1318,6 +1326,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (questionsPanel) questionsPanel.style.display = 'none';
             if (panelLogbook) panelLogbook.style.display = 'block';
             window.scrollTo(0, 0);
+            if (window.SPP_EVAL_DIRECTOR && typeof window.SPP_EVAL_DIRECTOR.volverALista === 'function') {
+                window.SPP_EVAL_DIRECTOR.volverALista();
+            }
         });
         dirQBack.dataset.directorBound = 'true';
     }

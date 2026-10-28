@@ -47,8 +47,8 @@ class UserService {
   /** @param {object} input validated by parseCreateUser */
   async create(actor, input) {
     const programId = await this.#resolveProgramId(input.role, input.programName);
-    if (await this.userRepository.findByDocument(input.documentNumber)) throw HttpError.conflict('A user with that document already exists');
-    if (await this.userRepository.findByEmail(input.email)) throw HttpError.conflict('A user with that e-mail already exists');
+    if (await this.userRepository.findByDocument(input.documentNumber)) throw HttpError.conflict('The document or email entered is not available for registration');
+    if (await this.userRepository.findByEmail(input.email)) throw HttpError.conflict('The document or email entered is not available for registration');
 
     const admin = this.identity.adminClient();
     const { data, error } = await admin.auth.admin.createUser({
@@ -57,7 +57,7 @@ class UserService {
       user_metadata: { firstName: input.firstName, lastName: input.lastName }
     });
     if (error) {
-      if (ALREADY_EXISTS_PATTERN.test(error.message)) throw HttpError.conflict('That e-mail already has an access account');
+      if (ALREADY_EXISTS_PATTERN.test(error.message)) throw HttpError.conflict('The document or email entered is not available for registration');
       throw HttpError.badRequest(`Could not create the account: ${error.message}`);
     }
     try {

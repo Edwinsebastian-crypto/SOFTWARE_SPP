@@ -746,6 +746,18 @@ body.dark-theme .ev-modal-close {
   margin-bottom: 20px;
 }
 
+@media (max-width: 900px) {
+  .ev-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .ev-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
 .ev-stat {
   background: var(--input-bg);
   border-radius: 14px;

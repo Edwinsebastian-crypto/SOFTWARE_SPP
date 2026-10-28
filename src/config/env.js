@@ -53,7 +53,7 @@ class Env {
 
   /** Evaluation microservice (FastAPI). Empty = the Evaluations feature is disabled. */
   get evaluationServiceUrl() {
-    return this.get('EVALUATION_SERVICE_URL', '');
+    return this.get('EVALUATION_SERVICE_URL', 'http://127.0.0.1:8000');
   }
 
   /** Secret shared with the evaluation service (its JWT_SECRET). */

@@ -143,10 +143,19 @@ function build(reply = jsonResponse(200, { ok: true })) {
   await test('only GET reaches /director/*; any other verb or path is a 404 and never reaches the service', async () => {
     const { gateway, calls } = buildDirector(jsonResponse(200, overview));
     for (const [method, path] of [['POST', '/evaluaciones'], ['PATCH', '/evaluaciones/1'], ['DELETE', '/evaluaciones/1'], ['PUT', '/resumen'],
-      ['GET', '/admin'], ['GET', '/evaluaciones/abc'], ['GET', '/evaluaciones/1/intentos'], ['GET', '/intentos/3'], ['GET', '/evaluaciones/1/../x']]) {
+      ['GET', '/admin'], ['GET', '/evaluaciones/abc'], ['GET', '/evaluaciones/1/no-existe'], ['GET', '/respuestas/3'], ['GET', '/evaluaciones/1/../x']]) {
       await rejects(gateway.forward(director, { role: 'director', method, path, body: {} }), 404);
     }
     assert.equal(calls.length, 0);
+  });
+  await test('director can read questions, attempts and attempt details', async () => {
+    const { gateway, calls } = buildDirector(jsonResponse(200, { ok: true, id_estudiante: 'E-9' }));
+    for (const path of ['/evaluaciones/1/preguntas', '/evaluaciones/1/intentos', '/intentos/3']) {
+      const res = await gateway.forward(director, { role: 'director', method: 'GET', path });
+      assert.equal(res.status, 200);
+      assert.deepEqual(res.body.directorio.estudiantes, { 'E-9': 'Sofía Ruiz' });
+    }
+    assert.equal(calls.length, 3);
   });
   await test('overview is forwarded to /api/v1/director/resumen with a DIRECTOR token', async () => {
     const { gateway, calls } = buildDirector(jsonResponse(200, overview));

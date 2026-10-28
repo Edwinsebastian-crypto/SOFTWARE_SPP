@@ -151,6 +151,11 @@ body.reg-page-body {
 .reg-done-card .cp-btn {
   text-decoration: none;
   min-width: 200px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  line-height: 1;
 }
 
 /* Error message box */

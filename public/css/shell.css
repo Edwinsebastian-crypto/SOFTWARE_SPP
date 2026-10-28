@@ -872,6 +872,11 @@ input:-webkit-autofill:active {
     cursor: pointer;
     transition: transform 0.2s ease, opacity 0.2s ease;
     border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    line-height: 1;
  }
 
  .cp-btn-save {
@@ -1070,12 +1075,51 @@ input:-webkit-autofill:active {
  }
 
  .cp-select-sheet-title {
-    margin: 0 20px 8px;
+    margin: 0 48px 8px 20px;
     font-family: var(--font-serif);
     font-size: 16px;
     font-weight: 700;
     color: #1a4231;
     flex-shrink: 0;
+ }
+
+ .cp-select-sheet-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(26, 66, 49, 0.08);
+    color: #1a4231;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+ }
+
+ .cp-select-sheet-close:hover {
+    background: rgba(26, 66, 49, 0.16);
+    color: #112d21;
+ }
+
+ .cp-select-sheet-close:active {
+    transform: scale(0.92);
+ }
+
+ body.dark-theme .cp-select-sheet-close {
+    background: rgba(0, 0, 0, 0.12);
+    color: #1a1a1a;
+ }
+
+ body.dark-theme .cp-select-sheet-close:hover {
+    background: rgba(0, 0, 0, 0.22);
  }
 
  .cp-select-sheet-list {
@@ -1206,6 +1250,11 @@ input:-webkit-autofill:active {
     cursor: pointer;
     transition: transform 0.2s ease, opacity 0.2s ease;
     border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    line-height: 1;
  }
 
  .cp-btn-save {
@@ -1404,7 +1453,7 @@ input:-webkit-autofill:active {
  }
 
  .cp-select-sheet-title {
-    margin: 0 20px 8px;
+    margin: 0 48px 8px 20px;
     font-family: var(--font-serif);
     font-size: 16px;
     font-weight: 700;
