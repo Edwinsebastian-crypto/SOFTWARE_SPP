@@ -283,6 +283,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Floating tooltip for collapsed sidebar (estilo verde platino) ---
+    if (sidebar && shell) {
+        let tooltip = document.getElementById('sidebar-collapsed-tooltip');
+        if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.id = 'sidebar-collapsed-tooltip';
+            tooltip.className = 'sidebar-tooltip';
+            tooltip.setAttribute('role', 'tooltip');
+            tooltip.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(tooltip);
+        }
+
+        function showTooltip(el) {
+            if (!shell.classList.contains('sidebar-collapsed') || isMobileLayout()) {
+                hideTooltip();
+                return;
+            }
+            let label = el.querySelector('span')?.textContent?.replace(/\s+/g, ' ').trim();
+            if (!label) {
+                if (el.classList.contains('sidebar-toggle')) {
+                    label = 'Menú';
+                } else {
+                    label = el.getAttribute('aria-label') || el.getAttribute('title') || '';
+                }
+            }
+            if (!label) return;
+
+            tooltip.textContent = label;
+            const rect = el.getBoundingClientRect();
+            const left = Math.round(rect.right + 12);
+            const top = Math.round(rect.top + (rect.height / 2));
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            tooltip.classList.add('is-visible');
+        }
+
+        function hideTooltip() {
+            if (tooltip) {
+                tooltip.classList.remove('is-visible');
+            }
+        }
+
+        const menuItems = sidebar.querySelectorAll('.app-nav-link, .app-logout, .sidebar-toggle');
+        menuItems.forEach((item) => {
+            item.addEventListener('mouseenter', () => showTooltip(item));
+            item.addEventListener('mouseleave', hideTooltip);
+            item.addEventListener('focus', () => showTooltip(item));
+            item.addEventListener('blur', hideTooltip);
+            item.addEventListener('click', hideTooltip);
+        });
+
+        sidebar.addEventListener('mouseleave', hideTooltip);
+        window.addEventListener('scroll', hideTooltip, { passive: true });
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', hideTooltip);
+        }
+    }
+
 });
 
 // On mobile only .app-shell may scroll. If anything (scrollIntoView, focus, autofill...)

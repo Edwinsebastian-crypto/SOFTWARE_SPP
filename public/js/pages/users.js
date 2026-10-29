@@ -819,7 +819,7 @@
         renderList();
     });
 
-    $('#um-btn-new').addEventListener('click', () => {
+    $('#um-btn-new')?.addEventListener('click', () => {
         clearForm();
         openTab('um-panel-register');
     });

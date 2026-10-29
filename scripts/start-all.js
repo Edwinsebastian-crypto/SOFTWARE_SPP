@@ -120,6 +120,7 @@ function run(label, color, command, args, cwd) {
     shutdown(code || 0);
   });
   children.push(child);
+  return child;
 }
 
 function killChild(child) {
@@ -146,7 +147,29 @@ function shutdown(code = 0) {
 process.on('SIGINT', () => shutdown(0));
 process.on('SIGTERM', () => shutdown(0));
 
-if (evalRunner.type === 'python') {
-  run('evaluation', '36', evalRunner.bin, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'], SERVICE_DIR);
+let monolithStarted = false;
+function startMonolith() {
+  if (monolithStarted) return;
+  monolithStarted = true;
+  run('monolith  ', '32', process.execPath, ['--watch', '--watch-path=src', 'src/server.js'], ROOT);
 }
-run('monolith  ', '32', process.execPath, ['--watch', 'src/server.js'], ROOT);
+
+if (evalRunner.type === 'python') {
+  const evalChild = run('evaluation', '36', evalRunner.bin, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'], SERVICE_DIR);
+  
+  const onData = (chunk) => {
+    const s = String(chunk);
+    if (s.includes('Uvicorn running on') || s.includes('Application startup complete')) {
+      evalChild.stdout.off('data', onData);
+      evalChild.stderr.off('data', onData);
+      startMonolith();
+    }
+  };
+  evalChild.stdout.on('data', onData);
+  evalChild.stderr.on('data', onData);
+
+  // Fallback si por alguna razón no coincide el texto
+  setTimeout(startMonolith, 3000);
+} else {
+  startMonolith();
+}

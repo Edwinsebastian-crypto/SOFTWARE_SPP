@@ -106,6 +106,7 @@ class EvaluationGatewayService {
   #translate({ status, body }) {
     if (status < 400) return { status, body };
     if (status === 401) throw HttpError.badGateway('The evaluation service rejected the session (check EVALUATION_SERVICE_SECRET)');
+    if (status === 502 || status === 503) throw HttpError.badGateway(errorMessage(body, status));
     if (status >= 500) throw HttpError.badGateway('The evaluation service failed');
     throw new HttpError(status, errorMessage(body, status));
   }
