@@ -23,6 +23,7 @@ const PracticeTypeRepository = require('./repositories/practice-type.repository'
 const IndicatorRepository = require('./repositories/indicator.repository');
 const AuditRepository = require('./repositories/audit.repository');
 const NotificationRepository = require('./repositories/notification.repository');
+const InternalEvidenceRepository = require('./repositories/internal-evidence.repository');
 
 const AuditService = require('./services/audit.service');
 const NotificationService = require('./services/notification.service');
@@ -49,6 +50,7 @@ const FeedbackController = require('./controllers/feedback.controller');
 const ReportController = require('./controllers/report.controller');
 const EvaluationController = require('./controllers/evaluation.controller');
 const PageController = require('./controllers/page.controller');
+const InternalController = require('./controllers/internal.controller');
 
 function createContainer() {
   // ----- repositories -----
@@ -62,6 +64,7 @@ function createContainer() {
   const indicatorRepository = new IndicatorRepository();
   const auditRepository = new AuditRepository();
   const notificationRepository = new NotificationRepository();
+  const internalEvidenceRepository = new InternalEvidenceRepository();
 
   // ----- services -----
   const auditService = new AuditService({ auditRepository });
@@ -96,6 +99,7 @@ function createContainer() {
     feedback: new FeedbackController({ feedbackService }),
     report: new ReportController({ reportService }),
     evaluation: new EvaluationController({ evaluationGatewayService }),
+    internal: new InternalController({ repository: internalEvidenceRepository }),
     page: new PageController({ resolveUser: authenticate.resolveUser })
   };
 
@@ -108,7 +112,7 @@ function createContainer() {
     },
     repositories: {
       userRepository, practiceRepository, activityRepository, evidenceRepository, feedbackRepository, institutionRepository,
-      practiceTypeRepository, indicatorRepository, auditRepository, notificationRepository
+      practiceTypeRepository, indicatorRepository, auditRepository, notificationRepository, internalEvidenceRepository
     }
   };
 }

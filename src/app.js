@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const env = require('./config/env');
 const { createContainer } = require('./container');
-const { createApiRouter, createPagesRouter } = require('./routes');
+const { createApiRouter, createPagesRouter, createInternalRouter } = require('./routes');
 const { securityHeaders } = require('./middlewares/security.middleware');
 const { apiNotFound, errorHandler } = require('./middlewares/error.middleware');
 
@@ -25,6 +25,7 @@ function createApp(container = createContainer()) {
 
   // Pages first, so /pages/*.html is never served without a session
   app.use(createPagesRouter(container));
+  app.use('/api/internal', createInternalRouter(container));
   app.use('/api', createApiRouter(container));
 
   // Public configuration for the views (domain of the institutional e-mail addresses)

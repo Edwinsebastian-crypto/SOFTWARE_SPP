@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             notice.textContent = '';
 
             submitButton.disabled = true;
+            document.body.style.cursor = 'wait';
             try {
                 const result = await SPP.request('/api/auth/login', {
                     method: 'POST',
@@ -48,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 notice.textContent = err.message;
                 submitButton.disabled = false;
+                document.body.style.cursor = '';
             }
         });
     }

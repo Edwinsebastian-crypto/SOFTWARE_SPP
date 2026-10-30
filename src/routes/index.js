@@ -11,6 +11,7 @@ const createPracticesRoutes = require('./practices.routes');
 const createActivitiesRoutes = require('./activities.routes');
 const createReportsRoutes = require('./reports.routes');
 const createEvaluationsRoutes = require('./evaluations.routes');
+const createInternalRoutes = require('./internal.routes');
 
 /**
  * JSON API mounted at /api.
@@ -41,4 +42,9 @@ function createPagesRouter({ controllers: { page }, authenticate }) {
   return router;
 }
 
-module.exports = { createApiRouter, createPagesRouter };
+/** Internal machine-to-machine API for other microservices (authenticated via shared secret). */
+function createInternalRouter({ controllers: { internal } }) {
+  return createInternalRoutes({ internalController: internal });
+}
+
+module.exports = { createApiRouter, createPagesRouter, createInternalRouter };

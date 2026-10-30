@@ -323,26 +323,69 @@ input:-webkit-autofill:active {
 }
 
 .btn-submit {
+  position: relative;
   width: 100%;
   height: 62px;
   display: flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  gap: 145px;
-  padding: 0 25px;
+  padding: 0 54px;
   color: #fff;
-  border: 2px solid #a64c2f;
-  border-radius: 15px;
-  background: linear-gradient(90deg, #319a76, #0d3829 60%);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, .2);
-  font: 700 26px var(--font-serif);
-  cursor: pointer
+  border: none;
+  outline: none;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #01764d 0%, #025738 52%, #05261a 100%);
+  box-shadow: 0 10px 24px -4px rgba(2, 40, 26, 0.42), 0 3px 8px -2px rgba(0, 0, 0, 0.2);
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s;
 }
 
+.btn-submit span {
+  text-align: center;
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -4px rgba(2, 40, 26, 0.52), 0 5px 12px -2px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.04);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px -2px rgba(2, 40, 26, 0.4);
+}
+
+.btn-submit:disabled,
+.btn-submit:disabled * {
+  opacity: 0.85;
+  cursor: wait !important;
+  transform: none;
+}
+
+.btn-submit .btn-arrow,
 .btn-submit i {
-  color: #e4a329;
-  font-size: 30px
+  position: absolute;
+  right: clamp(22px, 5vw, 34px);
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  stroke: #fff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) .btn-arrow,
+.btn-submit:hover:not(:disabled) i {
+  transform: translateX(4px);
 }
 
 /* Compact laptops and landscape tablets */
@@ -422,8 +465,7 @@ input:-webkit-autofill:active {
   }
 
   .btn-submit {
-    gap: 70px;
-    font-size: 22px;
+    font-size: 20px;
   }
 }
 
@@ -583,13 +625,16 @@ input:-webkit-autofill:active {
   }
 
   .btn-submit {
-    height: 58px;
-    gap: clamp(24px, 10vw, 55px);
-    font-size: 20px;
+    height: 56px;
+    padding: 0 clamp(20px, 5vw, 36px);
+    font-size: 19px;
   }
 
+  .btn-submit .btn-arrow,
   .btn-submit i {
-    font-size: 23px;
+    width: 24px;
+    height: 24px;
+    font-size: 22px;
   }
 }
 
@@ -804,12 +849,15 @@ input:-webkit-autofill:active {
   }
 
   .btn-submit {
-    height: clamp(52px, 6.5vh, 60px);
-    gap: clamp(38px, 8vw, 80px);
-    font-size: clamp(19px, 2vw, 22px);
+    height: clamp(54px, 6.5vh, 62px);
+    padding: 0 clamp(28px, 4vw, 44px);
+    font-size: clamp(19px, 1.8vw, 21px);
   }
 
+  .btn-submit .btn-arrow,
   .btn-submit i {
+    width: 28px;
+    height: 28px;
     font-size: 24px;
   }
 }
@@ -1015,14 +1063,16 @@ input:-webkit-autofill:active {
 
   /* Button */
   .btn-submit {
-    height: 46px;
-    gap: 48px;
-    padding: 12px;
-    font-size: 14px;
+    height: 48px;
+    padding: 0 24px;
+    font-size: 16px;
   }
 
+  .btn-submit .btn-arrow,
   .btn-submit i {
-    font-size: 21px;
+    width: 22px;
+    height: 22px;
+    font-size: 19px;
   }
 }
 
