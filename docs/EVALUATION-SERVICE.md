@@ -13,7 +13,7 @@ browser ──session cookie──▶ /api/evaluations/*  (this app)  ──2-mi
 | HTTP client + token signing (HS256, `sub` = document number) | `src/infrastructure/evaluation-service.js` |
 | Allow-list of routes, practice authorization, error translation | `src/services/evaluation-gateway.service.js` |
 | Express handlers / routes | `src/controllers/evaluation.controller.js`, `src/routes/evaluations.routes.js` |
-| Screens | `public/pages/{student,tutor}.html` (sección de preguntas), `public/pages/director-evaluations.html`, `public/js/core/*`, `public/css/evaluacion.css` |
+| Screens | `public/pages/{student,tutor,director}.html` (sección de preguntas y pestaña Evaluations), `public/js/core/*`, `public/css/evaluacion.css` |
 | Tests | `tests/evaluation-gateway.test.js` (`npm run test:evaluations`, no database needed) |
 
 No npm dependency was added (Node 18+ `fetch` and `crypto`).
@@ -45,7 +45,7 @@ Empty values disable the feature (`503`); the rest of the app is unaffected. Set
 
 ## Director view (read only)
 
-`/pages/director-evaluations.html` (menu entry "Evaluations" in the director panel) shows figures, alerts, charts, a
+The "Evaluations" tab inside the Reports section of `director.html` shows figures, alerts, charts, a
 per-tutor table and the list of all evaluations with a per-question detail. It is read only by construction:
 
 * The router only has `router.get('/director/*')` and the allow-list has no other verb, so POST/PATCH/DELETE are 404.

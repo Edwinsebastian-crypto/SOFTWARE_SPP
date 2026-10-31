@@ -909,8 +909,9 @@ body.dark-theme .um-cred-meta dd {
 
 .um-search {
    position: relative;
-   flex: 1 1 280px;
-   min-width: 0;
+   flex: 0 0 300px;
+   width: 300px;
+   min-width: 240px;
 }
 
 .um-search i {
@@ -949,7 +950,8 @@ body.dark-theme .um-cred-meta dd {
 .um-toolbar .um-control,
 .um-toolbar .cp-input-wrap {
    height: 46px;
-   flex: 0 1 200px;
+   flex: 0 0 220px;
+   width: 220px;
 }
 
 .um-ghost-btn {
@@ -1710,11 +1712,6 @@ body.dark-theme #manage-users .um-strength-bars span {
 
    .um-pagination {
       justify-content: center;
-   }
-
-   .um-toolbar .um-control,
-   .um-toolbar .cp-input-wrap {
-      flex: 1 1 160px;
    }
 }
 

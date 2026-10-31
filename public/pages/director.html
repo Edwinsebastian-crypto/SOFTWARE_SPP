@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="../css/director.css">
 	<link rel="stylesheet" href="../css/users.css">
 	<link rel="stylesheet" href="../css/evaluacion.css">
+	<link rel="stylesheet" href="../css/reports.css">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link
@@ -80,9 +81,6 @@
 							<div class="cp-input-wrap">
 								<select>
 									<option value="" disabled selected>Select Practice Type</option>
-									<option value="1">Pedagogical Observation Practice</option>
-									<option value="2">Teaching Deepening Practice</option>
-									<option value="3">Immersion or Intervention Practice</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
 							</div>
@@ -93,8 +91,6 @@
 							<div class="cp-input-wrap">
 								<select>
 									<option value="" disabled selected>Select the Institution</option>
-									<option value="1">Bucaramanga Higher Normal School</option>
-									<option value="2">San Jose School</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
 							</div>
@@ -124,8 +120,6 @@
 							<div class="cp-input-wrap">
 								<select>
 									<option value="" disabled selected>Select the Student</option>
-									<option value="1">Edwin Tester</option>
-									<option value="2">Jose David Suarez</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
 							</div>
@@ -136,8 +130,6 @@
 							<div class="cp-input-wrap">
 								<select>
 									<option value="" disabled selected>Select the Tutor</option>
-									<option value="1">Ramiro Jesus Urtado Bueno</option>
-									<option value="2">Juan Carlos Ramirez</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
 							</div>
@@ -148,8 +140,6 @@
 							<div class="cp-input-wrap">
 								<select>
 									<option value="" disabled selected>Select the Advisor</option>
-									<option value="1">Claudia Patricia Rueda Pardo</option>
-									<option value="2">Luisa Fernanda Rodriguez</option>
 								</select>
 								<i class="fa-solid fa-chevron-down right-icon"></i>
 							</div>
@@ -250,7 +240,7 @@
 							<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
 						</button>
 						<h2 id="logbook-title" class="logbook-title">Practice <span class="lb-student-name"
-								aria-label="View student credential">- Test Student</span></h2>
+								aria-label="View student credential"></span></h2>
 					</div>
 					<!-- BANNER DE CALIFICACIÓN Y OBSERVACIÓN -->
 					<div class="lb-hero-banner" id="lb-hero-banner">
@@ -261,13 +251,13 @@
 									<circle class="lb-ring-fill" id="lb-ring-fill" cx="44" cy="44" r="36" />
 								</svg>
 								<div class="lb-ring-content">
-									<span class="lb-score-val" id="lb-score-val">5.0</span>
+									<span class="lb-score-val" id="lb-score-val">—</span>
 									<span class="lb-score-max">OF 5.0</span>
 								</div>
 							</div>
 							<div class="lb-grade-info">
 								<span class="lb-grade-kicker">FINAL GRADE</span>
-								<h3 class="lb-grade-title" id="lb-grade-title">Excellent</h3>
+								<h3 class="lb-grade-title" id="lb-grade-title">—</h3>
 							</div>
 						</div>
 
@@ -276,7 +266,7 @@
 								<span class="lb-obs-kicker">GENERAL OBSERVATION</span>
 								<div class="lb-obs-text-wrap">
 									<span class="lb-obs-quote" aria-hidden="true">”</span>
-									<p class="lb-obs-text" id="lb-obs-text">Great job on your practice!</p>
+									<p class="lb-obs-text" id="lb-obs-text">—</p>
 								</div>
 							</div>
 						</div>
@@ -858,7 +848,7 @@
 									</div>
 
 									<div class="um-field">
-										<label for="um-pass">Temporary password</label>
+										<label for="um-pass">Password</label>
 										<div class="um-control um-control--mono">
 											<i class="fa-solid fa-key" aria-hidden="true"></i>
 											<input id="um-pass" name="pass" type="password" autocomplete="new-password">
@@ -872,17 +862,6 @@
 											<i class="fa-solid fa-dice" aria-hidden="true"></i> Generate a secure one
 										</button>
 									</div>
-
-
-
-									<label class="um-check">
-										<input type="checkbox" id="um-notify" checked>
-										<span>
-											<strong>Send the credentials by e-mail</strong>
-											<span>The link expires in 72 hours and forces a password change on first
-												sign-in.</span>
-										</span>
-									</label>
 								</div>
 
 								<!-- STEP 4 -->
@@ -1141,75 +1120,16 @@
 
 				<div id="ptm-panel-list" class="ptm-panel" style="display: none;">
 					<div class="ptm-type-list" id="ptm-type-list" aria-label="List of practice types">
-						<article class="ev-card ptm-type-card" data-code="TIP-001">
+						<article class="ev-card ptm-type-card" data-code="">
 							<div class="ev-card-body ptm-type-card-body">
 								<p class="ptm-type-label">Practice type</p>
-								<p class="ev-card-title ptm-type-name">Pedagogical Observation Practice</p>
+								<p class="ev-card-title ptm-type-name">—</p>
 								<p class="ptm-type-meta">
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Practice Code</span>
-										TIP-001</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Practice Code</span> —</span>
 									<span class="ptm-meta-sep" aria-hidden="true">|</span>
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Semester</span> 5</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Semester</span> —</span>
 									<span class="ptm-meta-sep" aria-hidden="true">|</span>
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Hours</span> 120</span>
-								</p>
-							</div>
-							<div class="ev-menu-wrapper">
-								<button type="button" class="ev-menu-btn" aria-label="Practice type options"
-									aria-expanded="false">
-									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
-								</button>
-								<div class="ev-dropdown" role="menu">
-									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
-											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
-									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
-											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
-									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
-											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
-								</div>
-							</div>
-						</article>
-
-						<article class="ev-card ptm-type-card" data-code="TIP-002">
-							<div class="ev-card-body ptm-type-card-body">
-								<p class="ptm-type-label">Practice type</p>
-								<p class="ev-card-title ptm-type-name">Teaching Deepening Practice</p>
-								<p class="ptm-type-meta">
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Practice Code</span>
-										TIP-002</span>
-									<span class="ptm-meta-sep" aria-hidden="true">|</span>
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Semester</span> 7</span>
-									<span class="ptm-meta-sep" aria-hidden="true">|</span>
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Hours</span> 160</span>
-								</p>
-							</div>
-							<div class="ev-menu-wrapper">
-								<button type="button" class="ev-menu-btn" aria-label="Practice type options"
-									aria-expanded="false">
-									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
-								</button>
-								<div class="ev-dropdown" role="menu">
-									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
-											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
-									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
-											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
-									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
-											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
-								</div>
-							</div>
-						</article>
-
-						<article class="ev-card ptm-type-card" data-code="TIP-003">
-							<div class="ev-card-body ptm-type-card-body">
-								<p class="ptm-type-label">Practice type</p>
-								<p class="ev-card-title ptm-type-name">Immersion or Intervention Practice</p>
-								<p class="ptm-type-meta">
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Practice Code</span>
-										TIP-003</span>
-									<span class="ptm-meta-sep" aria-hidden="true">|</span>
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Semester</span> 9</span>
-									<span class="ptm-meta-sep" aria-hidden="true">|</span>
-									<span class="ptm-meta-item"><span class="ptm-meta-key">Hours</span> 200</span>
+									<span class="ptm-meta-item"><span class="ptm-meta-key">Hours</span> —</span>
 								</p>
 							</div>
 							<div class="ev-menu-wrapper">
@@ -1317,53 +1237,18 @@
 
 				<div id="inst-panel-list" class="inst-panel" style="display: none;">
 					<div class="entity-list inst-entity-list" id="inst-entity-list" aria-label="List of institutions">
-						<article class="ev-card inst-entity-card" data-taxid="900123456-7">
+						<article class="ev-card inst-entity-card" data-taxid="">
 							<div class="ev-card-body">
 								<p class="entity-card-label">Institution</p>
-								<p class="ev-card-title">Bucaramanga Higher Normal School</p>
+								<p class="ev-card-title">—</p>
 								<p class="entity-card-meta">
-									<span class="entity-meta-item"><span class="entity-meta-key">Tax ID</span>
-										900123456-7</span>
+									<span class="entity-meta-item"><span class="entity-meta-key">Tax ID</span> —</span>
 									<span class="entity-meta-sep" aria-hidden="true">|</span>
-									<span class="entity-meta-item"><span class="entity-meta-key">Manager</span> María
-										Fernanda Prieto</span>
+									<span class="entity-meta-item"><span class="entity-meta-key">Manager</span> —</span>
 									<span class="entity-meta-sep" aria-hidden="true">|</span>
-									<span class="entity-meta-item"><span class="entity-meta-key">Email</span>
-										contact@ensb.edu.co</span>
+									<span class="entity-meta-item"><span class="entity-meta-key">Email</span> —</span>
 								</p>
-								<p class="entity-card-desc">45th Street #18-22, Bucaramanga</p>
-							</div>
-							<div class="ev-menu-wrapper">
-								<button type="button" class="ev-menu-btn" aria-label="Institution options"
-									aria-expanded="false">
-									<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
-								</button>
-								<div class="ev-dropdown" role="menu">
-									<button type="button" class="ev-dropdown-item ev-item--view" role="menuitem"><i
-											class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
-									<button type="button" class="ev-dropdown-item ev-item--edit" role="menuitem"><i
-											class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit</button>
-									<button type="button" class="ev-dropdown-item ev-item--delete" role="menuitem"><i
-											class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
-								</div>
-							</div>
-						</article>
-
-						<article class="ev-card inst-entity-card" data-taxid="890456789-1">
-							<div class="ev-card-body">
-								<p class="entity-card-label">Institution</p>
-								<p class="ev-card-title">San Jose School</p>
-								<p class="entity-card-meta">
-									<span class="entity-meta-item"><span class="entity-meta-key">Tax ID</span>
-										890456789-1</span>
-									<span class="entity-meta-sep" aria-hidden="true">|</span>
-									<span class="entity-meta-item"><span class="entity-meta-key">Manager</span> Juan
-										Carlos Ramirez</span>
-									<span class="entity-meta-sep" aria-hidden="true">|</span>
-									<span class="entity-meta-item"><span class="entity-meta-key">Email</span>
-										info@sanjoseschool.edu</span>
-								</p>
-								<p class="entity-card-desc">González Valencia Ave. # 55-119, Bucaramanga</p>
+								<p class="entity-card-desc">—</p>
 							</div>
 							<div class="ev-menu-wrapper">
 								<button type="button" class="ev-menu-btn" aria-label="Institution options"
@@ -1415,231 +1300,32 @@
 					<button type="button" class="reports-tab-btn" id="btn-evaluations-tab"><i class="fa-solid fa-clipboard-question"></i> Evaluations</button>
 				</nav>
 
-				<!-- ===== TAB: GENERAL ===== -->
+				<!-- ===== TAB: GENERAL (accreditation indicators + overview; drawn by accreditation.js and reports.js) ===== -->
 				<div class="report-panel" id="tab-general">
-					<div class="stats-grid">
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-copy"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-gen-total">&mdash;</span>
-								<span class="stat-label">Total Practices</span>
-							</div>
-						</article>
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-file-circle-check"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-gen-active">&mdash;</span>
-								<span class="stat-label">Active</span>
-							</div>
-						</article>
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-flag-checkered"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-gen-completed">&mdash;</span>
-								<span class="stat-label">Completed</span>
-							</div>
-						</article>
-					</div>
-
-					<div class="charts-grid">
-						<article class="chart-panel">
-							<h3><i class="fa-solid fa-building-columns"></i> Top Institutions</h3>
-							<ul class="progress-list" id="rep-gen-institutions"></ul>
-						</article>
-
-						<article class="chart-panel">
-							<h3><i class="fa-solid fa-user-group"></i> Top Tutors</h3>
-							<ul class="progress-list" id="rep-gen-tutors"></ul>
-						</article>
+					<div class="dv-wrapper rp-root">
+						<section class="dv-card dv-card--wide rp-acc" id="rep-accreditation-toolbar" aria-label="Accreditation indicators"></section>
+						<div id="rp-general"></div>
 					</div>
 				</div>
 
 				<!-- ===== TAB: TYPES ===== -->
 				<div class="report-panel" id="tab-types" style="display:none;">
-					<article class="types-table-panel">
-						<h3 class="types-table-title">Summary Table</h3>
-
-						<!-- Desktop view: regular table with its own scroll -->
-						<div class="types-table-scroll">
-							<table class="types-table" aria-label="Summary table of practice types">
-								<thead>
-									<tr>
-										<th scope="col">Practice Type</th>
-										<th scope="col">Students</th>
-										<th scope="col">% Participation</th>
-									</tr>
-								</thead>
-								<tbody id="rep-types-body"></tbody>
-							</table>
-						</div>
-
-						<!-- Mobile view: cards -->
-						<div class="types-cards" id="rep-types-cards" aria-label="Practice type details (mobile)"></div>
-					</article>
+					<div class="dv-wrapper rp-root" id="rp-types"></div>
 				</div>
 
-				<!-- ======== TAB: Practice =========== -->
+				<!-- ===== TAB: PRACTICE ===== -->
 				<div class="report-panel" id="tab-practice" style="display:none;">
-
-					<div class="stats-grid">
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-practice-total">&mdash;</span>
-								<span class="stat-label">Total Practices</span>
-							</div>
-						</article>
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-practice-no-evidence">&mdash;</span>
-								<span class="stat-label">Without Evidence</span>
-							</div>
-						</article>
-					</div>
-
-					<!-- Practice status chart -->
-					<article class="hdist-panel">
-						<h3 class="hdist-title">Practice Status</h3>
-						<div class="hdist-list" id="rep-practice-status"></div>
-						<p class="hdist-footer" id="rep-practice-status-total">Total : 0</p>
-					</article>
-
-					<article class="types-table-panel">
-						<h3 class="types-table-title">Practices without Evidence</h3>
-
-						<!-- Desktop view: regular table with its own scroll -->
-						<div class="types-table-scroll">
-							<table class="types-table" aria-label="Table of practices without evidence">
-								<thead>
-									<tr>
-										<th scope="col">Practice ID</th>
-										<th scope="col">Institution</th>
-										<th scope="col">Student</th>
-									</tr>
-								</thead>
-								<tbody id="rep-practice-no-evidence-body"></tbody>
-							</table>
-						</div>
-
-						<!-- Mobile view: cards -->
-						<div class="types-cards" id="rep-practice-no-evidence-cards" aria-label="Practices without evidence (mobile)"></div>
-					</article>
+					<div class="dv-wrapper rp-root" id="rp-practice"></div>
 				</div>
 
-				<!-- ====== TAB - Feedback ======= -->
+				<!-- ===== TAB: FEEDBACK ===== -->
 				<div class="report-panel" id="tab-feedback" style="display:none;">
-					<div class="stats-grid">
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-user-pen"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-fb-tutor">&mdash;</span>
-								<span class="stat-label">Tutor Feedback</span>
-							</div>
-						</article>
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-user-pen"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-fb-advisor">&mdash;</span>
-								<span class="stat-label">Advisor Feedback</span>
-							</div>
-						</article>
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-fb-without-tutor">&mdash;</span>
-								<span class="stat-label">No Tutor Feedback</span>
-							</div>
-						</article>
-					</div>
-
-					<div class="charts-grid">
-						<article class="chart-panel">
-							<h3><i class="fa-solid fa-user-group"></i> Most active tutors</h3>
-							<ul class="progress-list" id="rep-fb-tutors"></ul>
-						</article>
-
-						<article class="chart-panel">
-							<h3><i class="fa-solid fa-user-group"></i> Most active advisors</h3>
-							<ul class="progress-list" id="rep-fb-advisors"></ul>
-						</article>
-					</div>
-
-					<article class="types-table-panel">
-						<h3 class="types-table-title">Practices without tutor feedback</h3>
-
-						<!-- Desktop view: regular table with its own scroll -->
-						<div class="types-table-scroll">
-							<table class="types-table" aria-label="Table of practices without tutor feedback">
-								<thead>
-									<tr>
-										<th scope="col">Practice ID</th>
-										<th scope="col">Institution</th>
-										<th scope="col">Student</th>
-									</tr>
-								</thead>
-								<tbody id="rep-fb-no-tutor-body"></tbody>
-							</table>
-						</div>
-
-						<!-- Mobile view: cards -->
-						<div class="types-cards" id="rep-fb-no-tutor-cards" aria-label="Practices without tutor feedback (mobile)"></div>
-					</article>
+					<div class="dv-wrapper rp-root" id="rp-feedback"></div>
 				</div>
 
-				<!-- ====== TAB - Institutions ======= -->
+				<!-- ===== TAB: INSTITUTIONS ===== -->
 				<div class="report-panel" id="tab-institutions" style="display:none;">
-					<div class="stats-grid">
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-building-columns"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-inst-total">&mdash;</span>
-								<span class="stat-label">Total Institutions</span>
-							</div>
-						</article>
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-inst-active">&mdash;</span>
-								<span class="stat-label">With Active Students</span>
-							</div>
-						</article>
-						<article class="stat-card">
-							<div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-							<div class="stat-info">
-								<span class="stat-value" id="rep-inst-completed-only">&mdash;</span>
-								<span class="stat-label">Completed Only</span>
-							</div>
-						</article>
-					</div>
-
-					<!-- Institutions chart -->
-					<article class="hdist-panel">
-						<h3 class="hdist-title">Institutions with Most Student Teachers</h3>
-						<div class="hdist-list" id="rep-inst-distribution"></div>
-						<p class="hdist-footer" id="rep-inst-distribution-total">Total : 0</p>
-					</article>
-
-					<article class="types-table-panel">
-						<h3 class="types-table-title">Institution Details by Student Teachers</h3>
-
-						<!-- Desktop view: regular table with its own scroll -->
-						<div class="types-table-scroll">
-							<table class="types-table" aria-label="Institution details table by student teachers">
-								<thead>
-									<tr>
-										<th scope="col">Institution</th>
-										<th scope="col">Active Student Teachers</th>
-										<th scope="col">Completed Student Teachers</th>
-									</tr>
-								</thead>
-								<tbody id="rep-inst-details-body"></tbody>
-							</table>
-						</div>
-
-						<!-- Mobile view: cards -->
-						<div class="types-cards" id="rep-inst-details-cards" aria-label="Institution details (mobile)"></div>
-					</article>
+					<div class="dv-wrapper rp-root" id="rp-institutions"></div>
 				</div>
 
 				<!-- ===== TAB: EVALUATIONS ===== -->
@@ -1650,9 +1336,6 @@
 						<!-- ===== PANEL GENERAL ===== -->
 						<section class="ev-view" id="view-panel" aria-labelledby="panel-title">
 							<header class="dv-head">
-								<button type="button" class="ev-back" id="btn-eval-back-reports" aria-label="Back to Reports options" title="Back to Reports options">
-									<i class="fa-solid fa-arrow-left"></i>
-								</button>
 								<div class="dv-head-text">
 									<h2 id="panel-title">Evaluations</h2>
 									<p class="ev-sub">Query view of all program evaluations. <span id="panel-actualizado"></span></p>
@@ -1661,7 +1344,10 @@
 									<i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura
 								</span>
 								<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="btn-actualizar">
-									<i class="fa-solid fa-rotate" aria-hidden="true"></i>Actualizar
+									<i class="fa-solid fa-rotate" aria-hidden="true"></i>Refresh
+								</button>
+							<button type="button" class="ev-btn ev-btn--sm ev-btn--dark" id="btn-export-evaluaciones">
+									<i class="fa-solid fa-download" aria-hidden="true"></i>Export panel
 								</button>
 							</header>
 
@@ -1783,8 +1469,12 @@
 	<script src="../js/core/modals.js"></script>
 	<script src="../js/core/credential.js"></script>
 	<script src="../js/core/ui.js"></script>
+	<script src="../js/core/export.js"></script>
 	<script src="../js/pages/director.js"></script>
 	<script src="../js/pages/users.js"></script>
+	<script src="../js/pages/reports-kit.js"></script>
+	<script src="../js/pages/reports.js"></script>
+	<script src="../js/pages/accreditation.js"></script>
 	<script src="../js/pages/director.api.js"></script>
 	<script src="../js/pages/evaluacion-director.js"></script>
 </body>

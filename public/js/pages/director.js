@@ -43,87 +43,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---------- 3) Tabs ----------
     // Reports
-    const reportsHeader = document.getElementById('reports-header') || document.querySelector('#reports .reports-header');
-    const reportsTabsNav = document.getElementById('reports-tabs') || document.querySelector('#reports .reports-tabs');
-    const normalReportButtons = Array.from(document.querySelectorAll('#reports .reports-tab-btn:not(#btn-evaluations-tab)'));
-    const reportPanelIds = ['tab-general', 'tab-types', 'tab-practice', 'tab-feedback', 'tab-institutions'];
+    const reportButtons = Array.from(document.querySelectorAll('#reports .reports-tab-btn'));
+    const reportPanelIds = ['tab-general', 'tab-types', 'tab-practice', 'tab-feedback', 'tab-institutions', 'tab-evaluations'];
+    const reportPanels = reportPanelIds.map((id) => document.getElementById(id)).filter(Boolean);
 
     SPP.panels.wireTabs(
-        normalReportButtons,
-        reportPanelIds.map((id) => document.getElementById(id)).filter(Boolean),
+        reportButtons,
+        reportPanels,
         (_button, index) => reportPanelIds[index]
     );
 
     const btnEvalTab = document.getElementById('btn-evaluations-tab');
-    const tabEvaluations = document.getElementById('tab-evaluations');
-    const btnEvalBackReports = document.getElementById('btn-eval-back-reports');
-
-    const openEvaluationsView = () => {
-        if (!tabEvaluations) return;
-        reportPanelIds.forEach((id) => {
-            const p = document.getElementById(id);
-            if (p) p.style.display = 'none';
-        });
-        document.querySelectorAll('#reports .reports-tab-btn').forEach((b) => b.classList.remove('active'));
-        if (btnEvalTab) btnEvalTab.classList.add('active');
-        if (reportsHeader) reportsHeader.style.display = 'none';
-        if (reportsTabsNav) reportsTabsNav.style.display = 'none';
-        const accToolbar = document.getElementById('rep-accreditation-toolbar');
-        if (accToolbar) accToolbar.style.display = 'none';
-        tabEvaluations.style.display = '';
-        if (window.SPP_DIRECTOR && typeof window.SPP_DIRECTOR.cargarEvaluaciones === 'function') {
-            const cont = document.getElementById('panel-contenido');
-            if (cont && (cont.children.length === 0 || cont.querySelector('.ev-loading'))) {
-                window.SPP_DIRECTOR.cargarEvaluaciones();
-            } else if (window.SPP && SPP.customSelect && typeof SPP.customSelect.init === 'function') {
-                SPP.customSelect.init('#dv-lista');
-            }
-        }
-        SPP.panels.resetScroll();
-    };
-
-    const closeEvaluationsView = () => {
-        if (tabEvaluations) tabEvaluations.style.display = 'none';
-        const vPanel = document.getElementById('view-panel');
-        const vDetalle = document.getElementById('view-detalle');
-        if (vPanel) vPanel.hidden = false;
-        if (vDetalle) vDetalle.hidden = true;
-        if (reportsHeader) reportsHeader.style.display = '';
-        if (reportsTabsNav) reportsTabsNav.style.display = '';
-        const accToolbar = document.getElementById('rep-accreditation-toolbar');
-        if (accToolbar) accToolbar.style.display = '';
-        document.querySelectorAll('#reports .reports-tab-btn').forEach((b) => b.classList.remove('active'));
-        if (normalReportButtons[0]) normalReportButtons[0].click();
-        SPP.panels.resetScroll();
-    };
-
     if (btnEvalTab) {
-        btnEvalTab.addEventListener('click', openEvaluationsView);
-    }
-    if (btnEvalBackReports) {
-        btnEvalBackReports.addEventListener('click', closeEvaluationsView);
+        btnEvalTab.addEventListener('click', () => {
+            if (window.SPP_DIRECTOR && typeof window.SPP_DIRECTOR.cargarEvaluaciones === 'function') {
+                const cont = document.getElementById('panel-contenido');
+                if (cont && (cont.children.length === 0 || cont.querySelector('.ev-loading'))) {
+                    window.SPP_DIRECTOR.cargarEvaluaciones();
+                } else if (window.SPP && SPP.customSelect && typeof SPP.customSelect.init === 'function') {
+                    SPP.customSelect.init('#dv-lista');
+                }
+            }
+        });
     }
 
-    normalReportButtons.forEach((btn) => {
+    reportButtons.forEach((btn) => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('#reports .reports-tab-btn').forEach((b) => {
-                if (b !== btn) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            if (tabEvaluations) tabEvaluations.style.display = 'none';
-            if (reportsHeader) reportsHeader.style.display = '';
-            if (reportsTabsNav) reportsTabsNav.style.display = '';
+            if (btn !== btnEvalTab) {
+                const vPanel = document.getElementById('view-panel');
+                const vDetalle = document.getElementById('view-detalle');
+                if (vPanel) vPanel.hidden = false;
+                if (vDetalle) vDetalle.hidden = true;
+            }
         });
     });
-
-    const sidebarReportsLink = document.querySelector('.app-navigation a[href="#reports"]');
-    if (sidebarReportsLink) {
-        sidebarReportsLink.addEventListener('click', () => {
-            if (tabEvaluations && tabEvaluations.style.display !== 'none') {
-                closeEvaluationsView();
-            }
-        });
-    }
 
     // Practice types
     SPP.panels.wireTabs(
@@ -667,9 +620,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 h('td', { class: 'num' }, loc(g.cantidad_solicitada)), h('td', { class: 'num' }, loc(g.cantidad_generada)), h('td', { class: 'num' }, g.duracion_ms ? `${loc(g.duracion_ms / 1000, 1)} s` : '—')))));
     }
 
+    /* ------------------------------------------------------------ exportación (Excel / CSV / JSON / PDF)
+       Solo cifras y notas; igual que el panel, nunca incluye respuestas de estudiantes ni comentarios del tutor. */
+    function datosExportables() {
+        const r = RESUMEN;
+        if (!r) return [];
+        const t = r.totales, d = r.desempeno, ia = r.ia, e = r.por_estado, o = r.preguntas.por_origen, tp = r.preguntas.por_tipo, df = r.preguntas.por_dificultad;
+        const ds = (id, title, columns, rows) => ({ id, title, columns: columns.map(([key, label, num]) => ({ key, label, num: Boolean(num) })), rows });
+        return [
+            ds('eval-cifras', 'Cifras generales', [['indicador', 'Indicador'], ['valor', 'Valor', true]], [
+                ['Evaluaciones', t.evaluaciones], ['Publicadas', e.PUBLICADA], ['En borrador', e.BORRADOR], ['Cerradas', e.CERRADA], ['Prácticas con evaluación', t.practicas],
+                ['Tutores', t.tutores], ['Estudiantes', t.estudiantes], ['Intentos en curso', t.intentos_en_curso], ['Intentos pendientes de calificar', t.intentos_pendientes_revision],
+                ['Intentos calificados', t.intentos_calificados], ['Promedio de notas finales (%)', d.promedio_pct], ['Aprobación (%)', d.aprobacion_pct],
+                ['Evaluaciones calificadas', d.evaluaciones_calificadas], ['Aprobadas', d.aprobadas], ['Reprobadas', d.reprobadas], ['Preguntas con IA (%)', ia.uso_pct],
+                ['Evaluaciones vencidas sin cerrar', t.evaluaciones_vencidas_sin_cerrar]
+            ].map(([indicador, valor]) => ({ indicador, valor }))),
+            ds('eval-notas', 'Notas finales por rango', [['rango', 'Rango (% de la nota máxima)'], ['cantidad', 'Evaluaciones', true]], d.distribucion.map((x) => ({ rango: `${x.desde}–${x.hasta} %`, cantidad: x.cantidad }))),
+            ds('eval-origen', 'Origen de las preguntas', [['concepto', 'Concepto'], ['preguntas', 'Preguntas', true]], [
+                ['Generadas con IA', o.IA], ['Escritas por el tutor', o.MANUAL], ['IA aprobadas', ia.aprobadas], ['IA por revisar', ia.por_revisar], ['IA rechazadas', ia.rechazadas]
+            ].map(([concepto, preguntas]) => ({ concepto, preguntas }))),
+            ds('eval-meses', 'Actividad por mes', [['mes', 'Mes'], ['creadas', 'Evaluaciones creadas', true], ['enviados', 'Intentos enviados', true]], r.historial.map((m) => ({ mes: m.mes, creadas: m.evaluaciones_creadas, enviados: m.intentos_enviados }))),
+            ds('eval-preguntas', 'Preguntas por tipo y dificultad', [['categoria', 'Categoría'], ['preguntas', 'Preguntas', true]], [
+                ['Opción múltiple', tp.OPCION_MULTIPLE], ['Verdadero / Falso', tp.VERDADERO_FALSO], ['Abierta', tp.ABIERTA], ['Fácil', df.FACIL], ['Media', df.MEDIA], ['Difícil', df.DIFICIL], ['Sin definir', df.SIN_DEFINIR]
+            ].map(([categoria, preguntas]) => ({ categoria, preguntas }))),
+            ds('eval-tutores', 'Tutores', [['tutor', 'Tutor'], ['evaluaciones', 'Evaluaciones', true], ['publicadas', 'Publicadas', true], ['calificados', 'Intentos calificados', true], ['porCalificar', 'Por calificar', true], ['espera', 'Espera máxima (días)', true], ['promedio', 'Promedio (%)', true], ['alertas', 'Alertas', true]],
+                r.por_tutor.map((x) => ({ tutor: nombreTutor(x.id_tutor), evaluaciones: x.evaluaciones, publicadas: x.publicadas, calificados: x.intentos_calificados, porCalificar: x.pendientes_revision, espera: x.espera_max_dias, promedio: x.promedio_pct, alertas: x.alertas }))),
+            ds('eval-alertas', 'Alertas (requieren atención)', [['severidad', 'Severidad'], ['tipo', 'Tipo'], ['evaluacion', 'Evaluación'], ['practica', 'Práctica'], ['tutor', 'Tutor'], ['detalle', 'Detalle']],
+                r.alertas.map((a) => ({ severidad: (SEVERIDAD[a.severidad] || SEVERIDAD.BAJA)[1], tipo: TITULO_ALERTA[a.tipo] || a.tipo, evaluacion: a.titulo, practica: etiquetaPractica(a.id_practica), tutor: nombreTutor(a.id_tutor), detalle: mensajeAlerta(a) })))
+        ];
+    }
+
     /* ------------------------------------------------------------ arranque */
     if (EvalAPI.modo === 'mock') EvalUI.banner('Modo SIN backend: las cifras son datos de ejemplo.', 'fa-solid fa-flask', '');
     window.SPP_DIRECTOR = window.SPP_DIRECTOR || {};
     window.SPP_DIRECTOR.cargarEvaluaciones = cargarPanel;
+    window.SPP_DIRECTOR.getExportData = datosExportables;
     cargarPanel();
 });

@@ -108,7 +108,8 @@ see the service's OpenAPI at `<EVALUATION_SERVICE_URL>/docs`. Errors are `{ "err
 | Method | Path | Notes |
 |---|---|---|
 | GET | `/reports/summary` | `{ summary: { practices, activePractices, students, tutors, advisors, institutions, averageGrade } }` |
-| GET | `/reports?year=` | stored accreditation indicators (empty when MongoDB is not configured) |
+| GET | `/reports?year=` | stored accreditation indicators, one document per program (v2 includes summary, practice types, grade distribution, teacher support, partner institutions, tutors, advisors and the practices roster; v1 documents stay readable) |
+| GET | `/reports/dashboard` | data for the Reports tabs (general, types, practice, feedback, institutions) |
 | POST | `/reports/generate` | `{ year? }` computes from PostgreSQL and stores in MongoDB (502 if MongoDB fails) |
 | GET | `/audit-log?practiceId=` | audit entries |
 
@@ -118,5 +119,5 @@ see the service's OpenAPI at `<EVALUATION_SERVICE_URL>/docs`. Errors are `{ "err
 |---|---|
 | `/` and `/index.html` | login; users with a session are redirected to their panel |
 | `/pages/<role>.html` | role panel; wrong role → redirect to own panel; no session → `/index.html` |
-| `/pages/tutor-evaluations.html`, `/pages/student-evaluations.html`, `/pages/director-evaluations.html` | evaluations screens (same rules as the panels) |
+| `/pages/tutor-evaluations.html`, `/pages/student-evaluations.html`, `/pages/director-evaluations.html` | legacy evaluation paths (redirect to their integrated role panels) |
 | `/js/config.js` | public config for the views (`window.SPP_DOMAIN`) |

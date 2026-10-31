@@ -19,6 +19,7 @@ class PageController {
     const { page } = req.params;
     if (page === 'evaluaciones-tutor') return res.redirect('/pages/tutor.html');
     if (page === 'evaluaciones-estudiante') return res.redirect('/pages/student.html');
+    if (page === 'director-evaluations') return res.redirect('/pages/director.html#reports');
     const requiredRole = ROLE_LIST.includes(page) ? page : EXTRA_PAGES.get(page);
     if (!requiredRole) return res.status(404).send('Not found');
     if (req.user.role !== requiredRole) return res.redirect(`/pages/${req.user.role}.html`);

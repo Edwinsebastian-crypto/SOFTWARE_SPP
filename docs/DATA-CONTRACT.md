@@ -53,7 +53,7 @@ Free-text columns written by the application are now in English (for example the
 | Connection | Collection | Stored fields (legacy) |
 |---|---|---|
 | `MONGO_URI_PRIMARY` | `auditoria` | `usuario`, `entidad`, `idEntidad`, `idPractica`, `accion`, `fecha`, `anio`, `mes` |
-| `MONGO_URI_PRIMARY` | `indicadoresacreditacion` | `anio`, `idPrograma`, `nombrePrograma`, `totalEstudiantesActivos`, `practicasPorTipo`, `distribucionNotas`, `acompanamientoDocente`, `entidadesVinculadas`, `tasaDesercion`, `duracionPromedioPracticasDias` |
+| `MONGO_URI_PRIMARY` | `indicadoresacreditacion` | `anio`, `idPrograma`, `nombrePrograma`, `totalEstudiantesActivos`, `practicasPorTipo`, `distribucionNotas`, `acompanamientoDocente`, `entidadesVinculadas`, `tasaDesercion`, `duracionPromedioPracticasDias`; v2 optional: `facultadPrograma`, `totalEstudiantes`, `totalTutoresActivos`, `resumenPracticas`, `tutores`, `asesores`, `detallePracticas`, `fechaGeneracion`, `versionIndicador` |
 | `MONGO_URI_NOTIFICATIONS` | `notificaciones` | `tipo`, `destinatario`, `idPractica`, `asunto`, `contenido`, `fechaCreacion`, `fechaEnvio` |
 
 Repositories map these documents to English objects (`AuditRepository`, `IndicatorRepository`,

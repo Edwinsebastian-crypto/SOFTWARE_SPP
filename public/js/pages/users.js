@@ -148,8 +148,7 @@
         program: $('#um-program'),
         faculty: $('#um-faculty'),
         email: $('#um-email'),
-        password: $('#um-pass'),
-        notify: $('#um-notify')
+        password: $('#um-pass')
     };
 
     let accountStatus = 'active';
@@ -310,8 +309,7 @@
             ['Program', data.program],
             ['Faculty', fields.faculty.value || '—'],
             ['Institutional e-mail', data.email],
-            ['Initial status', STATUS_LABELS[data.status]],
-            ['Credential delivery', fields.notify.checked ? 'By e-mail, when saved' : 'Manual delivery']
+            ['Initial status', STATUS_LABELS[data.status]]
         ];
         summary.innerHTML = rows.map((row) =>
             '<div><dt>' + escapeHtml(row[0]) + '</dt><dd>' + escapeHtml(row[1] || '—') + '</dd></div>'
