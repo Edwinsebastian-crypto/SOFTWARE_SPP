@@ -11,7 +11,17 @@
 .rp-bar-title { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .rp-bar-title h2 { margin: 0; font-family: var(--font-serif); font-size: 22px; color: var(--text-primary); }
 .rp-bar-title p { margin: 0; font-family: var(--font-sans); font-size: 13px; color: var(--dv-ink2); }
-.rp-updated { font-family: var(--font-sans); font-size: 12.5px; font-weight: 500; color: var(--dv-ink2); }
+.rp-updated,
+#panel-actualizado {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: var(--dv-ink2, #52514e);
+}
+
+body.dark-theme .rp-updated,
+body.dark-theme #panel-actualizado {
+  color: var(--dv-ink2, #d4dcd8) !important;
+}
 .rp-bar-actions { display: flex; gap: 8px; margin-left: auto; }
 .rp-root .dv-kpi-value { overflow-wrap: anywhere; }
 .dv-kpi-value.rp-kpi-text { font-size: 19px; line-height: 1.2; }

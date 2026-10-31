@@ -178,29 +178,158 @@
 
  /* The button is OUTSIDE .practice-panel (see HTML). width:fit-content + margin-left:auto aligns it to the right without float, keeping it in the normal flow so it is always visible. */
  .practice-submit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    width: fit-content;
-    margin-left: auto;
-    margin-top: 30px;
-    height: 56px;
-    padding: 0 30px;
-    border: 0;
-    border-radius: 12px;
-    color: #fff;
-    background: linear-gradient(90deg, #1f503c, #2a7253);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, .2);
-    font-size: 21px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: var(--font-serif);
+   --ps-bg: linear-gradient(135deg, #1f523d 0%, #143b2a 100%);
+   --ps-bg-hover: linear-gradient(135deg, #245e46 0%, #184431 100%);
+   --ps-border: rgba(40, 131, 96, 0.4);
+   --ps-border-hover: rgba(52, 211, 153, 0.6);
+   --ps-shadow: 0 6px 20px -2px rgba(18, 55, 39, 0.35), 0 0 14px rgba(40, 131, 96, 0.15);
+   --ps-shadow-hover: 0 8px 24px -2px rgba(18, 55, 39, 0.45), 0 0 20px rgba(52, 211, 153, 0.25);
+   --ps-text: #ffffff;
+   --ps-circle-bg: linear-gradient(135deg, #34d399, #10b981);
+   --ps-circle-shadow: 0 0 14px rgba(52, 211, 153, 0.75), 0 0 28px rgba(52, 211, 153, 0.35), inset 0 0 5px rgba(255, 255, 255, 0.6);
+   --ps-circle-shadow-hover: 0 0 20px rgba(52, 211, 153, 0.95), 0 0 36px rgba(52, 211, 153, 0.5), inset 0 0 7px rgba(255, 255, 255, 0.7);
+   --ps-arrow-stroke: #06281b;
+   --ps-streak-color-1: #34d399;
+   --ps-streak-color-2: #10b981;
+   --ps-glow-bg: radial-gradient(circle at 85% 50%, rgba(52, 211, 153, 0.32) 0%, rgba(52, 211, 153, 0.12) 45%, transparent 75%);
+
+   display: flex;
+   align-items: center;
+   position: relative;
+   overflow: hidden;
+   width: fit-content;
+   min-width: 176px;
+   height: 54px;
+   margin-left: auto;
+   margin-right: 0;
+   margin-top: 30px;
+   padding: 5px 6px 5px 12px;
+   border: 1px solid var(--ps-border);
+   border-radius: 9999px;
+   background: var(--ps-bg);
+   box-shadow: var(--ps-shadow);
+   cursor: pointer;
+   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+               box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+               border-color 0.2s ease,
+               background 0.2s ease;
+   user-select: none;
+   -webkit-tap-highlight-color: transparent;
  }
 
- .practice-submit i {
-    font-size: 24px;
-    color: #fff;
+ .practice-submit:hover {
+    transform: translateY(-1px) scale(1.02);
+    border-color: var(--ps-border-hover);
+    box-shadow: var(--ps-shadow-hover);
+    background: var(--ps-bg-hover);
+ }
+
+ .practice-submit:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.3), 0 0 10px rgba(46, 245, 168, 0.2);
+ }
+
+ .practice-submit:focus-visible {
+    outline: 2px solid #2ee59d;
+    outline-offset: 3px;
+ }
+
+ .practice-submit:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    filter: grayscale(0.6);
+ }
+
+ .practice-submit-text {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    text-align: center;
+    padding-left: 24px;
+    padding-right: 12px;
+    font-family: var(--font-sans, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ps-text);
+    letter-spacing: 0.2px;
+    line-height: 1;
+ }
+
+ .practice-submit-glow {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 86px;
+    height: 42px;
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background: var(--ps-glow-bg);
+ }
+
+ .practice-submit-streaks {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+ }
+
+ .practice-submit-circle {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--ps-circle-bg);
+    color: var(--ps-arrow-stroke);
+    box-shadow: var(--ps-circle-shadow);
+    flex-shrink: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+ }
+
+ .practice-submit:hover .practice-submit-circle {
+    box-shadow: var(--ps-circle-shadow-hover);
+ }
+
+ .practice-submit-arrow {
+    width: 18px;
+    height: 18px;
+    stroke: var(--ps-arrow-stroke);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    display: block;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+ }
+
+ .practice-submit:hover .practice-submit-arrow {
+    transform: translateX(2.5px);
+ }
+
+ /* Modo Oscuro: Cápsula oscura y verde menta neón exactamente como estaba */
+ body.dark-theme .practice-submit {
+    --ps-bg: #0c1512;
+    --ps-bg-hover: #0f1a16;
+    --ps-border: rgba(46, 245, 168, 0.28);
+    --ps-border-hover: rgba(46, 245, 168, 0.55);
+    --ps-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.5), 0 0 16px rgba(46, 245, 168, 0.12);
+    --ps-shadow-hover: 0 8px 26px -2px rgba(0, 0, 0, 0.6), 0 0 22px rgba(46, 245, 168, 0.25);
+    --ps-text: #ffffff;
+    --ps-circle-bg: linear-gradient(135deg, #3ef8b3, #22dc92);
+    --ps-circle-shadow: 0 0 16px rgba(46, 245, 168, 0.8), 0 0 30px rgba(46, 245, 168, 0.4), inset 0 0 6px rgba(255, 255, 255, 0.5);
+    --ps-circle-shadow-hover: 0 0 22px rgba(46, 245, 168, 0.95), 0 0 40px rgba(46, 245, 168, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.7);
+    --ps-arrow-stroke: #081510;
+    --ps-streak-color-1: #2ef5a8;
+    --ps-streak-color-2: #22df96;
+    --ps-glow-bg: radial-gradient(circle at 85% 50%, rgba(46, 245, 168, 0.35) 0%, rgba(46, 245, 168, 0.15) 45%, transparent 75%);
  }
 
  /* --- Logbook Panel --- */

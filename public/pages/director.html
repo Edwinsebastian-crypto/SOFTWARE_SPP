@@ -227,8 +227,39 @@
 							<div class="practice-value" id="code">.....</div>
 						</div>
 					</form>
-					<button class="practice-submit" type="button"><i class="fa-solid fa-right-to-bracket"
-							aria-hidden="true"></i><span>Enter</span></button>
+					<button class="practice-submit" type="button" aria-label="Enter">
+						<span class="practice-submit-text">Enter</span>
+						<span class="practice-submit-glow" aria-hidden="true">
+							<svg class="practice-submit-streaks" viewBox="0 0 120 44" preserveAspectRatio="none">
+								<defs>
+									<linearGradient id="psStreakGrad" x1="100%" y1="0%" x2="0%" y2="0%">
+										<stop offset="0%" stop-color="#2ef5a8" stop-opacity="0.95" />
+										<stop offset="20%" stop-color="#2ef5a8" stop-opacity="0.8" />
+										<stop offset="55%" stop-color="#22df96" stop-opacity="0.3" />
+										<stop offset="100%" stop-color="#22df96" stop-opacity="0" />
+									</linearGradient>
+									<filter id="psGlowBlur" x="-30%" y="-30%" width="160%" height="160%">
+										<feGaussianBlur stdDeviation="1" result="blur" />
+										<feMerge>
+											<feMergeNode in="blur" />
+											<feMergeNode in="SourceGraphic" />
+										</feMerge>
+									</filter>
+								</defs>
+								<rect x="50" y="7" width="70" height="3" rx="1.5" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="25" y="14" width="95" height="3.5" rx="1.75" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="5" y="21" width="115" height="4" rx="2" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="22" y="28.5" width="98" height="3.5" rx="1.75" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="55" y="35" width="65" height="3" rx="1.5" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+							</svg>
+						</span>
+						<span class="practice-submit-circle">
+							<svg viewBox="0 0 24 24" class="practice-submit-arrow" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+								<line x1="5" y1="12" x2="19" y2="12"></line>
+								<polyline points="12 5 19 12 12 19"></polyline>
+							</svg>
+						</span>
+					</button>
 				</section>
 
 				<!-- LOGBOOK PANEL (shown after Enter) -->
@@ -407,9 +438,6 @@
 										<h3 id="dir-q-lista-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;">Evaluaciones de la Práctica</h3>
 										<p class="ev-sub" id="dir-q-lista-contexto">Cargando contexto…</p>
 									</div>
-									<span class="dv-readonly" title="Consulta de solo lectura: el director no crea, modifica ni califica evaluaciones.">
-										<i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura
-									</span>
 									<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="dir-q-btn-recargar" title="Recargar evaluaciones">
 										<i class="fa-solid fa-rotate" aria-hidden="true"></i>Actualizar
 									</button>
@@ -452,7 +480,6 @@
 										<h3 id="dir-q-eval-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;"></h3>
 										<div class="ev-badges" id="dir-q-eval-badges" style="margin-top:8px"></div>
 									</div>
-									<span class="dv-readonly"><i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura</span>
 								</div>
 
 								<p id="dir-q-eval-desc" class="ev-sub" style="margin:-10px 0 16px 0; font-size: 14px; line-height: 1.5; color: var(--text-primary);"></p>
@@ -489,7 +516,6 @@
 										<h3 id="dir-q-intento-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;"></h3>
 										<div class="ev-badges" id="dir-q-intento-badges" style="margin-top:8px"></div>
 									</div>
-									<span class="dv-readonly"><i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura</span>
 								</div>
 
 								<div class="ev-stack" id="dir-q-intento-contenido">
@@ -1303,6 +1329,7 @@
 				<!-- ===== TAB: GENERAL (accreditation indicators + overview; drawn by accreditation.js and reports.js) ===== -->
 				<div class="report-panel" id="tab-general">
 					<div class="dv-wrapper rp-root">
+						<div id="rp-general-header"></div>
 						<section class="dv-card dv-card--wide rp-acc" id="rep-accreditation-toolbar" aria-label="Accreditation indicators"></section>
 						<div id="rp-general"></div>
 					</div>
@@ -1310,22 +1337,34 @@
 
 				<!-- ===== TAB: TYPES ===== -->
 				<div class="report-panel" id="tab-types" style="display:none;">
-					<div class="dv-wrapper rp-root" id="rp-types"></div>
+					<div class="dv-wrapper rp-root">
+						<div id="rp-types-header"></div>
+						<div id="rp-types"></div>
+					</div>
 				</div>
 
 				<!-- ===== TAB: PRACTICE ===== -->
 				<div class="report-panel" id="tab-practice" style="display:none;">
-					<div class="dv-wrapper rp-root" id="rp-practice"></div>
+					<div class="dv-wrapper rp-root">
+						<div id="rp-practice-header"></div>
+						<div id="rp-practice"></div>
+					</div>
 				</div>
 
 				<!-- ===== TAB: FEEDBACK ===== -->
 				<div class="report-panel" id="tab-feedback" style="display:none;">
-					<div class="dv-wrapper rp-root" id="rp-feedback"></div>
+					<div class="dv-wrapper rp-root">
+						<div id="rp-feedback-header"></div>
+						<div id="rp-feedback"></div>
+					</div>
 				</div>
 
 				<!-- ===== TAB: INSTITUTIONS ===== -->
 				<div class="report-panel" id="tab-institutions" style="display:none;">
-					<div class="dv-wrapper rp-root" id="rp-institutions"></div>
+					<div class="dv-wrapper rp-root">
+						<div id="rp-institutions-header"></div>
+						<div id="rp-institutions"></div>
+					</div>
 				</div>
 
 				<!-- ===== TAB: EVALUATIONS ===== -->
@@ -1338,11 +1377,8 @@
 							<header class="dv-head">
 								<div class="dv-head-text">
 									<h2 id="panel-title">Evaluations</h2>
-									<p class="ev-sub">Query view of all program evaluations. <span id="panel-actualizado"></span></p>
+									<p class="ev-sub">Query view of all program evaluations. <span id="panel-actualizado" class="rp-updated"></span></p>
 								</div>
-								<span class="dv-readonly" title="The director queries; does not create, edit or grade evaluations.">
-									<i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura
-								</span>
 								<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="btn-actualizar">
 									<i class="fa-solid fa-rotate" aria-hidden="true"></i>Refresh
 								</button>
@@ -1368,7 +1404,6 @@
 										<h2 id="detalle-title"></h2>
 										<div class="ev-badges" id="detalle-badges"></div>
 									</div>
-									<span class="dv-readonly"><i class="fa-solid fa-eye" aria-hidden="true"></i>Solo lectura</span>
 								</div>
 								<div id="detalle-contenido"></div>
 							</div>

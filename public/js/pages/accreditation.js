@@ -194,8 +194,8 @@
         const exportButton = h('button', { type: 'button', class: 'rp-acc-export', disabled: !indicators.length, onclick: openExport }, icon('fa-solid fa-download'), 'Export data');
         const latest = totals(indicators).latest;
         return h('div', { class: 'rp-acc-head' },
-            h('div', { class: 'rp-acc-title' }, h('h3', {}, 'Accreditation indicators (real data)'),
-                h('p', {}, latest ? 'Saved in MongoDB · generated ' + dateTime(latest) : 'Computed from the practicum database and saved in MongoDB.')),
+            h('div', { class: 'rp-acc-title' }, h('h3', {}, 'Accreditation indicators'),
+                h('p', {}, latest ? 'Generated ' + dateTime(latest) : 'Computed from the practicum database and saved in MongoDB.')),
             h('div', { class: 'rp-acc-controls' }, h('label', { for: 'ind-year' }, 'Year'), input, exportButton, generate));
     }
 

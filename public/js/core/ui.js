@@ -112,10 +112,12 @@
         const html = Array.from(btn.childNodes);
         btn.disabled = true;
         btn.classList.add('is-busy');
+        document.body.classList.add('is-loading-wait');
         if (textoOcupado) { UI.clear(btn); btn.append(UI.icon('fa-solid fa-spinner fa-spin'), ' ' + textoOcupado); }
         try { return await fn(); }
         finally {
             btn.disabled = false; btn.classList.remove('is-busy');
+            document.body.classList.remove('is-loading-wait');
             if (textoOcupado) { UI.clear(btn); html.forEach((n) => btn.appendChild(n)); }
         }
     };

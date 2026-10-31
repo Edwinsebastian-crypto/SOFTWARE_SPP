@@ -226,10 +226,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ------------------------------------------------------------ PANEL GENERAL */
     let RESUMEN = null;
-    const F = { q: '', estado: '', id_tutor: '', solo_alertas: false };
-    const LIMITE = 10;
-    let offset = 0;
-    let listaCuerpo = null, listaConteo = null, listaMas = null, cargandoLista = false;
+    let todasLasEvaluaciones = [];
+    let limiteMostrado = 15;
+    let bqInput = null, seSelect = null, stSelect = null, caCheck = null;
+    let listaCuerpo = null, listaConteo = null, listaMas = null;
+
+    function stripAccents(str) {
+        return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    function filteredEvaluaciones() {
+        const query = stripAccents((bqInput ? bqInput.value : '').trim());
+        const estado = seSelect ? seSelect.value : '';
+        const tutor = stSelect ? stSelect.value : '';
+        const soloAlertas = caCheck ? caCheck.checked : false;
+
+        return todasLasEvaluaciones.filter((ev) => {
+            if (estado && ev.estado !== estado) return false;
+            if (tutor && String(ev.id_tutor) !== String(tutor)) return false;
+            if (soloAlertas && (!ev.alertas || ev.alertas.length === 0)) return false;
+            if (!query) return true;
+
+            const estudiante = nombreEstudiante(ev.id_estudiante);
+            const tut = nombreTutor(ev.id_tutor);
+            const p = DIR.practicas[ev.id_practica];
+            const practica = p ? `${p.tipo || ''} ${p.institucion || ''}` : '';
+            const corpus = stripAccents(`${ev.titulo} #${ev.id_evaluacion} ${ev.id_evaluacion} ${estudiante} ${tut} ${practica} ${ev.estado}`);
+            return corpus.includes(query);
+        });
+    }
+
+    function renderEvaluacionesList() {
+        if (!listaCuerpo) return;
+        clear(listaCuerpo);
+        clear(listaMas);
+
+        const list = filteredEvaluaciones();
+        if (list.length === 0) {
+            const emptyState = h('div', { class: 'um-empty' },
+                icon('fa-solid fa-magnifying-glass'),
+                h('strong', {}, 'Ninguna evaluación coincide con los filtros'),
+                h('span', {}, 'Intenta cambiar el criterio de búsqueda o limpia los filtros para ver todas las evaluaciones.')
+            );
+            listaCuerpo.append(h('tr', {}, h('td', { colspan: '7' }, emptyState)));
+            if (listaConteo) listaConteo.textContent = 'Sin resultados';
+            return;
+        }
+
+        const visible = list.slice(0, limiteMostrado);
+        visible.forEach((ev) => listaCuerpo.append(filaEvaluacion(ev)));
+
+        if (listaConteo) {
+            listaConteo.textContent = list.length <= limiteMostrado
+                ? `Mostrando ${loc(list.length)} de ${loc(list.length)}`
+                : `Mostrando ${loc(visible.length)} de ${loc(list.length)}`;
+        }
+
+        if (visible.length < list.length) {
+            listaMas.append(h('button', {
+                type: 'button',
+                class: 'ev-btn ev-btn--sm ev-btn--soft',
+                onclick: () => {
+                    limiteMostrado += 15;
+                    renderEvaluacionesList();
+                }
+            }, `Ver más evaluaciones (${loc(list.length - visible.length)} restantes)`));
+        }
+    }
 
     function glosario(r) {
         const dl = $('#dv-glosario'); clear(dl);
@@ -370,72 +433,89 @@ document.addEventListener('DOMContentLoaded', () => {
             r.por_tutor.length ? tabla([{ t: 'Tutor' }, { t: 'Evaluaciones', num: true }, { t: 'Publicadas', num: true }, { t: 'Calificados', num: true }, { t: 'Por calificar', num: true }, { t: 'Promedio', num: true }, { t: 'Alertas', num: true }], filas, { clic: true }) : vacio('Todavía no hay tutores con evaluaciones.'));
     }
     function filtrarTutor(id) {
-        F.id_tutor = id;
-        const s = $('#f-tutor');
-        if (s) {
-            s.value = id;
+        if (stSelect) {
+            stSelect.value = id;
             if (window.SPP && SPP.customSelect && typeof SPP.customSelect.sync === 'function') {
-                SPP.customSelect.sync(s);
+                SPP.customSelect.sync(stSelect);
             }
         }
-        cargarLista(true);
-        $('#dv-lista').scrollIntoView({ behavior: 'smooth' });
+        limiteMostrado = 15;
+        renderEvaluacionesList();
+        const lista = $('#dv-lista');
+        if (lista) lista.scrollIntoView({ behavior: 'smooth' });
     }
 
-    /* ---------- lista de evaluaciones (con filtros) ---------- */
+    /* ---------- lista de evaluaciones (con filtros rápidos estilo usuarios) ---------- */
     function tarjetaLista(r) {
-        const bq = h('input', { type: 'search', placeholder: 'Buscar por título…', 'aria-label': 'Buscar por título', maxlength: '100' });
-        let temporizador = null;
-        bq.addEventListener('input', () => { clearTimeout(temporizador); temporizador = setTimeout(() => { F.q = bq.value.trim(); cargarLista(true); }, 350); });
+        bqInput = h('input', {
+            type: 'search',
+            placeholder: 'Buscar por título, estudiante, tutor o práctica…',
+            'aria-label': 'Buscar por título, estudiante, tutor o práctica',
+            maxlength: '100'
+        });
+        bqInput.addEventListener('input', () => {
+            limiteMostrado = 15;
+            renderEvaluacionesList();
+        });
+        bqInput.addEventListener('change', () => {
+            limiteMostrado = 15;
+            renderEvaluacionesList();
+        });
         const searchWrap = h('div', { class: 'dv-search' },
             icon('fa-solid fa-magnifying-glass'),
-            bq
+            bqInput
         );
 
-        const se = h('select', { id: 'f-estado', 'aria-label': 'Seleccionar estado' }, [
+        seSelect = h('select', { id: 'f-estado', 'aria-label': 'Seleccionar estado' }, [
             ['', 'Todos los estados'],
             ['PUBLICADA', 'Publicadas'],
             ['BORRADOR', 'En borrador'],
             ['CERRADA', 'Cerradas']
         ].map(([v, t]) => h('option', { value: v }, t)));
-        se.addEventListener('change', () => { F.estado = se.value; cargarLista(true); });
+        seSelect.addEventListener('change', () => {
+            limiteMostrado = 15;
+            renderEvaluacionesList();
+        });
         const stateWrap = h('div', { class: 'cp-input-wrap' },
-            se,
+            seSelect,
             icon('fa-solid fa-chevron-down right-icon')
         );
 
-        const st = h('select', { id: 'f-tutor', 'aria-label': 'Seleccionar tutor' }, [
+        stSelect = h('select', { id: 'f-tutor', 'aria-label': 'Seleccionar tutor' }, [
             h('option', { value: '' }, 'Todos los tutores'),
             ...r.por_tutor.map((t) => h('option', { value: t.id_tutor }, nombreTutor(t.id_tutor)))
         ]);
-        st.addEventListener('change', () => { F.id_tutor = st.value; cargarLista(true); });
+        stSelect.addEventListener('change', () => {
+            limiteMostrado = 15;
+            renderEvaluacionesList();
+        });
         const tutorWrap = h('div', { class: 'cp-input-wrap' },
-            st,
+            stSelect,
             icon('fa-solid fa-chevron-down right-icon')
         );
 
-        const ca = h('input', { type: 'checkbox', id: 'f-alertas' });
-        ca.addEventListener('change', () => { F.solo_alertas = ca.checked; cargarLista(true); });
-        const checkWrap = h('label', { class: 'dv-check-pill' }, ca, h('span', {}, 'Solo con alertas'));
+        caCheck = h('input', { type: 'checkbox', id: 'f-alertas' });
+        caCheck.addEventListener('change', () => {
+            limiteMostrado = 15;
+            renderEvaluacionesList();
+        });
+        const checkWrap = h('label', { class: 'dv-check-pill' }, caCheck, h('span', {}, 'Solo con alertas'));
 
         const btnClear = h('button', { type: 'button', class: 'um-ghost-btn', id: 'ev-btn-clear', 'aria-label': 'Limpiar filtros' },
             icon('fa-solid fa-rotate-left'),
             'Clear'
         );
         btnClear.addEventListener('click', () => {
-            bq.value = '';
-            se.value = '';
-            st.value = '';
-            ca.checked = false;
-            F.q = '';
-            F.estado = '';
-            F.id_tutor = '';
-            F.solo_alertas = false;
+            bqInput.value = '';
+            seSelect.value = '';
+            stSelect.value = '';
+            caCheck.checked = false;
             if (window.SPP && SPP.customSelect && typeof SPP.customSelect.sync === 'function') {
-                SPP.customSelect.sync(se);
-                SPP.customSelect.sync(st);
+                SPP.customSelect.sync(seSelect);
+                SPP.customSelect.sync(stSelect);
             }
-            cargarLista(true);
+            limiteMostrado = 15;
+            renderEvaluacionesList();
         });
 
         listaCuerpo = h('tbody', {});
@@ -475,22 +555,6 @@ document.addEventListener('DOMContentLoaded', () => {
             h('td', {}, ev.fecha_limite ? fecha(ev.fecha_limite) : 'Sin límite'));
     }
 
-    async function cargarLista(reiniciar) {
-        if (cargandoLista) return;
-        cargandoLista = true;
-        if (reiniciar) { offset = 0; clear(listaCuerpo); }
-        clear(listaMas);
-        try {
-            const r = await API.listar({ ...F, solo_alertas: F.solo_alertas ? 'true' : undefined, limite: LIMITE, desplazamiento: offset });
-            absorber(r.directorio);
-            r.items.forEach((ev) => listaCuerpo.append(filaEvaluacion(ev)));
-            offset += r.items.length;
-            if (!r.total) listaCuerpo.append(h('tr', {}, h('td', { colspan: '7' }, vacio('Ninguna evaluación coincide con los filtros.', 'fa-solid fa-magnifying-glass'))));
-            listaConteo.textContent = r.total ? `Mostrando ${loc(offset)} de ${loc(r.total)}` : '';
-            if (offset < r.total) listaMas.append(h('button', { type: 'button', class: 'ev-btn ev-btn--sm ev-btn--soft', onclick: (e) => ocupado(e.currentTarget, () => cargarLista(false), 'Cargando…') }, `Ver ${Math.min(LIMITE, r.total - offset)} más`));
-        } catch (e) { EvalUI.error(e); } finally { cargandoLista = false; }
-    }
-
     function errorPanel(el, e, reintentar) {
         clear(el).append(h('div', { class: 'ev-empty' }, icon('fa-solid fa-plug-circle-exclamation'), (e && e.message) || 'No se pudo cargar la información.',
             h('div', { class: 'ev-actions', style: 'justify-content:center' }, h('button', { type: 'button', class: 'ev-btn ev-btn--primary', onclick: reintentar }, icon('fa-solid fa-rotate'), 'Reintentar'))));
@@ -499,19 +563,25 @@ document.addEventListener('DOMContentLoaded', () => {
     async function cargarPanel() {
         clear(contenido).append(h('p', { class: 'ev-loading' }, 'Cargando…'));
         try {
-            const r = await API.resumen();
+            const [r, listRes] = await Promise.all([
+                API.resumen(),
+                API.listar({ limite: 100 })
+            ]);
             absorber(r.directorio);
+            if (listRes && listRes.directorio) absorber(listRes.directorio);
             RESUMEN = r;
+            todasLasEvaluaciones = listRes?.items || [];
+            limiteMostrado = 15;
             glosario(r);
             $('#panel-actualizado').textContent = `Actualizado ${fecha(r.generado_en)}.`;
             clear(contenido).append(
                 renderKpis(r),
                 h('div', { class: 'dv-grid' }, tarjetaAlertas(r), tarjetaEstado(r), tarjetaNotas(r), tarjetaIA(r), tarjetaMeses(r), tarjetaTipos(r), tarjetaTutores(r), tarjetaLista(r)));
-            offset = 0; F.q = ''; F.estado = ''; F.id_tutor = ''; F.solo_alertas = false;
+            
             if (window.SPP && SPP.customSelect && typeof SPP.customSelect.init === 'function') {
                 SPP.customSelect.init('#dv-lista');
             }
-            await cargarLista(true);
+            renderEvaluacionesList();
         } catch (e) { errorPanel(contenido, e, cargarPanel); }
     }
     $('#btn-actualizar').addEventListener('click', (e) => ocupado(e.currentTarget, cargarPanel));

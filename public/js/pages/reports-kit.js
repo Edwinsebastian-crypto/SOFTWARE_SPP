@@ -387,12 +387,48 @@
     }
 
     // ------------------------------------------------------------------ section header with the usual buttons
-    /** Toolbar of a tab: "Updated ..." + Refresh + Export. */
+    /** Toolbar of a tab: matching the Evaluations panel style (dv-head + dv-help). */
     function toolbar(options) {
-        const updated = h('span', { class: 'rp-updated' }, options.updated ? 'Updated ' + dateTime(options.updated) : '');
-        const refresh = options.onRefresh ? h('button', { type: 'button', class: 'ev-btn ev-btn--sm ev-btn--ghost', onclick: (e) => options.onRefresh(e.currentTarget) }, icon('fa-solid fa-rotate'), 'Refresh') : null;
-        const exp = options.onExport ? h('button', { type: 'button', class: 'ev-btn ev-btn--sm ev-btn--dark', onclick: options.onExport }, icon('fa-solid fa-download'), 'Export panel') : null;
-        return h('div', { class: 'rp-bar' }, h('div', { class: 'rp-bar-title' }, options.title ? h('h2', {}, options.title) : null, options.sub ? h('p', {}, options.sub) : null, updated), h('div', { class: 'rp-bar-actions' }, refresh, exp));
+        const frag = document.createDocumentFragment();
+
+        const updatedFormatted = options.updated
+            ? (typeof EvalUI !== 'undefined' && typeof EvalUI.fecha === 'function' ? EvalUI.fecha(options.updated) : dateTime(options.updated))
+            : '';
+        const updatedSpan = h('span', { class: 'rp-updated' }, updatedFormatted ? 'Actualizado ' + updatedFormatted + '.' : '');
+
+        const subText = options.sub ? options.sub + ' ' : '';
+        const subP = h('p', { class: 'ev-sub' }, subText, updatedSpan);
+
+        const textDiv = h('div', { class: 'dv-head-text' },
+            options.title ? h('h2', {}, options.title) : null,
+            subP
+        );
+
+        const refreshBtn = options.onRefresh
+            ? h('button', { type: 'button', class: 'ev-btn ev-btn--sm ev-btn--ghost', onclick: (e) => options.onRefresh(e.currentTarget) }, icon('fa-solid fa-rotate'), 'Refresh')
+            : null;
+
+        const exportBtn = options.onExport
+            ? h('button', { type: 'button', class: 'ev-btn ev-btn--sm ev-btn--dark', onclick: options.onExport }, icon('fa-solid fa-download'), 'Export panel')
+            : null;
+
+        const headerEl = h('header', { class: 'dv-head' }, textDiv, refreshBtn, exportBtn);
+        frag.appendChild(headerEl);
+
+        if (options.glossary && Array.isArray(options.glossary) && options.glossary.length) {
+            const dl = h('dl', {});
+            options.glossary.forEach(([term, desc]) => {
+                dl.appendChild(h('dt', {}, term));
+                dl.appendChild(h('dd', {}, desc));
+            });
+            const details = h('details', { class: 'dv-help' },
+                h('summary', {}, icon('fa-solid fa-circle-info'), '¿Cómo se leen estas cifras?'),
+                dl
+            );
+            frag.appendChild(details);
+        }
+
+        return frag;
     }
 
     SPP.reportKit = {

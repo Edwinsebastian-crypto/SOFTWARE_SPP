@@ -13,11 +13,11 @@
     const { h, icon, fmt, pct, plural, monthLabel, day } = K;
 
     const TABS = [
-        { key: 'general', label: 'General', root: 'rp-general' },
-        { key: 'types', label: 'Types', root: 'rp-types' },
-        { key: 'practice', label: 'Practice', root: 'rp-practice' },
-        { key: 'feedback', label: 'Feedback', root: 'rp-feedback' },
-        { key: 'institutions', label: 'Institutions', root: 'rp-institutions' }
+        { key: 'general', label: 'General', root: 'rp-general', header: 'rp-general-header' },
+        { key: 'types', label: 'Types', root: 'rp-types', header: 'rp-types-header' },
+        { key: 'practice', label: 'Practice', root: 'rp-practice', header: 'rp-practice-header' },
+        { key: 'feedback', label: 'Feedback', root: 'rp-feedback', header: 'rp-feedback-header' },
+        { key: 'institutions', label: 'Institutions', root: 'rp-institutions', header: 'rp-institutions-header' }
     ];
 
     let dashboard = null;
@@ -354,6 +354,111 @@
     }
 
     // ------------------------------------------------------------------ rendering
+    const TAB_META = {
+        general: {
+            title: 'General',
+            sub: 'Overview of the status and indicators of professional practices.',
+            glossary: [
+                ['Total de prácticas', 'Cantidad acumulada de prácticas profesionales registradas en el sistema.'],
+                ['Tasa de aprobación', 'Porcentaje de prácticas con nota final de 60 % o más (3,0 sobre 5,0).'],
+                ['Horas registradas', 'Horas totales de actividades y bitácoras reportadas frente a las horas requeridas.'],
+                ['Promedio final', 'Calificación promedio obtenida en las prácticas ya calificadas y finalizadas.'],
+                ['Distribución de estados', 'Prácticas clasificadas en Activas (en curso), Completadas o Canceladas.'],
+                ['Instituciones vinculadas', 'Empresas y centros educativos con convenios vigentes y practicantes asignados.']
+            ]
+        },
+        types: {
+            title: 'Types',
+            sub: 'Distribution, hours compliance and performance across practice types.',
+            glossary: [
+                ['Tipos de práctica', 'Modalidades curriculares autorizadas para el desarrollo de la práctica profesional.'],
+                ['Horas requeridas', 'Cantidad mínima reglamentaria de horas a cumplir para cada modalidad.'],
+                ['Distribución de estudiantes', 'Proporción de practicantes inscritos en cada tipo respecto al total del programa.'],
+                ['Cumplimiento de horas', 'Porcentaje promedio de horas ejecutadas sobre las horas estipuladas.'],
+                ['Rendimiento académico', 'Promedio de notas finales y porcentaje de aprobación por modalidad de práctica.']
+            ]
+        },
+        practice: {
+            title: 'Practice',
+            sub: 'Detailed tracking of students, hours, academic progress and tutors.',
+            glossary: [
+                ['Identificador de práctica', 'Código único de seguimiento asignado a cada práctica profesional.'],
+                ['Horas válidas', 'Horas reportadas en bitácoras que ya cuentan con el visto bueno del tutor asignado.'],
+                ['Porcentaje de avance', 'Progreso horario acumulado en relación con la meta total establecida.'],
+                ['Nota definitiva', 'Calificación final asignada al consolidar las evaluaciones y el desempeño en la práctica.'],
+                ['Estado de la práctica', 'Indica si la práctica está Activa (en desarrollo), Completada o Cancelada.']
+            ]
+        },
+        feedback: {
+            title: 'Feedback',
+            sub: 'Monitoring of tutor observations, evaluation comments and response times.',
+            glossary: [
+                ['Retroalimentaciones', 'Comentarios y orientaciones pedagógicas emitidas por los tutores en las entregas.'],
+                ['Tiempo medio de respuesta', 'Días promedio que tarda el tutor en responder y retroalimentar una actividad enviada.'],
+                ['Revisiones pendientes', 'Entregas o bitácoras enviadas por el practicante que aún esperan comentarios.'],
+                ['Acompañamiento docente', 'Frecuencia y oportunidad de la orientación cualitativa ofrecida por los tutores.']
+            ]
+        },
+        institutions: {
+            title: 'Institutions',
+            sub: 'Partner entities, convention coverage and student placement statistics.',
+            glossary: [
+                ['Institución receptora', 'Organización, empresa o colegio formalmente registrado donde se realiza la práctica.'],
+                ['Capacidad y asignación', 'Total de prácticas profesionales activas e históricas albergadas en cada institución.'],
+                ['Asesores institucionales', 'Profesionales designados por la entidad receptora para coordinar el trabajo en sede.'],
+                ['Tasa de éxito institucional', 'Desempeño promedio y porcentaje de aprobación de estudiantes por entidad.']
+            ]
+        }
+    };
+
+    function paintHeader(key, updated) {
+        const tab = TABS.find((t) => t.key === key);
+        if (!tab || !tab.header) return;
+        const headContainer = document.getElementById(tab.header);
+        if (!headContainer) return;
+
+        const existingUpdated = headContainer.querySelector('.rp-updated');
+        if (existingUpdated && headContainer.querySelector('.dv-head')) {
+            if (updated) {
+                const formatted = (typeof EvalUI !== 'undefined' && typeof EvalUI.fecha === 'function')
+                    ? EvalUI.fecha(updated)
+                    : K.dateTime(updated);
+                existingUpdated.textContent = 'Actualizado ' + formatted + '.';
+            }
+            return;
+        }
+
+        const meta = TAB_META[key] || { title: tab.label, sub: '', glossary: [] };
+        const toolbarNode = K.toolbar({
+            title: meta.title,
+            sub: meta.sub,
+            glossary: meta.glossary,
+            updated: updated,
+            onRefresh: (button) => reload(button),
+            onExport: () => exportTabs(key)
+        });
+        K.clear(headContainer).append(toolbarNode);
+    }
+
+    function showLoadingState() {
+        // Ensure all tab headers are rendered and visible
+        TABS.forEach((tab) => {
+            paintHeader(tab.key, dashboard ? dashboard.generatedAt : null);
+        });
+
+        // Hide accreditation toolbar while loading
+        const acc = document.getElementById('rep-accreditation-toolbar');
+        if (acc) acc.style.display = 'none';
+
+        // Clear each tab content root and show ONLY Cargando...
+        TABS.forEach((tab) => {
+            const root = document.getElementById(tab.root);
+            if (root) {
+                K.clear(root).append(h('p', { class: 'ev-loading' }, 'Cargando…'));
+            }
+        });
+    }
+
     function paint(key) {
         const tab = TABS.find((t) => t.key === key);
         const root = document.getElementById(tab.root);
@@ -366,7 +471,17 @@
             console.error('[reports] could not draw ' + key, err);
             body = [K.empty('This tab could not be drawn: ' + err.message, 'fa-solid fa-plug-circle-exclamation')];
         }
-        K.clear(root).append(K.toolbar({ title: key === 'general' ? 'Practices overview' : null, updated: dashboard.generatedAt, onRefresh: (button) => reload(button), onExport: () => exportTabs(key) }), ...body);
+
+        // Update header with fresh generated date
+        paintHeader(key, dashboard.generatedAt);
+
+        // Restore accreditation toolbar if on General tab
+        if (key === 'general') {
+            const acc = document.getElementById('rep-accreditation-toolbar');
+            if (acc) acc.style.display = '';
+        }
+
+        K.clear(root).append(...body);
     }
 
     function showMessage(node) {
@@ -379,8 +494,18 @@
     async function reload(button) {
         if (loading) return;
         loading = true;
-        if (button) { button.disabled = true; }
+
+        if (button) {
+            button.disabled = true;
+            button.classList.add('is-busy');
+        }
+        document.body.classList.add('is-loading-wait');
+        showLoadingState();
+
         try {
+            if (window.SPP_ACCREDITATION && typeof window.SPP_ACCREDITATION.reload === 'function') {
+                window.SPP_ACCREDITATION.reload().catch(() => {});
+            }
             dashboard = (await SPP.get('/api/reports/dashboard')).dashboard;
             TABS.forEach((tab) => paint(tab.key));
         } catch (err) {
@@ -388,7 +513,11 @@
             else SPP.showError(err);
         } finally {
             loading = false;
-            if (button) button.disabled = false;
+            if (button) {
+                button.disabled = false;
+                button.classList.remove('is-busy');
+            }
+            document.body.classList.remove('is-loading-wait');
         }
     }
 

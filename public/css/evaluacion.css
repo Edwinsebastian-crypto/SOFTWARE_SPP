@@ -224,9 +224,20 @@ body.dark-theme .ev-icon-btn:hover {
   flex-wrap: wrap;
 }
 
-.is-busy {
-  cursor: progress;
+.is-busy { cursor: wait !important; }
+.ev-btn.is-busy,
+.ev-btn:disabled.is-busy,
+.ev-btn[disabled].is-busy,
+.is-busy,
+.is-busy * {
+  cursor: wait !important;
 }
+
+body.is-loading-wait,
+body.is-loading-wait * {
+  cursor: wait !important;
+}
+
 
 /* ---------- insignias ---------- */
 .ev-badge {
@@ -1422,7 +1433,7 @@ body.dark-theme .dv-wrapper {
 .dv-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
 .dv-head-text { margin-right: auto; min-width: 0; }
 .dv-head-text h2 { font-family: var(--font-serif); font-size: 26px; color: var(--text-primary); margin: 0; overflow-wrap: anywhere; }
-.dv-readonly { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--text-primary); border: 1.5px dashed var(--clr-accent-gold); }
+.dv-readonly { display: none !important; }
 .dv-help { margin-bottom: 20px; padding: 14px 18px; border-radius: 14px; background: var(--panel-bg); box-shadow: 0 4px 10px rgba(0,0,0,.05); }
 .dv-help summary { cursor: pointer; font-family: var(--font-serif); font-weight: 700; font-size: 15px; color: var(--text-primary); display: flex; gap: 10px; align-items: center; }
 .dv-help dl { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 8px 18px; margin: 14px 0 2px; font-family: var(--font-sans); font-size: 13.5px; line-height: 1.5; color: var(--text-primary); }
@@ -1855,4 +1866,38 @@ body.dark-theme .dv-tip { background: #f3efe8; color: #111d18; }
 }
 @media (forced-colors: active) {
   .dv-seg, .dv-bar, .dv-fill, .dv-key { forced-color-adjust: none; border: 1px solid CanvasText; }
+}
+.dv-tablewrap .um-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 42px 20px;
+  text-align: center;
+}
+.dv-tablewrap .um-empty i {
+  font-size: 32px;
+  color: #b6c4bd;
+}
+.dv-tablewrap .um-empty strong {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--text-primary);
+}
+.dv-tablewrap .um-empty span {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--dv-ink2);
+}
+
+.rp-updated,
+#panel-actualizado {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: var(--dv-ink2, #52514e);
+}
+
+body.dark-theme .rp-updated,
+body.dark-theme #panel-actualizado {
+  color: var(--dv-ink2, #d4dcd8) !important;
 }
