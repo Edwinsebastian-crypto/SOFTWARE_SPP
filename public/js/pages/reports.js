@@ -359,54 +359,54 @@
             title: 'General',
             sub: 'Overview of the status and indicators of professional practices.',
             glossary: [
-                ['Total de prácticas', 'Cantidad acumulada de prácticas profesionales registradas en el sistema.'],
-                ['Tasa de aprobación', 'Porcentaje de prácticas con nota final de 60 % o más (3,0 sobre 5,0).'],
-                ['Horas registradas', 'Horas totales de actividades y bitácoras reportadas frente a las horas requeridas.'],
-                ['Promedio final', 'Calificación promedio obtenida en las prácticas ya calificadas y finalizadas.'],
-                ['Distribución de estados', 'Prácticas clasificadas en Activas (en curso), Completadas o Canceladas.'],
-                ['Instituciones vinculadas', 'Empresas y centros educativos con convenios vigentes y practicantes asignados.']
+                ['Total practices', 'Cumulative number of professional practices registered in the system.'],
+                ['Approval rate', 'Percentage of practices with a final grade of 60% or more (3.0 out of 5.0).'],
+                ['Logged hours', 'Total hours of activities and logbooks reported against required hours.'],
+                ['Final average', 'Average grade obtained in already graded and completed practices.'],
+                ['Status distribution', 'Practices classified into Active (in progress), Completed or Cancelled.'],
+                ['Partner institutions', 'Companies and educational institutions with active agreements and assigned students.']
             ]
         },
         types: {
             title: 'Types',
             sub: 'Distribution, hours compliance and performance across practice types.',
             glossary: [
-                ['Tipos de práctica', 'Modalidades curriculares autorizadas para el desarrollo de la práctica profesional.'],
-                ['Horas requeridas', 'Cantidad mínima reglamentaria de horas a cumplir para cada modalidad.'],
-                ['Distribución de estudiantes', 'Proporción de practicantes inscritos en cada tipo respecto al total del programa.'],
-                ['Cumplimiento de horas', 'Porcentaje promedio de horas ejecutadas sobre las horas estipuladas.'],
-                ['Rendimiento académico', 'Promedio de notas finales y porcentaje de aprobación por modalidad de práctica.']
+                ['Practice types', 'Authorized curricular modalities for professional practice development.'],
+                ['Required hours', 'Minimum regulatory hours to be completed for each modality.'],
+                ['Student distribution', 'Proportion of students enrolled in each type relative to the program total.'],
+                ['Hours compliance', 'Average percentage of hours completed over stipulated hours.'],
+                ['Academic performance', 'Average final grades and approval rate by practice modality.']
             ]
         },
         practice: {
             title: 'Practice',
             sub: 'Detailed tracking of students, hours, academic progress and tutors.',
             glossary: [
-                ['Identificador de práctica', 'Código único de seguimiento asignado a cada práctica profesional.'],
-                ['Horas válidas', 'Horas reportadas en bitácoras que ya cuentan con el visto bueno del tutor asignado.'],
-                ['Porcentaje de avance', 'Progreso horario acumulado en relación con la meta total establecida.'],
-                ['Nota definitiva', 'Calificación final asignada al consolidar las evaluaciones y el desempeño en la práctica.'],
-                ['Estado de la práctica', 'Indica si la práctica está Activa (en desarrollo), Completada o Cancelada.']
+                ['Practice ID', 'Unique tracking code assigned to each professional practice.'],
+                ['Approved hours', 'Hours reported in logbooks that have been approved by the assigned tutor.'],
+                ['Progress percentage', 'Cumulative hourly progress relative to the total established target.'],
+                ['Final grade', 'Consolidated grade assigned from evaluations and performance in practice.'],
+                ['Practice status', 'Indicates whether the practice is Active (in progress), Completed or Cancelled.']
             ]
         },
         feedback: {
             title: 'Feedback',
             sub: 'Monitoring of tutor observations, evaluation comments and response times.',
             glossary: [
-                ['Retroalimentaciones', 'Comentarios y orientaciones pedagógicas emitidas por los tutores en las entregas.'],
-                ['Tiempo medio de respuesta', 'Días promedio que tarda el tutor en responder y retroalimentar una actividad enviada.'],
-                ['Revisiones pendientes', 'Entregas o bitácoras enviadas por el practicante que aún esperan comentarios.'],
-                ['Acompañamiento docente', 'Frecuencia y oportunidad de la orientación cualitativa ofrecida por los tutores.']
+                ['Feedback comments', 'Pedagogical observations and guidance provided by tutors on submissions.'],
+                ['Average response time', 'Average days the tutor takes to respond and provide feedback on submitted activities.'],
+                ['Pending reviews', 'Submissions or logbooks sent by the student awaiting comments.'],
+                ['Tutor accompaniment', 'Frequency and timeliness of qualitative guidance offered by tutors.']
             ]
         },
         institutions: {
             title: 'Institutions',
             sub: 'Partner entities, convention coverage and student placement statistics.',
             glossary: [
-                ['Institución receptora', 'Organización, empresa o colegio formalmente registrado donde se realiza la práctica.'],
-                ['Capacidad y asignación', 'Total de prácticas profesionales activas e históricas albergadas en cada institución.'],
-                ['Asesores institucionales', 'Profesionales designados por la entidad receptora para coordinar el trabajo en sede.'],
-                ['Tasa de éxito institucional', 'Desempeño promedio y porcentaje de aprobación de estudiantes por entidad.']
+                ['Host institution', 'Formally registered organization, company or school where the practice takes place.'],
+                ['Capacity & placement', 'Total active and historical professional practices hosted at each institution.'],
+                ['Institutional advisors', 'Professionals designated by the host entity to coordinate on-site work.'],
+                ['Institutional success rate', 'Average student performance and approval rate per entity.']
             ]
         }
     };
@@ -423,7 +423,7 @@
                 const formatted = (typeof EvalUI !== 'undefined' && typeof EvalUI.fecha === 'function')
                     ? EvalUI.fecha(updated)
                     : K.dateTime(updated);
-                existingUpdated.textContent = 'Actualizado ' + formatted + '.';
+                existingUpdated.textContent = 'Updated ' + formatted + '.';
             }
             return;
         }

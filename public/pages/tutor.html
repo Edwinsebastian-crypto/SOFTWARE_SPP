@@ -101,8 +101,39 @@
 							<div class="practice-value" id="code">.....</div>
 						</div>
 					</form>
-					<button class="practice-submit" type="button"><i class="fa-solid fa-right-to-bracket"
-							aria-hidden="true"></i><span>Enter</span></button>
+					<button class="practice-submit" type="button" aria-label="Enter">
+						<span class="practice-submit-text">Enter</span>
+						<span class="practice-submit-glow" aria-hidden="true">
+							<svg class="practice-submit-streaks" viewBox="0 0 120 44" preserveAspectRatio="none">
+								<defs>
+									<linearGradient id="psStreakGrad" x1="100%" y1="0%" x2="0%" y2="0%">
+										<stop offset="0%" stop-color="var(--ps-streak-color-1, #34d399)" stop-opacity="0.95" />
+										<stop offset="20%" stop-color="var(--ps-streak-color-1, #34d399)" stop-opacity="0.8" />
+										<stop offset="55%" stop-color="var(--ps-streak-color-2, #10b981)" stop-opacity="0.3" />
+										<stop offset="100%" stop-color="var(--ps-streak-color-2, #10b981)" stop-opacity="0" />
+									</linearGradient>
+									<filter id="psGlowBlur" x="-30%" y="-30%" width="160%" height="160%">
+										<feGaussianBlur stdDeviation="1" result="blur" />
+										<feMerge>
+											<feMergeNode in="blur" />
+											<feMergeNode in="SourceGraphic" />
+										</feMerge>
+									</filter>
+								</defs>
+								<rect x="50" y="7" width="70" height="3" rx="1.5" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="25" y="14" width="95" height="3.5" rx="1.75" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="5" y="21" width="115" height="4" rx="2" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="22" y="28.5" width="98" height="3.5" rx="1.75" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+								<rect x="55" y="35" width="65" height="3" rx="1.5" fill="url(#psStreakGrad)" filter="url(#psGlowBlur)" />
+							</svg>
+						</span>
+						<span class="practice-submit-circle">
+							<svg viewBox="0 0 24 24" class="practice-submit-arrow" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+								<line x1="5" y1="12" x2="19" y2="12"></line>
+								<polyline points="12 5 19 12 12 19"></polyline>
+							</svg>
+						</span>
+					</button>
 				</section>
 
 				<!-- LOGBOOK PANEL (shown after Enter) -->

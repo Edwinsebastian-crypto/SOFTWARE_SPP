@@ -394,7 +394,7 @@
         const updatedFormatted = options.updated
             ? (typeof EvalUI !== 'undefined' && typeof EvalUI.fecha === 'function' ? EvalUI.fecha(options.updated) : dateTime(options.updated))
             : '';
-        const updatedSpan = h('span', { class: 'rp-updated' }, updatedFormatted ? 'Actualizado ' + updatedFormatted + '.' : '');
+        const updatedSpan = h('span', { class: 'rp-updated' }, updatedFormatted ? 'Updated ' + updatedFormatted + '.' : '');
 
         const subText = options.sub ? options.sub + ' ' : '';
         const subP = h('p', { class: 'ev-sub' }, subText, updatedSpan);
@@ -422,7 +422,7 @@
                 dl.appendChild(h('dd', {}, desc));
             });
             const details = h('details', { class: 'dv-help' },
-                h('summary', {}, icon('fa-solid fa-circle-info'), '¿Cómo se leen estas cifras?'),
+                h('summary', {}, icon('fa-solid fa-circle-info'), 'How to read these figures?'),
                 dl
             );
             frag.appendChild(details);

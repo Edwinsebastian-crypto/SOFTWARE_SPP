@@ -233,10 +233,10 @@
 							<svg class="practice-submit-streaks" viewBox="0 0 120 44" preserveAspectRatio="none">
 								<defs>
 									<linearGradient id="psStreakGrad" x1="100%" y1="0%" x2="0%" y2="0%">
-										<stop offset="0%" stop-color="#2ef5a8" stop-opacity="0.95" />
-										<stop offset="20%" stop-color="#2ef5a8" stop-opacity="0.8" />
-										<stop offset="55%" stop-color="#22df96" stop-opacity="0.3" />
-										<stop offset="100%" stop-color="#22df96" stop-opacity="0" />
+										<stop offset="0%" stop-color="var(--ps-streak-color-1, #34d399)" stop-opacity="0.95" />
+										<stop offset="20%" stop-color="var(--ps-streak-color-1, #34d399)" stop-opacity="0.8" />
+										<stop offset="55%" stop-color="var(--ps-streak-color-2, #10b981)" stop-opacity="0.3" />
+										<stop offset="100%" stop-color="var(--ps-streak-color-2, #10b981)" stop-opacity="0" />
 									</linearGradient>
 									<filter id="psGlowBlur" x="-30%" y="-30%" width="160%" height="160%">
 										<feGaussianBlur stdDeviation="1" result="blur" />
@@ -435,11 +435,11 @@
 							<div class="ev-panel">
 								<div class="ev-head">
 									<div style="margin-right:auto;min-width:0">
-										<h3 id="dir-q-lista-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;">Evaluaciones de la Práctica</h3>
-										<p class="ev-sub" id="dir-q-lista-contexto">Cargando contexto…</p>
+										<h3 id="dir-q-lista-title" style="margin:0; font-family: var(--font-serif); font-size: 22px;">Practice Evaluations</h3>
+										<p class="ev-sub" id="dir-q-lista-contexto">Loading context…</p>
 									</div>
-									<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="dir-q-btn-recargar" title="Recargar evaluaciones">
-										<i class="fa-solid fa-rotate" aria-hidden="true"></i>Actualizar
+									<button type="button" class="ev-btn ev-btn--sm ev-btn--ghost" id="dir-q-btn-recargar" title="Reload evaluations">
+										<i class="fa-solid fa-rotate" aria-hidden="true"></i>Refresh
 									</button>
 								</div>
 
@@ -447,24 +447,24 @@
 								<div class="ev-stats" id="dir-q-list-stats" style="margin-bottom: 20px;">
 									<div class="ev-stat">
 										<b id="dir-kpi-total-evals">0</b>
-										<span>Evaluaciones</span>
+										<span>Evaluations</span>
 									</div>
 									<div class="ev-stat">
 										<b id="dir-kpi-assigned">0</b>
-										<span>Asignadas</span>
+										<span>Assigned</span>
 									</div>
 									<div class="ev-stat">
 										<b id="dir-kpi-in-progress">0</b>
-										<span>En curso</span>
+										<span>In progress</span>
 									</div>
 									<div class="ev-stat">
 										<b id="dir-kpi-avg-grade">—</b>
-										<span>Promedio</span>
+										<span>Average</span>
 									</div>
 								</div>
 
 								<div class="ev-stack" id="dir-q-lista-contenido">
-									<p class="ev-loading">Cargando evaluaciones…</p>
+									<p class="ev-loading">Loading evaluations…</p>
 								</div>
 							</div>
 						</section>
@@ -473,7 +473,7 @@
 						<section class="ev-view" id="dir-q-view-eval" aria-labelledby="dir-q-eval-title" hidden>
 							<div class="ev-panel">
 								<div class="ev-head">
-									<button type="button" class="ev-back" id="dir-q-btn-volver-lista" aria-label="Volver a la lista de evaluaciones">
+									<button type="button" class="ev-back" id="dir-q-btn-volver-lista" aria-label="Back to evaluations list">
 										<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
 									</button>
 									<div style="margin-right:auto;min-width:0">
@@ -488,12 +488,12 @@
 								<div class="ev-stats" id="dir-q-eval-stats"></div>
 
 								<!-- Tabs: Preguntas del Tutor / Respuestas e Intentos del Estudiante -->
-								<div class="ev-tabs" role="tablist" aria-label="Pestañas de la evaluación">
+								<div class="ev-tabs" role="tablist" aria-label="Evaluation tabs">
 									<button type="button" class="ev-tab" role="tab" id="dir-q-tab-preguntas" aria-selected="true">
-										<i class="fa-regular fa-circle-question" style="margin-right:6px"></i>Preguntas del Tutor
+										<i class="fa-regular fa-circle-question" style="margin-right:6px"></i>Tutor Questions
 									</button>
 									<button type="button" class="ev-tab" role="tab" id="dir-q-tab-resultados" aria-selected="false">
-										<i class="fa-solid fa-user-graduate" style="margin-right:6px"></i>Respuestas e Intentos
+										<i class="fa-solid fa-user-graduate" style="margin-right:6px"></i>Answers & Attempts
 									</button>
 								</div>
 
@@ -509,7 +509,7 @@
 						<section class="ev-view" id="dir-q-view-intento" aria-labelledby="dir-q-intento-title" hidden>
 							<div class="ev-panel">
 								<div class="ev-head">
-									<button type="button" class="ev-back" id="dir-q-btn-volver-eval" aria-label="Volver a la evaluación">
+									<button type="button" class="ev-back" id="dir-q-btn-volver-eval" aria-label="Back to evaluation">
 										<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
 									</button>
 									<div style="margin-right:auto;min-width:0">
@@ -519,7 +519,7 @@
 								</div>
 
 								<div class="ev-stack" id="dir-q-intento-contenido">
-									<p class="ev-loading">Cargando respuestas del intento…</p>
+									<p class="ev-loading">Loading attempt answers…</p>
 								</div>
 							</div>
 						</section>
@@ -1388,18 +1388,18 @@
 							</header>
 
 							<details class="dv-help">
-								<summary><i class="fa-solid fa-circle-info" aria-hidden="true"></i>¿Cómo se leen estas cifras?</summary>
+								<summary><i class="fa-solid fa-circle-info" aria-hidden="true"></i>How to read these figures?</summary>
 								<dl id="dv-glosario"></dl>
 							</details>
 
-							<div id="panel-contenido"><p class="ev-loading">Cargando…</p></div>
+							<div id="panel-contenido"><p class="ev-loading">Loading…</p></div>
 						</section>
 
 						<!-- ===== DETALLE DE UNA EVALUACIÓN ===== -->
 						<section class="ev-view" id="view-detalle" aria-labelledby="detalle-title" hidden>
 							<div class="ev-panel">
 								<div class="ev-head">
-									<button type="button" class="ev-back" id="btn-volver" aria-label="Volver al panel"><i class="fa-solid fa-arrow-left"></i></button>
+									<button type="button" class="ev-back" id="btn-volver" aria-label="Back to panel"><i class="fa-solid fa-arrow-left"></i></button>
 									<div class="dv-head-text">
 										<h2 id="detalle-title"></h2>
 										<div class="ev-badges" id="detalle-badges"></div>

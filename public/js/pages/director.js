@@ -129,14 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const loc = (n, dec) => Number(n).toLocaleString('es-CO', { maximumFractionDigits: dec === undefined ? 0 : dec });
     const n0 = (n) => (n === null || n === undefined ? '—' : loc(n));
     const pct = (n) => (n === null || n === undefined ? '—' : `${loc(n, 1)} %`);
-    const dias = (d) => plural(d, 'día', 'días');
+    const dias = (d) => plural(d, 'day', 'days');
     const DIR = { practicas: {}, tutores: {}, estudiantes: {} };
     const absorber = (d) => { if (d) for (const k of Object.keys(DIR)) Object.assign(DIR[k], d[k] || {}); };
     const nombreTutor = (id) => DIR.tutores[id] || `Tutor ${id}`;
-    const nombreEstudiante = (id) => DIR.estudiantes[id] || `Estudiante ${id}`;
+    const nombreEstudiante = (id) => DIR.estudiantes[id] || `Student ${id}`;
     const etiquetaPractica = (id) => {
         const p = DIR.practicas[id];
-        return p ? `${p.estudiante || 'Estudiante'} · ${p.tipo || 'Práctica'}` : `Práctica ${id} (no encontrada)`;
+        return p ? `${p.estudiante || 'Student'} · ${p.tipo || 'Practice'}` : `Practice ${id} (not found)`;
     };
     const pausa = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const abierto = boton.getAttribute('aria-pressed') === 'true';
             boton.setAttribute('aria-pressed', String(!abierto));
             vistaTabla.hidden = abierto; vistaGrafica.hidden = !abierto;
-        } }, icon('fa-solid fa-table'), 'Ver tabla') : null;
+        } }, icon('fa-solid fa-table'), 'View table') : null;
         return h('article', { class: 'dv-card' + (ancho ? ' dv-card--wide' : '') },
             h('div', { class: 'dv-card-head' }, h('div', { style: 'margin-right:auto;min-width:0' }, h('h3', {}, titulo), sub ? h('p', {}, sub) : null), boton),
             vistaGrafica, vistaTabla, nota ? h('p', { class: 'dv-note' }, nota) : null);
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Barra apilada: un segmento por categoría, con 2 px de separación y la cifra dentro si cabe. */
     function barraApilada(partes) {
         const total = partes.reduce((s, p) => s + p.valor, 0);
-        if (!total) return vacio('Todavía no hay datos.');
+        if (!total) return vacio('No data available yet.');
         return h('div', {},
             h('div', { class: 'dv-stack', role: 'img', 'aria-label': partes.map((p) => `${p.etiqueta}: ${p.valor}`).join(', ') },
                 partes.map((p) => h('div', { class: `dv-seg ${p.clase}${p.valor ? '' : ' dv-seg--zero'}`, style: `flex:${p.valor} 1 0`, 'data-tip': `${p.etiqueta}: ${loc(p.valor)} (${loc(p.valor / total * 100, 1)} %)`, tabindex: '0' },
@@ -208,17 +208,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ------------------------------------------------------------ texto de las alertas */
-    const SEVERIDAD = { ALTA: ['fa-solid fa-circle-exclamation', 'Alta'], MEDIA: ['fa-solid fa-triangle-exclamation', 'Media'], BAJA: ['fa-solid fa-circle-info', 'Baja'] };
+    const SEVERIDAD = { ALTA: ['fa-solid fa-circle-exclamation', 'High'], MEDIA: ['fa-solid fa-triangle-exclamation', 'Medium'], BAJA: ['fa-solid fa-circle-info', 'Low'] };
     function mensajeAlerta(a) {
         switch (a.tipo) {
-            case 'REVISION_ATRASADA': return `${plural(a.cantidad, 'intento espera', 'intentos esperan')} calificación; el más antiguo lleva ${dias(a.dias)}.`;
-            case 'VENCIDA_SIN_CERRAR': return `La fecha límite pasó hace ${dias(a.dias)} y la evaluación sigue publicada.`;
-            case 'BORRADOR_ANTIGUO': return `Lleva ${dias(a.dias)} en borrador sin publicarse.`;
-            case 'SIN_INTENTOS': return `Publicada hace ${dias(a.dias)} y el estudiante aún no la presenta.`;
+            case 'REVISION_ATRASADA': return `${plural(a.cantidad, 'attempt awaits', 'attempts await')} grading; the oldest has been waiting for ${dias(a.dias)}.`;
+            case 'VENCIDA_SIN_CERRAR': return `The deadline passed ${dias(a.dias)} ago and the evaluation remains published.`;
+            case 'BORRADOR_ANTIGUO': return `Has been in draft for ${dias(a.dias)} without being published.`;
+            case 'SIN_INTENTOS': return `Published ${dias(a.dias)} ago and the student has not yet taken it.`;
             default: return a.tipo;
         }
     }
-    const TITULO_ALERTA = { REVISION_ATRASADA: 'Calificación atrasada', VENCIDA_SIN_CERRAR: 'Vencida sin cerrar', BORRADOR_ANTIGUO: 'Borrador antiguo', SIN_INTENTOS: 'Sin presentar' };
+    const TITULO_ALERTA = { REVISION_ATRASADA: 'Overdue grading', VENCIDA_SIN_CERRAR: 'Overdue unclosed', BORRADOR_ANTIGUO: 'Old draft', SIN_INTENTOS: 'Not taken' };
     function bandera(a) {
         const [ic, t] = SEVERIDAD[a.severidad] || SEVERIDAD.BAJA;
         return h('span', { class: `dv-flag ${a.severidad === 'ALTA' ? '' : 'dv-flag--warn'}`, 'data-tip': mensajeAlerta(a), tabindex: '0' }, icon(ic), `${TITULO_ALERTA[a.tipo] || a.tipo}`);
@@ -265,11 +265,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (list.length === 0) {
             const emptyState = h('div', { class: 'um-empty' },
                 icon('fa-solid fa-magnifying-glass'),
-                h('strong', {}, 'Ninguna evaluación coincide con los filtros'),
-                h('span', {}, 'Intenta cambiar el criterio de búsqueda o limpia los filtros para ver todas las evaluaciones.')
+                h('strong', {}, 'No evaluations match the filters'),
+                h('span', {}, 'Try changing the search criteria or clear filters to view all evaluations.')
             );
             listaCuerpo.append(h('tr', {}, h('td', { colspan: '7' }, emptyState)));
-            if (listaConteo) listaConteo.textContent = 'Sin resultados';
+            if (listaConteo) listaConteo.textContent = 'No results';
             return;
         }
 
@@ -278,8 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (listaConteo) {
             listaConteo.textContent = list.length <= limiteMostrado
-                ? `Mostrando ${loc(list.length)} de ${loc(list.length)}`
-                : `Mostrando ${loc(visible.length)} de ${loc(list.length)}`;
+                ? `Showing ${loc(list.length)} of ${loc(list.length)}`
+                : `Showing ${loc(visible.length)} of ${loc(list.length)}`;
         }
 
         if (visible.length < list.length) {
@@ -290,21 +290,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     limiteMostrado += 15;
                     renderEvaluacionesList();
                 }
-            }, `Ver más evaluaciones (${loc(list.length - visible.length)} restantes)`));
+            }, `View more evaluations (${loc(list.length - visible.length)} remaining)`));
         }
     }
 
     function glosario(r) {
         const dl = $('#dv-glosario'); clear(dl);
         const items = [
-            ['Nota final', 'La mejor nota entre los intentos ya calificados de una evaluación.'],
-            ['Porcentaje', 'Nota dividida entre la nota máxima de la evaluación; así se pueden comparar escalas distintas.'],
-            ['Aprobada', `Nota final de ${loc(r.umbral_aprobacion_pct)} % o más (3,0 sobre 5,0).`],
-            ['Pendiente de calificar', 'El estudiante ya envió el intento, pero el tutor aún no califica sus preguntas abiertas.'],
-            ['Acierto de una pregunta', 'Respuestas correctas entre las respuestas ya calificadas. Una abierta cuenta como acierto desde la mitad de su valor.'],
-            ['Pregunta con IA', 'Propuesta por la IA a partir de un tema o de las evidencias. El tutor la aprueba, edita o rechaza antes de publicar.'],
-            ['Alertas', `Calificación atrasada: un intento lleva ${r.dias_revision_atrasada} días o más sin calificar. Vencida sin cerrar: pasó la fecha límite y sigue publicada. Borrador antiguo: ${r.dias_borrador_antiguo} días o más sin publicar. Sin presentar: publicada hace ${r.dias_sin_intentos} días o más y nadie la ha presentado.`],
-            ['Privacidad', 'Este panel muestra cifras y notas. No muestra lo que escribieron los estudiantes ni los comentarios del tutor.'],
+            ['Final grade', 'The highest score among the graded attempts of an evaluation.'],
+            ['Percentage', 'Score divided by the maximum evaluation grade, allowing comparison across different scales.'],
+            ['Passed', `Final score of ${loc(r.umbral_aprobacion_pct)} % or higher (3.0 out of 5.0).`],
+            ['Pending grading', 'The student submitted the attempt, but the tutor has not graded the open questions yet.'],
+            ['Question success rate', 'Correct answers among graded responses. An open question counts as correct starting from half its value.'],
+            ['AI question', 'Suggested by AI from a topic or evidence. The tutor approves, edits, or rejects before publishing.'],
+            ['Alerts', `Overdue grading: an attempt has waited ${r.dias_revision_atrasada} days or more without grading. Overdue unclosed: the deadline passed and it remains published. Old draft: ${r.dias_borrador_antiguo} days or more without publishing. Not taken: published ${r.dias_sin_intentos} days or more ago and no one has taken it.`],
+            ['Privacy', 'This dashboard shows statistics and scores. It does not show student answers or tutor comments.'],
         ];
         items.forEach(([t, d]) => dl.append(h('dt', {}, t), h('dd', {}, d)));
     }
@@ -318,16 +318,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderKpis(r) {
         const t = r.totales, d = r.desempeno, ia = r.ia, e = r.por_estado;
         const presentados = t.intentos_pendientes_revision + t.intentos_calificados;
-        const equivale = d.promedio_pct === null ? 'Aún no hay evaluaciones calificadas.' : `Equivale a ${loc(d.promedio_pct / 20, 1)} sobre 5,0 · ${plural(d.evaluaciones_calificadas, 'evaluación calificada', 'evaluaciones calificadas')}.`;
+        const equivale = d.promedio_pct === null ? 'No graded evaluations yet.' : `Equivalent to ${loc(d.promedio_pct / 20, 1)} out of 5.0 · ${plural(d.evaluaciones_calificadas, 'graded evaluation', 'graded evaluations')}.`;
         return h('div', { class: 'dv-kpis' },
-            kpi('fa-solid fa-clipboard-question', n0(t.evaluaciones), 'Evaluaciones', `${n0(e.PUBLICADA)} publicadas · ${n0(e.BORRADOR)} en borrador · ${n0(e.CERRADA)} cerradas`),
-            kpi('fa-solid fa-people-group', n0(t.practicas), 'Prácticas con evaluación', `${plural(t.tutores, 'tutor', 'tutores')} · ${plural(t.estudiantes, 'estudiante', 'estudiantes')}`),
-            kpi('fa-solid fa-paper-plane', n0(presentados), 'Intentos presentados', `${n0(t.intentos_en_curso)} en curso ahora mismo`),
-            kpi('fa-solid fa-hourglass-half', n0(t.intentos_pendientes_revision), 'Pendientes de calificar', t.intentos_pendientes_revision ? 'Esperan la calificación del tutor.' : 'Todo está al día.', r.alertas.some((a) => a.tipo === 'REVISION_ATRASADA')),
-            kpi('fa-solid fa-chart-simple', pct(d.promedio_pct), 'Promedio de notas finales', equivale),
-            kpi('fa-solid fa-circle-check', pct(d.aprobacion_pct), 'Aprobación', d.evaluaciones_calificadas ? `${n0(d.aprobadas)} aprobaron · ${n0(d.reprobadas)} no llegaron al ${loc(r.umbral_aprobacion_pct)} %.` : 'Aún no hay evaluaciones calificadas.'),
-            kpi('fa-solid fa-wand-magic-sparkles', pct(ia.uso_pct), 'Preguntas hechas con IA', ia.preguntas ? `${pct(ia.aceptacion_pct)} de las que el tutor ya revisó fueron aceptadas.` : 'Ninguna pregunta se generó con IA.'),
-            kpi('fa-solid fa-calendar-xmark', n0(t.evaluaciones_vencidas_sin_cerrar), 'Vencidas sin cerrar', t.evaluaciones_vencidas_sin_cerrar ? 'Pasó la fecha límite y siguen publicadas.' : 'Ninguna.', t.evaluaciones_vencidas_sin_cerrar > 0));
+            kpi('fa-solid fa-clipboard-question', n0(t.evaluaciones), 'Evaluations', `${n0(e.PUBLICADA)} published · ${n0(e.BORRADOR)} in draft · ${n0(e.CERRADA)} closed`),
+            kpi('fa-solid fa-people-group', n0(t.practicas), 'Practices with evaluation', `${plural(t.tutores, 'tutor', 'tutors')} · ${plural(t.estudiantes, 'student', 'students')}`),
+            kpi('fa-solid fa-paper-plane', n0(presentados), 'Submitted attempts', `${n0(t.intentos_en_curso)} in progress right now`),
+            kpi('fa-solid fa-hourglass-half', n0(t.intentos_pendientes_revision), 'Pending grading', t.intentos_pendientes_revision ? 'Awaiting tutor grading.' : 'Everything is up to date.', r.alertas.some((a) => a.tipo === 'REVISION_ATRASADA')),
+            kpi('fa-solid fa-chart-simple', pct(d.promedio_pct), 'Final grades average', equivale),
+            kpi('fa-solid fa-circle-check', pct(d.aprobacion_pct), 'Pass rate', d.evaluaciones_calificadas ? `${n0(d.aprobadas)} passed · ${n0(d.reprobadas)} did not reach ${loc(r.umbral_aprobacion_pct)} %.` : 'No graded evaluations yet.'),
+            kpi('fa-solid fa-wand-magic-sparkles', pct(ia.uso_pct), 'Questions generated with AI', ia.preguntas ? `${pct(ia.aceptacion_pct)} of tutor-reviewed questions were accepted.` : 'No questions were generated with AI.'),
+            kpi('fa-solid fa-calendar-xmark', n0(t.evaluaciones_vencidas_sin_cerrar), 'Overdue unclosed', t.evaluaciones_vencidas_sin_cerrar ? 'Deadline passed and still published.' : 'None.', t.evaluaciones_vencidas_sin_cerrar > 0));
     }
 
     function tarjetaAlertas(r) {
@@ -342,24 +342,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         h('span', { class: 'dv-alert-text' }, `${etiquetaPractica(a.id_practica)} · ${nombreTutor(a.id_tutor)}. ${mensajeAlerta(a)}`)),
                     icon('fa-solid fa-chevron-right dv-alert-go')));
             }))
-            : vacio('No hay situaciones que atender.', 'fa-regular fa-circle-check');
+            : vacio('No situations requiring attention.', 'fa-regular fa-circle-check');
         const mas = r.alertas.length > MAX ? h('div', { class: 'dv-more' }, h('button', { type: 'button', class: 'ev-btn ev-btn--sm ev-btn--ghost', onclick: () => {
             F.solo_alertas = true; const c = $('#f-alertas'); if (c) c.checked = true; cargarLista(true); $('#dv-lista').scrollIntoView({ behavior: 'smooth' });
-        } }, `Ver las ${r.alertas.length} alertas en la lista`)) : null;
+        } }, `View all ${r.alertas.length} alerts in list`)) : null;
         return h('article', { class: 'dv-card dv-card--wide' },
-            h('div', { class: 'dv-card-head' }, h('div', {}, h('h3', {}, 'Requieren atención'), h('p', {}, 'Ordenadas de la más urgente a la menos urgente. Toca una para ver la evaluación.'))),
+            h('div', { class: 'dv-card-head' }, h('div', {}, h('h3', {}, 'Require attention'), h('p', {}, 'Sorted from most to least urgent. Click one to view evaluation.'))),
             cuerpo, mas);
     }
 
     function tarjetaEstado(r) {
         const e = r.por_estado;
-        const partes = [{ etiqueta: 'Publicadas', valor: e.PUBLICADA, clase: 'dv-s1' }, { etiqueta: 'En borrador', valor: e.BORRADOR, clase: 'dv-s2' }, { etiqueta: 'Cerradas', valor: e.CERRADA, clase: 'dv-s3' }];
+        const partes = [{ etiqueta: 'Published', valor: e.PUBLICADA, clase: 'dv-s1' }, { etiqueta: 'In draft', valor: e.BORRADOR, clase: 'dv-s2' }, { etiqueta: 'Closed', valor: e.CERRADA, clase: 'dv-s3' }];
         const t = r.totales;
-        const intentos = [{ etiqueta: 'En curso', valor: t.intentos_en_curso, clase: 'dv-s1' }, { etiqueta: 'Por calificar', valor: t.intentos_pendientes_revision, clase: 'dv-s2' }, { etiqueta: 'Calificados', valor: t.intentos_calificados, clase: 'dv-s3' }];
-        const grafico = h('div', {}, barraApilada(partes), h('h4', { class: 'dv-sub' }, 'Estado de los intentos de los estudiantes'), barraApilada(intentos));
-        return tarjeta({ titulo: 'Estado de las evaluaciones', sub: 'Publicadas las ve el estudiante; en borrador aún las prepara el tutor; cerradas ya no admiten intentos.',
-            grafico, columnas: [{ t: 'Concepto' }, { t: 'Cantidad', num: true }],
-            filas: [...partes.map((p) => [`Evaluaciones ${p.etiqueta.toLowerCase()}`, loc(p.valor)]), ...intentos.map((p) => [`Intentos ${p.etiqueta.toLowerCase()}`, loc(p.valor)])] });
+        const intentos = [{ etiqueta: 'In progress', valor: t.intentos_en_curso, clase: 'dv-s1' }, { etiqueta: 'To grade', valor: t.intentos_pendientes_revision, clase: 'dv-s2' }, { etiqueta: 'Graded', valor: t.intentos_calificados, clase: 'dv-s3' }];
+        const grafico = h('div', {}, barraApilada(partes), h('h4', { class: 'dv-sub' }, 'Student attempt status'), barraApilada(intentos));
+        return tarjeta({ titulo: 'Evaluation status', sub: 'Published are visible to students; drafts are prepared by tutors; closed no longer accept attempts.',
+            grafico, columnas: [{ t: 'Concept' }, { t: 'Count', num: true }],
+            filas: [...partes.map((p) => [`Evaluations (${p.etiqueta.toLowerCase()})`, loc(p.valor)]), ...intentos.map((p) => [`Attempts (${p.etiqueta.toLowerCase()})`, loc(p.valor)])] });
     }
 
     function tarjetaNotas(r) {
@@ -368,69 +368,69 @@ document.addEventListener('DOMContentLoaded', () => {
         const max = Math.max(0, ...rangos.map((x) => x.cantidad));
         const etiqueta = (x) => `${x.desde}–${x.hasta} %`;
         let grafico;
-        if (!d.evaluaciones_calificadas) grafico = vacio('Aún no hay evaluaciones calificadas.', 'fa-regular fa-clipboard');
+        if (!d.evaluaciones_calificadas) grafico = vacio('No graded evaluations yet.', 'fa-regular fa-clipboard');
         else {
             const cols = [];
             rangos.forEach((x, i) => {
                 if (x.desde === r.umbral_aprobacion_pct) cols.push(h('i', { class: 'dv-pass-line', 'aria-hidden': 'true' }));
-                cols.push(h('div', { class: 'dv-col' }, h('div', { class: `dv-bar dv-s1${x.cantidad ? '' : ' dv-bar--zero'}`, style: `height:${max ? x.cantidad / max * 100 : 0}%`, 'data-tip': `${etiqueta(x)} de la nota máxima: ${plural(x.cantidad, 'evaluación', 'evaluaciones')}`, tabindex: '0' }, h('span', {}, String(x.cantidad)))));
+                cols.push(h('div', { class: 'dv-col' }, h('div', { class: `dv-bar dv-s1${x.cantidad ? '' : ' dv-bar--zero'}`, style: `height:${max ? x.cantidad / max * 100 : 0}%`, 'data-tip': `${etiqueta(x)} of maximum grade: ${plural(x.cantidad, 'evaluation', 'evaluations')}`, tabindex: '0' }, h('span', {}, String(x.cantidad)))));
             });
-            grafico = h('div', {}, h('div', { class: 'dv-cols', role: 'img', 'aria-label': `Notas finales por rango: ${rangos.map((x) => `${etiqueta(x)}: ${x.cantidad}`).join(', ')}` }, cols),
+            grafico = h('div', {}, h('div', { class: 'dv-cols', role: 'img', 'aria-label': `Final grades by range: ${rangos.map((x) => `${etiqueta(x)}: ${x.cantidad}`).join(', ')}` }, cols),
                 h('div', { class: 'dv-xaxis' }, rangos.map((x) => h('span', {}, etiqueta(x)))));
         }
-        return tarjeta({ titulo: 'Notas finales', sub: 'Evaluaciones calificadas según el porcentaje de la nota máxima.', grafico,
-            columnas: [{ t: 'Rango' }, { t: 'Evaluaciones', num: true }], filas: rangos.map((x) => [etiqueta(x), loc(x.cantidad)]),
-            nota: `La línea roja punteada marca el mínimo para aprobar (${loc(r.umbral_aprobacion_pct)} %).` });
+        return tarjeta({ titulo: 'Final grades', sub: 'Graded evaluations by percentage of maximum grade.', grafico,
+            columnas: [{ t: 'Range' }, { t: 'Evaluations', num: true }], filas: rangos.map((x) => [etiqueta(x), loc(x.cantidad)]),
+            nota: `The dashed red line indicates minimum passing score (${loc(r.umbral_aprobacion_pct)} %).` });
     }
 
     function tarjetaIA(r) {
         const o = r.preguntas.por_origen, ia = r.ia;
-        const grafico = h('div', {}, barraApilada([{ etiqueta: 'Generadas con IA', valor: o.IA, clase: 'dv-s1' }, { etiqueta: 'Escritas por el tutor', valor: o.MANUAL, clase: 'dv-s2' }]),
-            ia.preguntas ? h('div', {}, h('h4', { class: 'dv-sub' }, 'Qué hizo el tutor con las preguntas de la IA'),
-                barrasH([{ etiqueta: 'Aprobadas', valor: ia.aprobadas }, { etiqueta: 'Por revisar', valor: ia.por_revisar }, { etiqueta: 'Rechazadas', valor: ia.rechazadas }], ia.preguntas, null)) : null);
-        const prov = Object.entries(ia.por_proveedor).map(([k, v]) => `${k} (${v})`).join(', ') || 'ninguno';
-        return tarjeta({ titulo: 'Origen de las preguntas', sub: 'Cuántas propone la IA y cuántas acepta el tutor.', grafico,
-            columnas: [{ t: 'Concepto' }, { t: 'Preguntas', num: true }], filas: [['Generadas con IA', loc(o.IA)], ['Escritas por el tutor', loc(o.MANUAL)], ['IA aprobadas', loc(ia.aprobadas)], ['IA por revisar', loc(ia.por_revisar)], ['IA rechazadas', loc(ia.rechazadas)]],
-            nota: `Aceptación de la IA: ${pct(ia.aceptacion_pct)} de lo ya revisado. Generaciones: ${loc(ia.generaciones)}${ia.generaciones_fallidas ? ` (${loc(ia.generaciones_fallidas)} fallidas)` : ''}. Proveedor: ${prov}.` });
+        const grafico = h('div', {}, barraApilada([{ etiqueta: 'Generated with AI', valor: o.IA, clase: 'dv-s1' }, { etiqueta: 'Written by tutor', valor: o.MANUAL, clase: 'dv-s2' }]),
+            ia.preguntas ? h('div', {}, h('h4', { class: 'dv-sub' }, 'Tutor actions on AI questions'),
+                barrasH([{ etiqueta: 'Approved', valor: ia.aprobadas }, { etiqueta: 'Pending review', valor: ia.por_revisar }, { etiqueta: 'Rejected', valor: ia.rechazadas }], ia.preguntas, null)) : null);
+        const prov = Object.entries(ia.por_proveedor).map(([k, v]) => `${k} (${v})`).join(', ') || 'none';
+        return tarjeta({ titulo: 'Question origin', sub: 'How many suggested by AI and how many accepted by the tutor.', grafico,
+            columnas: [{ t: 'Concept' }, { t: 'Questions', num: true }], filas: [['Generated with AI', loc(o.IA)], ['Written by tutor', loc(o.MANUAL)], ['AI approved', loc(ia.aprobadas)], ['AI pending review', loc(ia.por_revisar)], ['AI rejected', loc(ia.rechazadas)]],
+            nota: `AI acceptance: ${pct(ia.aceptacion_pct)} of reviewed items. Generations: ${loc(ia.generaciones)}${ia.generaciones_fallidas ? ` (${loc(ia.generaciones_fallidas)} failed)` : ''}. Provider: ${prov}.` });
     }
 
-    const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const MESES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const nombreMes = (m) => `${MESES[Number(m.slice(5, 7)) - 1]} ${m.slice(2, 4)}`;
     function tarjetaMeses(r) {
         const H = r.historial;
         const max = Math.max(0, ...H.flatMap((m) => [m.evaluaciones_creadas, m.intentos_enviados]));
         const barra = (v, clase, tip) => h('div', { class: `dv-bar ${clase}${v ? '' : ' dv-bar--zero'}`, style: `height:${max ? v / max * 100 : 0}%`, 'data-tip': tip, tabindex: '0' }, h('span', {}, String(v)));
-        const grafico = !max ? vacio('Todavía no hay actividad en estos meses.') : h('div', {},
-            h('div', { class: 'dv-cols dv-cols--tight', role: 'img', 'aria-label': 'Actividad de los últimos meses' },
-                H.map((m) => h('div', { class: 'dv-col' }, barra(m.evaluaciones_creadas, 'dv-s1', `${nombreMes(m.mes)}: ${plural(m.evaluaciones_creadas, 'evaluación creada', 'evaluaciones creadas')}`), barra(m.intentos_enviados, 'dv-s2', `${nombreMes(m.mes)}: ${plural(m.intentos_enviados, 'intento enviado', 'intentos enviados')}`)))),
+        const grafico = !max ? vacio('No activity in these months yet.') : h('div', {},
+            h('div', { class: 'dv-cols dv-cols--tight', role: 'img', 'aria-label': 'Recent months activity' },
+                H.map((m) => h('div', { class: 'dv-col' }, barra(m.evaluaciones_creadas, 'dv-s1', `${nombreMes(m.mes)}: ${plural(m.evaluaciones_creadas, 'created evaluation', 'created evaluations')}`), barra(m.intentos_enviados, 'dv-s2', `${nombreMes(m.mes)}: ${plural(m.intentos_enviados, 'submitted attempt', 'submitted attempts')}`)))),
             h('div', { class: 'dv-xaxis dv-xaxis--tight' }, H.map((m) => h('span', {}, nombreMes(m.mes)))),
-            h('div', { class: 'dv-legend' }, h('span', {}, h('i', { class: 'dv-key dv-s1' }), 'Evaluaciones creadas'), h('span', {}, h('i', { class: 'dv-key dv-s2' }), 'Intentos enviados')));
-        return tarjeta({ titulo: 'Actividad por mes', sub: `Últimos ${H.length} meses.`, grafico,
-            columnas: [{ t: 'Mes' }, { t: 'Evaluaciones creadas', num: true }, { t: 'Intentos enviados', num: true }], filas: H.map((m) => [nombreMes(m.mes), loc(m.evaluaciones_creadas), loc(m.intentos_enviados)]) });
+            h('div', { class: 'dv-legend' }, h('span', {}, h('i', { class: 'dv-key dv-s1' }), 'Created evaluations'), h('span', {}, h('i', { class: 'dv-key dv-s2' }), 'Submitted attempts')));
+        return tarjeta({ titulo: 'Activity by month', sub: `Last ${H.length} months.`, grafico,
+            columnas: [{ t: 'Month' }, { t: 'Created evaluations', num: true }, { t: 'Submitted attempts', num: true }], filas: H.map((m) => [nombreMes(m.mes), loc(m.evaluaciones_creadas), loc(m.intentos_enviados)]) });
     }
 
     function tarjetaTipos(r) {
         const t = r.preguntas.por_tipo, d = r.preguntas.por_dificultad;
         const total = Object.values(t).reduce((s, v) => s + v, 0);
         const fila = (etiqueta, valor) => ({ etiqueta, valor, texto: `${loc(valor)}${total ? ` · ${loc(valor / total * 100)} %` : ''}` });
-        const grafico = !total ? vacio('Todavía no hay preguntas.') : h('div', { class: 'dv-two' },
-            h('div', {}, h('h4', { class: 'dv-sub dv-sub--first' }, 'Por tipo'),
-                barrasH([fila('Opción múltiple', t.OPCION_MULTIPLE), fila('Verdadero / Falso', t.VERDADERO_FALSO), fila('Abierta', t.ABIERTA)], total)),
-            h('div', {}, h('h4', { class: 'dv-sub dv-sub--first' }, 'Por dificultad con que se redactaron'),
-                barrasH([fila('Fácil', d.FACIL), fila('Media', d.MEDIA), fila('Difícil', d.DIFICIL), fila('Sin definir', d.SIN_DEFINIR)], total)));
-        return tarjeta({ titulo: 'Preguntas', ancho: true, sub: `${plural(total, 'pregunta en total', 'preguntas en total')}.`, grafico,
-            columnas: [{ t: 'Categoría' }, { t: 'Preguntas', num: true }], filas: [['Opción múltiple', loc(t.OPCION_MULTIPLE)], ['Verdadero / Falso', loc(t.VERDADERO_FALSO)], ['Abierta', loc(t.ABIERTA)], ['Fácil', loc(d.FACIL)], ['Media', loc(d.MEDIA)], ['Difícil', loc(d.DIFICIL)], ['Sin definir', loc(d.SIN_DEFINIR)]] });
+        const grafico = !total ? vacio('No questions yet.') : h('div', { class: 'dv-two' },
+            h('div', {}, h('h4', { class: 'dv-sub dv-sub--first' }, 'By type'),
+                barrasH([fila('Multiple choice', t.OPCION_MULTIPLE), fila('True / False', t.VERDADERO_FALSO), fila('Open', t.ABIERTA)], total)),
+            h('div', {}, h('h4', { class: 'dv-sub dv-sub--first' }, 'By difficulty'),
+                barrasH([fila('Easy', d.FACIL), fila('Medium', d.MEDIA), fila('Hard', d.DIFICIL), fila('Undefined', d.SIN_DEFINIR)], total)));
+        return tarjeta({ titulo: 'Questions', ancho: true, sub: `${plural(total, 'question in total', 'questions in total')}.`, grafico,
+            columnas: [{ t: 'Category' }, { t: 'Questions', num: true }], filas: [['Multiple choice', loc(t.OPCION_MULTIPLE)], ['True / False', loc(t.VERDADERO_FALSO)], ['Open', loc(t.ABIERTA)], ['Easy', loc(d.FACIL)], ['Medium', loc(d.MEDIA)], ['Hard', loc(d.DIFICIL)], ['Undefined', loc(d.SIN_DEFINIR)]] });
     }
 
     function tarjetaTutores(r) {
         const filas = r.por_tutor.map((t) => h('tr', { tabindex: '0', onclick: () => filtrarTutor(t.id_tutor), onkeydown: (e) => { if (e.key === 'Enter') filtrarTutor(t.id_tutor); } },
             h('td', {}, h('span', { class: 'dv-cell-title' }, nombreTutor(t.id_tutor))),
             h('td', { class: 'num' }, loc(t.evaluaciones)), h('td', { class: 'num' }, loc(t.publicadas)), h('td', { class: 'num' }, loc(t.intentos_calificados)),
-            h('td', { class: 'num' }, t.pendientes_revision ? h('span', { class: `dv-flag ${t.espera_max_dias >= r.dias_revision_atrasada ? '' : 'dv-flag--warn'}`, 'data-tip': `El intento más antiguo espera hace ${dias(t.espera_max_dias)}`, tabindex: '0' }, icon('fa-solid fa-hourglass-half'), `${loc(t.pendientes_revision)} · ${dias(t.espera_max_dias)}`) : h('span', { class: 'dv-flag dv-flag--ok' }, icon('fa-solid fa-check'), 'Al día')),
+            h('td', { class: 'num' }, t.pendientes_revision ? h('span', { class: `dv-flag ${t.espera_max_dias >= r.dias_revision_atrasada ? '' : 'dv-flag--warn'}`, 'data-tip': `The oldest attempt has been waiting for ${dias(t.espera_max_dias)}`, tabindex: '0' }, icon('fa-solid fa-hourglass-half'), `${loc(t.pendientes_revision)} · ${dias(t.espera_max_dias)}`) : h('span', { class: 'dv-flag dv-flag--ok' }, icon('fa-solid fa-check'), 'Up to date')),
             h('td', { class: 'num' }, pct(t.promedio_pct)), h('td', { class: 'num' }, t.alertas ? loc(t.alertas) : '—')));
         return h('article', { class: 'dv-card dv-card--wide' },
-            h('div', { class: 'dv-card-head' }, h('div', {}, h('h3', {}, 'Tutores'), h('p', {}, 'Primero quienes tienen más intentos esperando calificación. Toca un tutor para filtrar la lista de abajo.'))),
-            r.por_tutor.length ? tabla([{ t: 'Tutor' }, { t: 'Evaluaciones', num: true }, { t: 'Publicadas', num: true }, { t: 'Calificados', num: true }, { t: 'Por calificar', num: true }, { t: 'Promedio', num: true }, { t: 'Alertas', num: true }], filas, { clic: true }) : vacio('Todavía no hay tutores con evaluaciones.'));
+            h('div', { class: 'dv-card-head' }, h('div', {}, h('h3', {}, 'Tutors'), h('p', {}, 'Sorted by most attempts awaiting grading. Click a tutor to filter the list below.'))),
+            r.por_tutor.length ? tabla([{ t: 'Tutor' }, { t: 'Evaluations', num: true }, { t: 'Published', num: true }, { t: 'Graded', num: true }, { t: 'To grade', num: true }, { t: 'Average', num: true }, { t: 'Alerts', num: true }], filas, { clic: true }) : vacio('No tutors with evaluations yet.'));
     }
     function filtrarTutor(id) {
         if (stSelect) {
@@ -449,8 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function tarjetaLista(r) {
         bqInput = h('input', {
             type: 'search',
-            placeholder: 'Buscar por título, estudiante, tutor o práctica…',
-            'aria-label': 'Buscar por título, estudiante, tutor o práctica',
+            placeholder: 'Search by title, student, tutor or practice…',
+            'aria-label': 'Search by title, student, tutor or practice',
             maxlength: '100'
         });
         bqInput.addEventListener('input', () => {
@@ -466,11 +466,11 @@ document.addEventListener('DOMContentLoaded', () => {
             bqInput
         );
 
-        seSelect = h('select', { id: 'f-estado', 'aria-label': 'Seleccionar estado' }, [
-            ['', 'Todos los estados'],
-            ['PUBLICADA', 'Publicadas'],
-            ['BORRADOR', 'En borrador'],
-            ['CERRADA', 'Cerradas']
+        seSelect = h('select', { id: 'f-estado', 'aria-label': 'Select status' }, [
+            ['', 'All statuses'],
+            ['PUBLICADA', 'Published'],
+            ['BORRADOR', 'In draft'],
+            ['CERRADA', 'Closed']
         ].map(([v, t]) => h('option', { value: v }, t)));
         seSelect.addEventListener('change', () => {
             limiteMostrado = 15;
@@ -481,8 +481,8 @@ document.addEventListener('DOMContentLoaded', () => {
             icon('fa-solid fa-chevron-down right-icon')
         );
 
-        stSelect = h('select', { id: 'f-tutor', 'aria-label': 'Seleccionar tutor' }, [
-            h('option', { value: '' }, 'Todos los tutores'),
+        stSelect = h('select', { id: 'f-tutor', 'aria-label': 'Select tutor' }, [
+            h('option', { value: '' }, 'All tutors'),
             ...r.por_tutor.map((t) => h('option', { value: t.id_tutor }, nombreTutor(t.id_tutor)))
         ]);
         stSelect.addEventListener('change', () => {
@@ -499,9 +499,9 @@ document.addEventListener('DOMContentLoaded', () => {
             limiteMostrado = 15;
             renderEvaluacionesList();
         });
-        const checkWrap = h('label', { class: 'dv-check-pill' }, caCheck, h('span', {}, 'Solo con alertas'));
+        const checkWrap = h('label', { class: 'dv-check-pill' }, caCheck, h('span', {}, 'Only with alerts'));
 
-        const btnClear = h('button', { type: 'button', class: 'um-ghost-btn', id: 'ev-btn-clear', 'aria-label': 'Limpiar filtros' },
+        const btnClear = h('button', { type: 'button', class: 'um-ghost-btn', id: 'ev-btn-clear', 'aria-label': 'Clear filters' },
             icon('fa-solid fa-rotate-left'),
             'Clear'
         );
@@ -529,17 +529,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         return h('article', { class: 'dv-card dv-card--wide', id: 'dv-lista' },
-            h('div', { class: 'dv-card-head' }, h('div', {}, h('h3', {}, 'Todas las evaluaciones'), h('p', {}, 'Toca una fila para ver el análisis por pregunta y los intentos.'))),
+            h('div', { class: 'dv-card-head' }, h('div', {}, h('h3', {}, 'All evaluations'), h('p', {}, 'Click a row to view question analysis and attempts.'))),
             h('div', { class: 'dv-filters' }, searchWrap, stateWrap, tutorWrap, checkWrap, btnClear, listaConteo),
             h('div', { class: 'dv-tablewrap' }, h('table', { class: 'dv-table dv-table--click' },
-                h('thead', {}, h('tr', {}, [['Evaluación'], ['Tutor'], ['Estado'], ['Preguntas', 1], ['Intentos', 1], ['Nota final', 1], ['Fecha límite']].map(([t, num]) => h('th', { scope: 'col', class: num ? 'num' : null }, t)))),
+                h('thead', {}, h('tr', {}, [['Evaluation'], ['Tutor'], ['Status'], ['Questions', 1], ['Attempts', 1], ['Final grade', 1], ['Deadline']].map(([t, num]) => h('th', { scope: 'col', class: num ? 'num' : null }, t)))),
                 listaCuerpo)),
             listaMas);
     }
 
     function subtitulo(ev) {
         const p = DIR.practicas[ev.id_practica];
-        return `${nombreEstudiante(ev.id_estudiante)} · ${p ? (p.tipo || 'Práctica') : 'práctica no encontrada'}`;
+        return `${nombreEstudiante(ev.id_estudiante)} · ${p ? (p.tipo || 'Practice') : 'practice not found'}`;
     }
 
     function filaEvaluacion(ev) {
@@ -548,20 +548,20 @@ document.addEventListener('DOMContentLoaded', () => {
             h('td', {}, h('span', { class: 'dv-cell-title' }, ev.titulo), h('span', { class: 'dv-cell-sub' }, subtitulo(ev)),
                 ev.alertas.length ? h('span', { class: 'dv-cell-sub' }, ev.alertas.map(bandera)) : null),
             h('td', {}, nombreTutor(ev.id_tutor)),
-            h('td', {}, badge(ev.estado), ev.vencida && ev.estado === 'PUBLICADA' ? h('span', { class: 'dv-cell-sub' }, 'Vencida') : null),
-            h('td', { class: 'num' }, loc(ev.total_preguntas), ev.preguntas_ia ? h('span', { class: 'dv-cell-sub' }, `${loc(ev.preguntas_ia)} con IA`) : null),
-            h('td', { class: 'num' }, `${loc(ev.intentos_calificados)}/${loc(ev.intentos_enviados)}`, ev.pendientes_revision ? h('span', { class: 'dv-cell-sub' }, `${loc(ev.pendientes_revision)} por calificar`) : null),
-            h('td', { class: 'num' }, ev.nota_final === null ? '—' : h('span', { class: 'dv-pct' }, pct(ev.porcentaje_final), h('small', {}, `${loc(ev.nota_final, 2)} de ${loc(ev.nota_maxima, 1)}`))),
-            h('td', {}, ev.fecha_limite ? fecha(ev.fecha_limite) : 'Sin límite'));
+            h('td', {}, badge(ev.estado), ev.vencida && ev.estado === 'PUBLICADA' ? h('span', { class: 'dv-cell-sub' }, 'Overdue') : null),
+            h('td', { class: 'num' }, loc(ev.total_preguntas), ev.preguntas_ia ? h('span', { class: 'dv-cell-sub' }, `${loc(ev.preguntas_ia)} with AI`) : null),
+            h('td', { class: 'num' }, `${loc(ev.intentos_calificados)}/${loc(ev.intentos_enviados)}`, ev.pendientes_revision ? h('span', { class: 'dv-cell-sub' }, `${loc(ev.pendientes_revision)} to grade`) : null),
+            h('td', { class: 'num' }, ev.nota_final === null ? '—' : h('span', { class: 'dv-pct' }, pct(ev.porcentaje_final), h('small', {}, `${loc(ev.nota_final, 2)} of ${loc(ev.nota_maxima, 1)}`))),
+            h('td', {}, ev.fecha_limite ? fecha(ev.fecha_limite) : 'No deadline'));
     }
 
     function errorPanel(el, e, reintentar) {
-        clear(el).append(h('div', { class: 'ev-empty' }, icon('fa-solid fa-plug-circle-exclamation'), (e && e.message) || 'No se pudo cargar la información.',
-            h('div', { class: 'ev-actions', style: 'justify-content:center' }, h('button', { type: 'button', class: 'ev-btn ev-btn--primary', onclick: reintentar }, icon('fa-solid fa-rotate'), 'Reintentar'))));
+        clear(el).append(h('div', { class: 'ev-empty' }, icon('fa-solid fa-plug-circle-exclamation'), (e && e.message) || 'Could not load information.',
+            h('div', { class: 'ev-actions', style: 'justify-content:center' }, h('button', { type: 'button', class: 'ev-btn ev-btn--primary', onclick: reintentar }, icon('fa-solid fa-rotate'), 'Retry'))));
     }
 
     async function cargarPanel() {
-        clear(contenido).append(h('p', { class: 'ev-loading' }, 'Cargando…'));
+        clear(contenido).append(h('p', { class: 'ev-loading' }, 'Loading…'));
         try {
             const [r, listRes] = await Promise.all([
                 API.resumen(),
@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
             todasLasEvaluaciones = listRes?.items || [];
             limiteMostrado = 15;
             glosario(r);
-            $('#panel-actualizado').textContent = `Actualizado ${fecha(r.generado_en)}.`;
+            $('#panel-actualizado').textContent = `Updated ${fecha(r.generado_en)}.`;
             clear(contenido).append(
                 renderKpis(r),
                 h('div', { class: 'dv-grid' }, tarjetaAlertas(r), tarjetaEstado(r), tarjetaNotas(r), tarjetaIA(r), tarjetaMeses(r), tarjetaTipos(r), tarjetaTutores(r), tarjetaLista(r)));
@@ -601,14 +601,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function abrirDetalle(id) {
         ver('detalle');
-        $('#detalle-title').textContent = 'Cargando…'; clear($('#detalle-badges')); clear(detalle);
+        $('#detalle-title').textContent = 'Loading…'; clear($('#detalle-badges')); clear(detalle);
         try {
             const d = await API.detalle(id);
             absorber(d.directorio);
             ultimoDetalle = d;
             pintarDetalle(d);
         } catch (e) {
-            $('#detalle-title').textContent = 'No se pudo abrir la evaluación';
+            $('#detalle-title').textContent = 'Could not open evaluation';
             errorPanel(detalle, e, () => abrirDetalle(id));
         }
     }
@@ -617,21 +617,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function pintarDetalle(d) {
         $('#detalle-title').textContent = d.titulo;
         const b = $('#detalle-badges'); clear(b);
-        EvalUI.add(b, badge(d.estado), d.vencida && d.estado === 'PUBLICADA' ? h('span', { class: 'ev-badge ev-badge--cerrada' }, icon('fa-regular fa-calendar-xmark'), 'Fecha límite vencida') : null, d.alertas.map(bandera));
+        EvalUI.add(b, badge(d.estado), d.vencida && d.estado === 'PUBLICADA' ? h('span', { class: 'ev-badge ev-badge--cerrada' }, icon('fa-regular fa-calendar-xmark'), 'Deadline passed') : null, d.alertas.map(bandera));
         const p = DIR.practicas[d.id_practica] || {};
         EvalUI.add(clear(detalle),
             h('dl', { class: 'dv-meta' },
-                dato('Estudiante', nombreEstudiante(d.id_estudiante)), dato('Tutor', nombreTutor(d.id_tutor)),
-                dato('Práctica', DIR.practicas[d.id_practica] ? `${p.tipo || 'Práctica'}${p.institucion ? ` · ${p.institucion}` : ''}` : `${d.id_practica} (no encontrada)`),
-                dato('Creada', fecha(d.fecha_evaluacion)), dato('Fecha límite', d.fecha_limite ? fecha(d.fecha_limite) : 'Sin límite'),
-                dato('Intentos permitidos', String(d.intentos_permitidos)), dato('Nota máxima', loc(d.nota_maxima, 1)),
-                dato('Resultados al estudiante', d.mostrar_resultados ? 'Los ve al terminar' : 'Ocultos')),
+                dato('Student', nombreEstudiante(d.id_estudiante)), dato('Tutor', nombreTutor(d.id_tutor)),
+                dato('Practice', DIR.practicas[d.id_practica] ? `${p.tipo || 'Practice'}${p.institucion ? ` · ${p.institucion}` : ''}` : `${d.id_practica} (not found)`),
+                dato('Created', fecha(d.fecha_evaluacion)), dato('Deadline', d.fecha_limite ? fecha(d.fecha_limite) : 'No deadline'),
+                dato('Allowed attempts', String(d.intentos_permitidos)), dato('Max grade', loc(d.nota_maxima, 1)),
+                dato('Results to student', d.mostrar_resultados ? 'Visible upon submission' : 'Hidden')),
             d.descripcion ? h('p', { class: 'dv-note', style: 'margin:-6px 0 18px' }, d.descripcion) : null,
             h('div', { class: 'ev-stats' },
-                estadistica(d.total_preguntas, 'Preguntas', d.preguntas_ia ? `${d.preguntas_ia} con IA` : null),
-                estadistica(d.intentos_enviados, 'Intentos enviados', `${d.intentos_iniciados} iniciados`),
-                estadistica(d.pendientes_revision, 'Por calificar', d.espera_max_dias !== null ? `desde hace ${dias(d.espera_max_dias)}` : null),
-                estadistica(d.nota_final === null ? '—' : pct(d.porcentaje_final), 'Nota final', d.nota_final === null ? 'Sin calificar' : `${loc(d.nota_final, 2)} de ${loc(d.nota_maxima, 1)}`)),
+                estadistica(d.total_preguntas, 'Questions', d.preguntas_ia ? `${d.preguntas_ia} with AI` : null),
+                estadistica(d.intentos_enviados, 'Submitted attempts', `${d.intentos_iniciados} started`),
+                estadistica(d.pendientes_revision, 'To grade', d.espera_max_dias !== null ? `waiting for ${dias(d.espera_max_dias)}` : null),
+                estadistica(d.nota_final === null ? '—' : pct(d.porcentaje_final), 'Final grade', d.nota_final === null ? 'Ungraded' : `${loc(d.nota_final, 2)} of ${loc(d.nota_maxima, 1)}`)),
             d.alertas.length ? h('ul', { class: 'dv-alerts', style: 'margin-bottom:18px' }, d.alertas.map((a) => {
                 const [ic, t] = SEVERIDAD[a.severidad] || SEVERIDAD.BAJA;
                 return h('li', { class: `dv-alert dv-alert--${a.severidad.toLowerCase()}`, style: 'cursor:default' }, h('span', { class: 'dv-alert-sev' }, icon(ic), t), h('span', {}, h('span', { class: 'dv-alert-title' }, TITULO_ALERTA[a.tipo] || a.tipo), h('span', { class: 'dv-alert-text' }, mensajeAlerta(a))), h('span', {}));
@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const estadistica = (valor, etiqueta, nota) => h('div', { class: 'ev-stat' }, h('b', {}, String(valor)), h('span', {}, etiqueta), nota ? h('span', { style: 'display:block;font-size:11.5px;opacity:.75;margin-top:2px' }, nota) : null);
 
     function pestanas(d) {
-        const defs = [['analisis', 'Análisis por pregunta', () => panelAnalisis(d)], ['intentos', 'Intentos', () => panelIntentos(d)], ['ia', 'Uso de IA', () => panelIA(d)]];
+        const defs = [['analisis', 'Question analysis', () => panelAnalisis(d)], ['intentos', 'Attempts', () => panelIntentos(d)], ['ia', 'AI usage', () => panelIA(d)]];
         const botones = defs.map(([k, t]) => h('button', { type: 'button', class: 'ev-tab', role: 'tab', 'aria-selected': k === 'analisis' ? 'true' : 'false', 'data-tab': k }, t));
         const paneles = defs.map(([k, , f]) => h('div', { 'data-panel': k, hidden: k !== 'analisis' }, f()));
         botones.forEach((btn) => btn.addEventListener('click', () => {
@@ -653,40 +653,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const TIPO = EvalUI.TIPOS;
     function panelAnalisis(d) {
-        if (!d.preguntas.length) return vacio('Esta evaluación todavía no tiene preguntas.', 'fa-regular fa-circle-question');
+        if (!d.preguntas.length) return vacio('This evaluation does not have questions yet.', 'fa-regular fa-circle-question');
         const filas = d.preguntas.map((q) => {
             const claseAcierto = q.pct_acierto === null ? '' : q.pct_acierto >= 70 ? 'dv-fill--good' : q.pct_acierto >= 40 ? 'dv-fill--mid' : 'dv-fill--low';
             const calificadas = q.correctas + q.incorrectas;
             return h('tr', {},
                 h('td', { class: 'num' }, String(q.orden)),
-                h('td', {}, h('span', { class: 'dv-qtext' }, q.enunciado), q.estado_revision !== 'APROBADA' ? h('span', { class: 'dv-cell-sub' }, q.estado_revision === 'RECHAZADA' ? 'Rechazada por el tutor (no se aplica)' : 'Aún sin revisar por el tutor (no se aplica)') : null),
+                h('td', {}, h('span', { class: 'dv-qtext' }, q.enunciado), q.estado_revision !== 'APROBADA' ? h('span', { class: 'dv-cell-sub' }, q.estado_revision === 'RECHAZADA' ? 'Rejected by tutor (not applied)' : 'Pending tutor review (not applied)') : null),
                 h('td', {}, TIPO[q.tipo_pregunta] || q.tipo_pregunta), h('td', {}, EvalUI.badgeOrigen(q.origen)),
-                h('td', {}, { FACIL: 'Fácil', MEDIA: 'Media', DIFICIL: 'Difícil' }[q.dificultad] || '—'),
+                h('td', {}, { FACIL: 'Easy', MEDIA: 'Medium', DIFICIL: 'Hard' }[q.dificultad] || '—'),
                 h('td', { class: 'num' }, loc(q.valor_pregunta, 2)),
-                h('td', {}, q.pct_acierto === null ? h('span', { class: 'dv-cell-sub' }, q.sin_calificar ? `${plural(q.sin_calificar, 'respuesta', 'respuestas')} sin calificar` : 'Sin respuestas todavía')
-                    : h('div', { class: 'dv-acierto' }, h('div', { class: 'dv-track', 'data-tip': `${q.correctas} de ${calificadas} respuestas calificadas fueron correctas`, tabindex: '0' }, h('div', { class: `dv-fill ${claseAcierto}`, style: `width:${q.pct_acierto}%` })), h('b', {}, pct(q.pct_acierto)),
-                        h('small', {}, `${q.correctas} de ${calificadas} correctas${q.sin_calificar ? ` · ${q.sin_calificar} sin calificar` : ''}`))));
+                h('td', {}, q.pct_acierto === null ? h('span', { class: 'dv-cell-sub' }, q.sin_calificar ? `${plural(q.sin_calificar, 'answer', 'answers')} ungraded` : 'No answers yet')
+                    : h('div', { class: 'dv-acierto' }, h('div', { class: 'dv-track', 'data-tip': `${q.correctas} of ${calificadas} graded answers were correct`, tabindex: '0' }, h('div', { class: `dv-fill ${claseAcierto}`, style: `width:${q.pct_acierto}%` })), h('b', {}, pct(q.pct_acierto)),
+                        h('small', {}, `${q.correctas} of ${calificadas} correct${q.sin_calificar ? ` · ${q.sin_calificar} ungraded` : ''}`))));
         });
-        return h('div', {}, tabla([{ t: '#', num: true }, { t: 'Pregunta' }, { t: 'Tipo' }, { t: 'Origen' }, { t: 'Dificultad' }, { t: 'Valor', num: true }, { t: 'Acierto' }], filas),
-            h('p', { class: 'dv-note' }, 'Acierto = respuestas correctas entre las ya calificadas. Una pregunta abierta cuenta como correcta desde la mitad de su valor. Por privacidad no se muestra lo que respondió el estudiante.'));
+        return h('div', {}, tabla([{ t: '#', num: true }, { t: 'Question' }, { t: 'Type' }, { t: 'Source' }, { t: 'Difficulty' }, { t: 'Value', num: true }, { t: 'Success rate' }], filas),
+            h('p', { class: 'dv-note' }, 'Success rate = correct answers among graded responses. An open question counts as correct from half its value. For privacy, student answers are not displayed.'));
     }
     function panelIntentos(d) {
-        if (!d.intentos.length) return vacio('El estudiante todavía no ha iniciado esta evaluación.', 'fa-regular fa-hourglass');
-        return tabla([{ t: 'Intento', num: true }, { t: 'Estado' }, { t: 'Inicio' }, { t: 'Envío' }, { t: 'Nota', num: true }, { t: 'Porcentaje', num: true }, { t: 'Espera', num: true }],
+        if (!d.intentos.length) return vacio('The student has not started this evaluation yet.', 'fa-regular fa-hourglass');
+        return tabla([{ t: 'Attempt', num: true }, { t: 'Status' }, { t: 'Start' }, { t: 'Submitted' }, { t: 'Grade', num: true }, { t: 'Percentage', num: true }, { t: 'Waiting', num: true }],
             d.intentos.map((i) => h('tr', {}, h('td', { class: 'num' }, String(i.numero_intento)), h('td', {}, badge(i.estado)), h('td', {}, fecha(i.fecha_inicio)), h('td', {}, i.fecha_envio ? fecha(i.fecha_envio) : '—'),
-                h('td', { class: 'num' }, i.nota_obtenida === null ? '—' : `${loc(i.nota_obtenida, 2)} de ${loc(d.nota_maxima, 1)}`), h('td', { class: 'num' }, pct(i.porcentaje)),
+                h('td', { class: 'num' }, i.nota_obtenida === null ? '—' : `${loc(i.nota_obtenida, 2)} of ${loc(d.nota_maxima, 1)}`), h('td', { class: 'num' }, pct(i.porcentaje)),
                 h('td', { class: 'num' }, i.dias_esperando === null ? '—' : dias(i.dias_esperando)))));
     }
     function panelIA(d) {
         const ia = d.preguntas.filter((q) => q.origen === 'IA');
         const cuenta = (e) => ia.filter((q) => q.estado_revision === e).length;
         const resumen = h('p', { class: 'dv-note', style: 'margin:0 0 14px' }, ia.length
-            ? `${plural(ia.length, 'pregunta fue propuesta', 'preguntas fueron propuestas')} por la IA: ${cuenta('APROBADA')} aprobadas, ${cuenta('BORRADOR')} por revisar y ${cuenta('RECHAZADA')} rechazadas.`
-            : 'Esta evaluación no usa preguntas generadas con IA.');
+            ? `${plural(ia.length, 'question was proposed', 'questions were proposed')} by AI: ${cuenta('APROBADA')} approved, ${cuenta('BORRADOR')} pending review and ${cuenta('RECHAZADA')} rejected.`
+            : 'This evaluation does not use questions generated with AI.');
         if (!d.generaciones.length) return h('div', {}, resumen);
-        return h('div', {}, resumen, tabla([{ t: 'Fecha' }, { t: 'Proveedor' }, { t: 'Modelo' }, { t: 'Resultado' }, { t: 'Pedidas', num: true }, { t: 'Generadas', num: true }, { t: 'Duración', num: true }],
+        return h('div', {}, resumen, tabla([{ t: 'Date' }, { t: 'Provider' }, { t: 'Model' }, { t: 'Result' }, { t: 'Requested', num: true }, { t: 'Generated', num: true }, { t: 'Duration', num: true }],
             d.generaciones.map((g) => h('tr', {}, h('td', {}, fecha(g.created_at)), h('td', {}, g.proveedor || '—'), h('td', {}, g.modelo || '—'),
-                h('td', {}, g.estado === 'FALLIDA' ? h('span', { class: 'dv-flag' }, icon('fa-solid fa-circle-xmark'), 'Fallida') : h('span', { class: 'dv-flag dv-flag--ok' }, icon('fa-solid fa-check'), g.estado === 'COMPLETADA' ? 'Completada' : g.estado)),
+                h('td', {}, g.estado === 'FALLIDA' ? h('span', { class: 'dv-flag' }, icon('fa-solid fa-circle-xmark'), 'Failed') : h('span', { class: 'dv-flag dv-flag--ok' }, icon('fa-solid fa-check'), g.estado === 'COMPLETADA' ? 'Completed' : g.estado)),
                 h('td', { class: 'num' }, loc(g.cantidad_solicitada)), h('td', { class: 'num' }, loc(g.cantidad_generada)), h('td', { class: 'num' }, g.duracion_ms ? `${loc(g.duracion_ms / 1000, 1)} s` : '—')))));
     }
 
@@ -698,24 +698,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const t = r.totales, d = r.desempeno, ia = r.ia, e = r.por_estado, o = r.preguntas.por_origen, tp = r.preguntas.por_tipo, df = r.preguntas.por_dificultad;
         const ds = (id, title, columns, rows) => ({ id, title, columns: columns.map(([key, label, num]) => ({ key, label, num: Boolean(num) })), rows });
         return [
-            ds('eval-cifras', 'Cifras generales', [['indicador', 'Indicador'], ['valor', 'Valor', true]], [
-                ['Evaluaciones', t.evaluaciones], ['Publicadas', e.PUBLICADA], ['En borrador', e.BORRADOR], ['Cerradas', e.CERRADA], ['Prácticas con evaluación', t.practicas],
-                ['Tutores', t.tutores], ['Estudiantes', t.estudiantes], ['Intentos en curso', t.intentos_en_curso], ['Intentos pendientes de calificar', t.intentos_pendientes_revision],
-                ['Intentos calificados', t.intentos_calificados], ['Promedio de notas finales (%)', d.promedio_pct], ['Aprobación (%)', d.aprobacion_pct],
-                ['Evaluaciones calificadas', d.evaluaciones_calificadas], ['Aprobadas', d.aprobadas], ['Reprobadas', d.reprobadas], ['Preguntas con IA (%)', ia.uso_pct],
-                ['Evaluaciones vencidas sin cerrar', t.evaluaciones_vencidas_sin_cerrar]
+            ds('eval-cifras', 'General metrics', [['indicador', 'Metric'], ['valor', 'Value', true]], [
+                ['Evaluations', t.evaluaciones], ['Published', e.PUBLICADA], ['In draft', e.BORRADOR], ['Closed', e.CERRADA], ['Practices with evaluation', t.practicas],
+                ['Tutors', t.tutores], ['Students', t.estudiantes], ['Attempts in progress', t.intentos_en_curso], ['Attempts pending grading', t.intentos_pendientes_revision],
+                ['Graded attempts', t.intentos_calificados], ['Final grades average (%)', d.promedio_pct], ['Pass rate (%)', d.aprobacion_pct],
+                ['Graded evaluations', d.evaluaciones_calificadas], ['Passed', d.aprobadas], ['Failed', d.reprobadas], ['Questions with AI (%)', ia.uso_pct],
+                ['Overdue unclosed evaluations', t.evaluaciones_vencidas_sin_cerrar]
             ].map(([indicador, valor]) => ({ indicador, valor }))),
-            ds('eval-notas', 'Notas finales por rango', [['rango', 'Rango (% de la nota máxima)'], ['cantidad', 'Evaluaciones', true]], d.distribucion.map((x) => ({ rango: `${x.desde}–${x.hasta} %`, cantidad: x.cantidad }))),
-            ds('eval-origen', 'Origen de las preguntas', [['concepto', 'Concepto'], ['preguntas', 'Preguntas', true]], [
-                ['Generadas con IA', o.IA], ['Escritas por el tutor', o.MANUAL], ['IA aprobadas', ia.aprobadas], ['IA por revisar', ia.por_revisar], ['IA rechazadas', ia.rechazadas]
+            ds('eval-notas', 'Final grades by range', [['rango', 'Range (% of maximum grade)'], ['cantidad', 'Evaluations', true]], d.distribucion.map((x) => ({ rango: `${x.desde}–${x.hasta} %`, cantidad: x.cantidad }))),
+            ds('eval-origen', 'Question origin', [['concepto', 'Concept'], ['preguntas', 'Questions', true]], [
+                ['Generated with AI', o.IA], ['Written by tutor', o.MANUAL], ['AI approved', ia.aprobadas], ['AI pending review', ia.por_revisar], ['AI rejected', ia.rechazadas]
             ].map(([concepto, preguntas]) => ({ concepto, preguntas }))),
-            ds('eval-meses', 'Actividad por mes', [['mes', 'Mes'], ['creadas', 'Evaluaciones creadas', true], ['enviados', 'Intentos enviados', true]], r.historial.map((m) => ({ mes: m.mes, creadas: m.evaluaciones_creadas, enviados: m.intentos_enviados }))),
-            ds('eval-preguntas', 'Preguntas por tipo y dificultad', [['categoria', 'Categoría'], ['preguntas', 'Preguntas', true]], [
-                ['Opción múltiple', tp.OPCION_MULTIPLE], ['Verdadero / Falso', tp.VERDADERO_FALSO], ['Abierta', tp.ABIERTA], ['Fácil', df.FACIL], ['Media', df.MEDIA], ['Difícil', df.DIFICIL], ['Sin definir', df.SIN_DEFINIR]
+            ds('eval-meses', 'Activity by month', [['mes', 'Month'], ['creadas', 'Created evaluations', true], ['enviados', 'Submitted attempts', true]], r.historial.map((m) => ({ mes: m.mes, creadas: m.evaluaciones_creadas, enviados: m.intentos_enviados }))),
+            ds('eval-preguntas', 'Questions by type and difficulty', [['categoria', 'Category'], ['preguntas', 'Questions', true]], [
+                ['Multiple choice', tp.OPCION_MULTIPLE], ['True / False', tp.VERDADERO_FALSO], ['Open', tp.ABIERTA], ['Easy', df.FACIL], ['Medium', df.MEDIA], ['Hard', df.DIFICIL], ['Undefined', df.SIN_DEFINIR]
             ].map(([categoria, preguntas]) => ({ categoria, preguntas }))),
-            ds('eval-tutores', 'Tutores', [['tutor', 'Tutor'], ['evaluaciones', 'Evaluaciones', true], ['publicadas', 'Publicadas', true], ['calificados', 'Intentos calificados', true], ['porCalificar', 'Por calificar', true], ['espera', 'Espera máxima (días)', true], ['promedio', 'Promedio (%)', true], ['alertas', 'Alertas', true]],
+            ds('eval-tutores', 'Tutors', [['tutor', 'Tutor'], ['evaluaciones', 'Evaluations', true], ['publicadas', 'Published', true], ['calificados', 'Graded attempts', true], ['porCalificar', 'To grade', true], ['espera', 'Max wait (days)', true], ['promedio', 'Average (%)', true], ['alertas', 'Alerts', true]],
                 r.por_tutor.map((x) => ({ tutor: nombreTutor(x.id_tutor), evaluaciones: x.evaluaciones, publicadas: x.publicadas, calificados: x.intentos_calificados, porCalificar: x.pendientes_revision, espera: x.espera_max_dias, promedio: x.promedio_pct, alertas: x.alertas }))),
-            ds('eval-alertas', 'Alertas (requieren atención)', [['severidad', 'Severidad'], ['tipo', 'Tipo'], ['evaluacion', 'Evaluación'], ['practica', 'Práctica'], ['tutor', 'Tutor'], ['detalle', 'Detalle']],
+            ds('eval-alertas', 'Alerts (require attention)', [['severidad', 'Severity'], ['tipo', 'Type'], ['evaluacion', 'Evaluation'], ['practica', 'Practice'], ['tutor', 'Tutor'], ['detalle', 'Detail']],
                 r.alertas.map((a) => ({ severidad: (SEVERIDAD[a.severidad] || SEVERIDAD.BAJA)[1], tipo: TITULO_ALERTA[a.tipo] || a.tipo, evaluacion: a.titulo, practica: etiquetaPractica(a.id_practica), tutor: nombreTutor(a.id_tutor), detalle: mensajeAlerta(a) })))
         ];
     }

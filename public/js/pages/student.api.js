@@ -97,12 +97,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (scoreValEl) scoreValEl.textContent = gradeNum.toFixed(1);
         
-        let gradeTitle = 'Excelente';
-        if (gradeNum >= 4.5) gradeTitle = 'Excelente';
-        else if (gradeNum >= 4.0) gradeTitle = 'Sobresaliente';
-        else if (gradeNum >= 3.0) gradeTitle = 'Aprobado';
-        else if (gradeNum > 0) gradeTitle = 'Reprobado';
-        else gradeTitle = 'Sin calificar';
+        let gradeTitle = 'Excellent';
+        if (gradeNum >= 4.5) gradeTitle = 'Excellent';
+        else if (gradeNum >= 4.0) gradeTitle = 'Outstanding';
+        else if (gradeNum >= 3.0) gradeTitle = 'Passed';
+        else if (gradeNum > 0) gradeTitle = 'Failed';
+        else gradeTitle = 'Ungraded';
         
         if (scoreTitleEl) scoreTitleEl.textContent = gradeTitle;
 
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (obsTextEl) {
             const obsText = lb.generalObservation && lb.generalObservation.trim()
                 ? lb.generalObservation
-                : '¡Qué buen trabajo realizaste!';
+                : 'Great work completed!';
             obsTextEl.textContent = obsText;
             obsTextEl.title = obsText;
         }

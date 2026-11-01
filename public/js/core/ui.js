@@ -40,8 +40,8 @@
         if (!iso) return '—';
         const d = new Date(iso);
         if (isNaN(d)) return '—';
-        return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
-            d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+        return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
+            d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     };
     UI.nota = (n) => (n === null || n === undefined) ? '—' : Number(n).toFixed(2);
     UI.num = (n) => (n === null || n === undefined) ? '' : String(Number(n));
@@ -69,7 +69,7 @@
         };
         const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); cerrar(); } };
         const caja = h('div', { class: 'ev-modal', role: 'dialog', 'aria-modal': 'true', style: ancho ? `max-width:${ancho}px` : null },
-            h('button', { type: 'button', class: 'ev-modal-close', 'aria-label': 'Cerrar', onclick: cerrar }, UI.icon('fa-solid fa-xmark')),
+            h('button', { type: 'button', class: 'ev-modal-close', 'aria-label': 'Close', onclick: cerrar }, UI.icon('fa-solid fa-xmark')),
             h('h3', { class: 'ev-modal-title' }, titulo),
             contenido);
         const overlay = h('div', { class: 'ev-modal-overlay' }, caja);
@@ -96,12 +96,12 @@
             let resuelto = false;
             const fin = (v) => { if (!resuelto) { resuelto = true; resolve(v); } };
             const m = UI.modal({
-                titulo: titulo || '¿Confirmas?', ancho: 460, onClose: () => fin(false),
+                titulo: titulo || 'Confirm?', ancho: 460, onClose: () => fin(false),
                 contenido: h('div', {},
                     h('p', { class: 'ev-confirm-text' }, mensaje),
                     h('div', { class: 'ev-actions' },
-                        h('button', { type: 'button', class: 'ev-btn ev-btn--soft', onclick: () => { fin(false); m.close(); } }, 'Cancelar'),
-                        h('button', { type: 'button', class: 'ev-btn ' + (peligro ? 'ev-btn--danger' : 'ev-btn--dark'), onclick: () => { fin(true); m.close(); } }, ok || 'Aceptar'))),
+                        h('button', { type: 'button', class: 'ev-btn ev-btn--soft', onclick: () => { fin(false); m.close(); } }, 'Cancel'),
+                        h('button', { type: 'button', class: 'ev-btn ' + (peligro ? 'ev-btn--danger' : 'ev-btn--dark'), onclick: () => { fin(true); m.close(); } }, ok || 'Confirm'))),
             });
         });
     };
@@ -122,14 +122,14 @@
         }
     };
 
-    UI.error = (e) => UI.toast((e && e.message) || 'Ocurrió un error inesperado.', 'error');
+    UI.error = (e) => UI.toast((e && e.message) || 'An unexpected error occurred.', 'error');
 
     /* ---------- insignias ---------- */
     const ESTADOS = {
-        BORRADOR: ['Borrador', 'fa-regular fa-pen-to-square'], PUBLICADA: ['Publicada', 'fa-solid fa-circle-check'],
-        CERRADA: ['Cerrada', 'fa-solid fa-lock'], EN_CURSO: ['En curso', 'fa-solid fa-hourglass-half'],
-        ENVIADO: ['Pendiente de revisión', 'fa-regular fa-clock'], CALIFICADO: ['Calificado', 'fa-solid fa-circle-check'],
-        APROBADA: ['Aprobada', 'fa-solid fa-check'], RECHAZADA: ['Rechazada', 'fa-solid fa-ban'],
+        BORRADOR: ['Draft', 'fa-regular fa-pen-to-square'], PUBLICADA: ['Published', 'fa-solid fa-circle-check'],
+        CERRADA: ['Closed', 'fa-solid fa-lock'], EN_CURSO: ['In progress', 'fa-solid fa-hourglass-half'],
+        ENVIADO: ['Pending review', 'fa-regular fa-clock'], CALIFICADO: ['Graded', 'fa-solid fa-circle-check'],
+        APROBADA: ['Approved', 'fa-solid fa-check'], RECHAZADA: ['Rejected', 'fa-solid fa-ban'],
     };
     UI.badge = (estado, textoPropio) => {
         const [t, ic] = ESTADOS[estado] || [estado, 'fa-solid fa-circle'];
@@ -138,7 +138,7 @@
     UI.badgeOrigen = (origen) => origen === 'IA'
         ? h('span', { class: 'ev-badge ev-badge--ia' }, UI.icon('fa-solid fa-wand-magic-sparkles'), 'IA')
         : h('span', { class: 'ev-badge ev-badge--manual' }, UI.icon('fa-solid fa-pen'), 'Manual');
-    UI.TIPOS = { OPCION_MULTIPLE: 'Opción múltiple', VERDADERO_FALSO: 'Verdadero / Falso', ABIERTA: 'Abierta' };
+    UI.TIPOS = { OPCION_MULTIPLE: 'Multiple choice', VERDADERO_FALSO: 'True / False', ABIERTA: 'Open' };
 
     /* ---------- navegación de la carcasa ---------- */
     UI.habilitarEnlacesExternos = function () {
