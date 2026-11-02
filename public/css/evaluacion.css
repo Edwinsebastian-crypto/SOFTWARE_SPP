@@ -685,6 +685,21 @@ body.dark-theme .ev-modal-close {
   border-radius: 14px;
   padding: 18px 22px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.ev-card[role="button"] {
+  cursor: pointer;
+}
+
+.ev-card[role="button"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .08);
+}
+
+.ev-card[role="button"]:hover .ev-go {
+  transform: scale(1.05);
+  opacity: 1;
 }
 
 .ev-card-icon {

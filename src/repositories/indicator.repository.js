@@ -90,7 +90,7 @@ class IndicatorRepository extends BaseRepository {
     const rows = await this.query(
       `SELECT p."idPractica" AS id, e.${programColumn} AS "programId", p."fechaInicio" AS "startDate", p."fechaFinal" AS "endDate",
               p."notaFinal" AS "finalGrade", p."observacionFinal" AS "finalObservation", lower(trim(p.${statusColumn})) AS status,
-              tp."idTipoPractica" AS "typeId", tp.nombre AS "typeName", COALESCE(tp."horasRequeridas", 0) AS "requiredHours",
+              tp."idTipoPractica" AS "typeId", tp.nombre AS "typeName", tp."numSemestre" AS semester, COALESCE(tp."horasRequeridas", 0) AS "requiredHours",
               i."nitEntidad" AS "taxId", i.nombre AS "institutionName", i.direccion AS "institutionAddress",
               i.encargado AS "institutionManager", i."correoInstitucion" AS "institutionEmail",
               e."numDocumento" AS "studentDocument", e."tipoDocumento" AS "studentDocumentType",
@@ -140,7 +140,30 @@ class IndicatorRepository extends BaseRepository {
     const Model = accreditationIndicator();
     if (!Model) return [];
     const documents = await Model.find(year ? { anio: year } : {}).sort({ anio: -1, nombrePrograma: 1 }).lean();
-    return documents.map(IndicatorRepository.#fromDocument);
+    const indicators = documents.map(IndicatorRepository.#fromDocument);
+    const missingSemester = indicators.some((i) => (i.practicesByType || []).some((t) => t.semester === null || t.semester === undefined));
+    if (missingSemester) {
+      try {
+        const types = await this.query('SELECT "idTipoPractica" AS id, nombre AS name, "numSemestre" AS semester FROM tipopractica');
+        const map = new Map();
+        types.forEach((t) => {
+          if (t.id) map.set(String(t.id).trim().toLowerCase(), t.semester);
+          if (t.name) map.set(String(t.name).trim().toLowerCase(), t.semester);
+        });
+        indicators.forEach((ind) => {
+          (ind.practicesByType || []).forEach((t) => {
+            if (t.semester === null || t.semester === undefined) {
+              const sem = (t.typeId && map.get(String(t.typeId).trim().toLowerCase())) ||
+                          (t.type && map.get(String(t.type).trim().toLowerCase()));
+              if (sem !== undefined && sem !== null) t.semester = sem;
+            }
+          });
+        });
+      } catch (e) {
+        // Fallback gracefully if database is unreachable
+      }
+    }
+    return indicators;
   }
 
   /**

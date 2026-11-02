@@ -689,7 +689,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const qBtn = document.getElementById('preguntas-preguntas-btn');
     if (cardQuestions && qBtn) {
         cardQuestions.addEventListener('click', (e) => {
-            if (!e.target.closest('#preguntas-preguntas-btn')) qBtn.click();
+            if (!e.target.closest('#preguntas-preguntas-btn') && !e.target.closest('.lb-action-btn')) qBtn.click();
         });
         cardQuestions.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -697,6 +697,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 qBtn.click();
             }
         });
+    }
+
+    if (qBtn && !qBtn.dataset.tutorBound) {
+        qBtn.addEventListener('click', () => {
+            const panelLogbook = document.getElementById('logbook-panel');
+            const questionsPanel = document.getElementById('questions-panel');
+            if (panelLogbook) panelLogbook.style.display = 'none';
+            if (questionsPanel) questionsPanel.style.display = 'flex';
+            window.scrollTo(0, 0);
+            if (window.SPP_EVAL_TUTOR && typeof window.SPP_EVAL_TUTOR.abrir === 'function') {
+                window.SPP_EVAL_TUTOR.abrir();
+            }
+        });
+        qBtn.dataset.tutorBound = 'true';
     }
 
     function updateLogbookHero(logbook) {

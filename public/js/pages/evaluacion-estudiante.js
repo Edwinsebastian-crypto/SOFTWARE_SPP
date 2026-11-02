@@ -34,12 +34,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function tarjeta(ev) {
         const abierto = ev.id_intento_abierto !== null;
+        const vencida = Boolean(ev.fecha_limite && new Date(ev.fecha_limite) < new Date());
         let accion;
         if (abierto) accion = ['Continuar', 'fa-solid fa-play', 'ev-btn--gold', () => iniciar(ev.id_evaluacion)];
         else if (ev.puede_intentar) accion = [ev.intentos_usados ? 'Nuevo intento' : 'Comenzar', 'fa-solid fa-play', 'ev-btn--primary', () => confirmarInicio(ev)];
-        const verRes = ev.id_ultimo_intento ? ['Ver resultado', 'fa-solid fa-chart-simple', 'ev-btn--dark', () => abrirResultado(ev.id_ultimo_intento)] : null;
-        const estadoTxt = abierto ? badge('EN_CURSO') : ev.ultimo_intento_estado ? badge(ev.ultimo_intento_estado) : ev.estado === 'CERRADA' ? badge('CERRADA') : null;
-        return h('div', { class: 'ev-card' },
+        const verRes = ev.id_ultimo_intento
+            ? ['Ver resultado', 'fa-solid fa-chart-simple', 'ev-btn--dark', () => abrirResultado(ev.id_ultimo_intento)]
+            : (vencida ? ['Ver preguntas', 'fa-solid fa-eye', 'ev-btn--dark', () => iniciar(ev.id_evaluacion)] : null);
+        const estadoTxt = abierto ? badge('EN_CURSO') : ev.ultimo_intento_estado ? badge(ev.ultimo_intento_estado) : ev.estado === 'CERRADA' ? badge('CERRADA') : (vencida && !ev.puede_intentar ? badge('VENCIDA') : null);
+
+        const abrirTarjeta = () => {
+            if (abierto) {
+                iniciar(ev.id_evaluacion);
+            } else if (ev.puede_intentar) {
+                confirmarInicio(ev);
+            } else if (ev.id_ultimo_intento) {
+                abrirResultado(ev.id_ultimo_intento);
+            } else if (vencida) {
+                iniciar(ev.id_evaluacion);
+            }
+        };
+
+        const esClickeable = abierto || ev.puede_intentar || Boolean(ev.id_ultimo_intento) || vencida;
+
+        return h('div', {
+            class: 'ev-card',
+            role: esClickeable ? 'button' : undefined,
+            tabindex: esClickeable ? '0' : undefined,
+            style: esClickeable ? 'cursor: pointer;' : undefined,
+            onclick: esClickeable ? abrirTarjeta : undefined,
+            onkeydown: esClickeable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirTarjeta(); } } : undefined
+        },
             h('div', { class: 'ev-card-icon' }, icon('fa-solid fa-circle-question')),
             h('div', { class: 'ev-card-body' },
                 h('div', { class: 'ev-card-title' }, ev.titulo),
@@ -47,10 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 h('div', { class: 'ev-badges', style: 'margin-top:8px' }, estadoTxt),
                 h('div', { class: 'ev-card-meta' },
                     h('span', {}, icon('fa-regular fa-circle-question'), plural(ev.total_preguntas, 'pregunta', 'preguntas')),
-                    h('span', {}, icon('fa-solid fa-rotate-right'), `Intentos: ${ev.intentos_usados} de ${ev.intentos_permitidos}`),
+                    h('span', {}, icon('fa-solid fa-rotate-right'), ev.intentos_usados === 0 ? '0 intentos' : `Intentos: ${ev.intentos_usados} de ${ev.intentos_permitidos}`),
                     ev.fecha_limite ? h('span', {}, icon('fa-regular fa-calendar'), 'Límite: ' + fecha(ev.fecha_limite)) : null)),
             ev.nota_final !== null ? h('div', { class: 'ev-nota' }, nota(ev.nota_final), h('small', {}, 'de ' + ev.nota_maxima)) : null,
-            h('div', { class: 'ev-toolbar' }, verRes && !abierto ? btn(...verRes) : null, accion ? btn(...accion) : null));
+            h('div', { class: 'ev-toolbar', onclick: (e) => e.stopPropagation() },
+                verRes && !abierto ? btn(...verRes) : null,
+                accion ? btn(...accion) : null
+            )
+        );
     }
     function btn(txt, ic, cls, fn) { const b = h('button', { type: 'button', class: 'ev-btn ev-btn--sm ' + cls }, icon(ic), txt); b.addEventListener('click', () => ocupado(b, fn)); return b; }
     async function confirmarInicio(ev) {
@@ -58,12 +87,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ok) await iniciar(ev.id_evaluacion);
     }
     async function iniciar(id) {
+        ver('quiz');
+        const cont = clear($('#quiz-contenido'));
+        if (cont) cont.appendChild(h('p', { class: 'ev-loading' }, 'Cargando preguntas…'));
         try {
             const it = await API.iniciarIntento(id);
             if (it.estado === 'EN_CURSO') abrirQuiz(it); else mostrarResultado(it);
-        } catch (e) { EvalUI.error(e); cargarLista(); }
+        } catch (e) {
+            ver('lista');
+            EvalUI.error(e);
+            cargarLista();
+        }
     }
-    async function abrirResultado(id) { try { mostrarResultado(await API.verIntento(id)); } catch (e) { EvalUI.error(e); } }
+    async function abrirResultado(id) {
+        ver('resultado');
+        const cont = clear($('#resultado-contenido'));
+        if (cont) cont.appendChild(h('p', { class: 'ev-loading' }, 'Cargando resultado…'));
+        try {
+            mostrarResultado(await API.verIntento(id));
+        } catch (e) {
+            ver('lista');
+            EvalUI.error(e);
+        }
+    }
 
     /* ================================================================== QUIZ */
     let Q = null;   // { it, idx, resp: {id_pregunta: {id_opcion, respuesta}}, timers }
@@ -169,7 +215,14 @@ document.addEventListener('DOMContentLoaded', () => {
         cont.appendChild(h('div', { class: 'qz-card qz-result' },
             h('h2', { class: 'ev-section-title', style: 'font-size:22px' }, it.titulo),
             calificado
-                ? h('div', {}, h('div', { class: 'qz-score' }, nota(it.nota_obtenida), h('small', {}, ' / ' + it.nota_maxima)), h('p', { class: 'ev-sub', style: 'margin-top:10px' }, `Intento ${it.numero_intento} · enviado ${fecha(it.fecha_envio)}`))
+                ? h('div', {},
+                    h('div', { class: 'qz-score' }, nota(it.nota_obtenida), h('small', {}, ' / ' + it.nota_maxima)),
+                    h('p', { class: 'ev-sub', style: 'margin-top:10px' },
+                        !it.fecha_envio || it.numero_intento === 0
+                            ? '0 intentos'
+                            : `Intento ${it.numero_intento} · enviado ${fecha(it.fecha_envio)}`
+                    )
+                  )
                 : h('div', {}, h('div', { class: 'ev-badges', style: 'justify-content:center' }, badge('ENVIADO')),
                     h('p', { class: 'ev-sub', style: 'margin-top:12px;font-size:16px' }, `Tu tutor está revisando ${plural(pendientes, 'respuesta abierta', 'respuestas abiertas')}. Cuando termine verás aquí tu nota.`)),
             h('div', { class: 'ev-actions', style: 'justify-content:center' }, h('button', { type: 'button', class: 'ev-btn ev-btn--dark', onclick: () => { ver('lista'); cargarLista(); } }, icon('fa-solid fa-arrow-left'), 'Volver a mis evaluaciones'))));
@@ -177,15 +230,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const revision = h('div', { class: 'qz-review' });
         it.preguntas.forEach((p, n) => {
             const r = it.respuestas.find((x) => x.id_pregunta === p.id_pregunta) || {};
+            const respondida = p.tipo_pregunta === 'ABIERTA'
+                ? Boolean(r.respuesta && r.respuesta.trim())
+                : (r.id_opcion !== null && r.id_opcion !== undefined);
+
             const tarj = h('article', { class: 'ev-q' },
                 h('div', { class: 'ev-q-top' }, h('span', { class: 'ev-q-num' }, 'Pregunta ' + (n + 1)), h('span', { class: 'ev-badge' }, TIPOS[p.tipo_pregunta]),
                     it.resultados_visibles && r.nota_obtenida !== null && r.nota_obtenida !== undefined ? h('span', { class: 'ev-badge ' + (r.es_correcta ? 'ev-badge--calificado' : 'ev-badge--rechazada') }, `${nota(r.nota_obtenida)} / ${p.valor_pregunta}`) : null,
                     r.pendiente_revision ? badge('ENVIADO', 'Por calificar') : null),
                 h('div', { class: 'ev-q-text' }, p.enunciado));
+
             if (p.tipo_pregunta === 'ABIERTA') {
                 tarj.appendChild(h('div', { class: 'ev-ans' }, r.respuesta && r.respuesta.trim() ? r.respuesta : '(sin responder)'));
                 if (p.respuesta_esperada) tarj.appendChild(h('div', { class: 'ev-q-note' }, h('b', {}, 'Criterio de calificación: '), p.respuesta_esperada));
             } else if (it.resultados_visibles) {
+                if (!respondida) {
+                    tarj.appendChild(h('div', { class: 'ev-ans' }, '(sin responder)'));
+                }
                 tarj.appendChild(h('ul', { class: 'ev-q-opts' }, p.opciones.map((o) => {
                     const mia = r.id_opcion === o.id_opcion;
                     return h('li', { class: o.es_correcta ? 'is-ok' : (mia ? 'ev-ans--bad' : '') }, icon(o.es_correcta ? 'fa-solid fa-circle-check' : mia ? 'fa-solid fa-circle-xmark' : 'fa-regular fa-circle'), o.texto, mia ? h('b', {}, ' ← tu respuesta') : null);
@@ -207,10 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnQuestions = document.getElementById('questions-btn');
     if (btnQuestions) {
         btnQuestions.addEventListener('click', () => {
-            setTimeout(() => {
+            ver('lista');
+            cargarLista();
+        });
+    }
+
+    const qCardStudent = document.getElementById('lb-card-questions');
+    if (qCardStudent) {
+        qCardStudent.addEventListener('click', (e) => {
+            if (!e.target.closest('#questions-btn') && !e.target.closest('.lb-action-btn')) {
                 ver('lista');
                 cargarLista();
-            }, 60);
+            }
         });
     }
 
@@ -221,6 +290,19 @@ document.addEventListener('DOMContentLoaded', () => {
             window.updateStudentQuestionsPill?.();
         });
     }
+
+    window.SPP_EVAL_ESTUDIANTE = {
+        abrir: () => {
+            ver('lista');
+            cargarLista();
+        },
+        volverALista: () => {
+            ver('lista');
+        },
+        recargar: () => {
+            cargarLista();
+        }
+    };
 
     cargarLista();
 });

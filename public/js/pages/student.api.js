@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const qBtn = document.getElementById('questions-btn');
     if (cardQuestions && qBtn) {
         cardQuestions.addEventListener('click', (e) => {
-            if (!e.target.closest('#questions-btn')) qBtn.click();
+            if (!e.target.closest('#questions-btn') && !e.target.closest('.lb-action-btn')) qBtn.click();
         });
         cardQuestions.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -151,6 +151,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 qBtn.click();
             }
         });
+    }
+
+    if (qBtn && !qBtn.dataset.studentBound) {
+        qBtn.addEventListener('click', () => {
+            const panelLogbook = document.getElementById('logbook-panel');
+            const questionsPanel = document.getElementById('questions-panel');
+            if (panelLogbook) panelLogbook.style.display = 'none';
+            if (questionsPanel) questionsPanel.style.display = 'flex';
+            window.scrollTo(0, 0);
+            if (window.SPP_EVAL_ESTUDIANTE && typeof window.SPP_EVAL_ESTUDIANTE.abrir === 'function') {
+                window.SPP_EVAL_ESTUDIANTE.abrir();
+            }
+        });
+        qBtn.dataset.studentBound = 'true';
     }
 
     // ---------- 2) Activities ----------

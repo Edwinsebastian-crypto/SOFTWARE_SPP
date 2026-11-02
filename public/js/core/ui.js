@@ -31,7 +31,7 @@
     UI.icon = (cls) => h('i', { class: cls, 'aria-hidden': 'true' });
     /** Como append(), pero ignora null/undefined/false (append() los escribiría como texto). */
     UI.add = (el, ...nodos) => { nodos.flat().forEach((n) => { if (n !== null && n !== undefined && n !== false) el.append(n); }); return el; };
-    UI.clear = (el) => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
+    UI.clear = (el) => { if (!el) return el; while (el.firstChild) el.removeChild(el.firstChild); return el; };
     UI.$ = (sel, root) => (root || document).querySelector(sel);
     UI.$$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
@@ -130,6 +130,7 @@
         CERRADA: ['Closed', 'fa-solid fa-lock'], EN_CURSO: ['In progress', 'fa-solid fa-hourglass-half'],
         ENVIADO: ['Pending review', 'fa-regular fa-clock'], CALIFICADO: ['Graded', 'fa-solid fa-circle-check'],
         APROBADA: ['Approved', 'fa-solid fa-check'], RECHAZADA: ['Rejected', 'fa-solid fa-ban'],
+        VENCIDA: ['Deadline passed', 'fa-regular fa-calendar-xmark'],
     };
     UI.badge = (estado, textoPropio) => {
         const [t, ic] = ESTADOS[estado] || [estado, 'fa-solid fa-circle'];

@@ -14,7 +14,7 @@ const programs = [
 ];
 const row = (over) => ({
   id: 'PRA-1', programId: 'P-01', startDate: '2026-02-01', endDate: '2026-03-03', finalGrade: '4.50', finalObservation: ' ok ',
-  status: 'completed', typeId: 'TIP-001', typeName: 'Observation', requiredHours: 120, taxId: '900', institutionName: 'School X',
+  status: 'completed', typeId: 'TIP-001', typeName: 'Observation', semester: 5, requiredHours: 120, taxId: '900', institutionName: 'School X',
   institutionAddress: 'Street 1', institutionManager: 'Ana', institutionEmail: 'x@x.co',
   studentDocument: '111', studentDocumentType: 'CC', studentName: 'Edwin T', studentEmail: 'e@u.co', studentStatus: 'active',
   tutorDocument: '222', tutorName: 'Ramiro U', tutorEmail: 't@u.co', advisorDocument: '333', advisorName: 'Claudia R', advisorEmail: 'a@u.co',
@@ -62,7 +62,7 @@ test('grade distribution always lists the three ranges', () => {
 
 test('practices by type and partner institutions carry the complete data', () => {
   const [first, second] = early.practicesByType;
-  assert.deepEqual([first.type, first.count, first.students, first.averageGrade, first.approvalRate], ['Observation', 2, 2, 3.25, 50]);
+  assert.deepEqual([first.type, first.semester, first.count, first.students, first.averageGrade, first.approvalRate], ['Observation', 5, 2, 2, 3.25, 50]);
   assert.equal(second.type, 'Intervention');
   const school = early.partnerInstitutions[0];
   assert.deepEqual([school.institutionName, school.taxId, school.address, school.manager, school.email], ['School X', '900', 'Street 1', 'Ana', 'x@x.co']);

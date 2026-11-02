@@ -76,6 +76,7 @@ function toDetail(row) {
     studentStatus: row.studentStatus || null,
     typeId: row.typeId ?? null,
     type: row.typeName || 'No type',
+    semester: row.semester != null ? num(row.semester) : null,
     taxId: row.taxId ?? null,
     institution: row.institutionName || 'No institution',
     tutorDocument: row.tutorDocument || null,
@@ -133,6 +134,7 @@ function byType(details) {
     return {
       typeId: group[0].typeId,
       type: group[0].type,
+      semester: group[0].semester ?? null,
       requiredHours: group[0].requiredHours,
       count: group.length,
       students: new Set(group.map((d) => d.studentDocument)).size,

@@ -241,9 +241,17 @@
             overview: () => overview(i, s, legacy), types: () => typesPanel(i), support: () => supportPanel(i),
             institutions: () => tablePanel('institutions', i), practices: () => rosterPanel(i)
         };
+        const panelHolder = h('div', { class: 'rp-acc-panel' }, panels[openTab]());
         const buttons = tabs.map(([key, label]) => h('button', {
             type: 'button', class: 'ev-tab', role: 'tab', 'aria-selected': String(openTab === key),
-            onclick: () => { openTab = key; render(); }
+            onclick: (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (openTab === key) return;
+                openTab = key;
+                buttons.forEach((b, idx) => b.setAttribute('aria-selected', String(tabs[idx][0] === key)));
+                K.clear(panelHolder).append(panels[key]());
+            }
         }, label));
         return h('article', { class: 'dv-card dv-card--wide rp-acc-detail', id: 'rp-acc-detail' },
             h('div', { class: 'dv-card-head' }, h('div', { style: 'margin-right:auto;min-width:0' }, h('h3', {}, i.programName + ' · ' + i.year),
@@ -251,7 +259,7 @@
             h('button', { type: 'button', class: 'dv-toggle', onclick: () => { openId = null; render(); } }, icon('fa-solid fa-xmark'), 'Close')),
             legacy ? banner('This program was saved with an earlier version of the indicators and only has the headline figures. Click “Generate and save” to store the complete information (practices, students, tutors, institutions...).', 'warn') : null,
             h('div', { class: 'ev-tabs', role: 'tablist' }, buttons),
-            h('div', { class: 'rp-acc-panel' }, panels[openTab]()));
+            panelHolder);
     }
 
     function overview(i, s, legacy) {
@@ -362,10 +370,38 @@
     }
 
     // ------------------------------------------------------------------ data
+    function enrichSemesters(list, pTypes) {
+        if (!pTypes || !pTypes.length || !list || !list.length) return;
+        const typeMap = new Map();
+        pTypes.forEach((pt) => {
+            if (pt.id) typeMap.set(String(pt.id).trim().toLowerCase(), pt.semester);
+            if (pt.code) typeMap.set(String(pt.code).trim().toLowerCase(), pt.semester);
+            if (pt.name) typeMap.set(String(pt.name).trim().toLowerCase(), pt.semester);
+        });
+        list.forEach((ind) => {
+            (ind.practicesByType || []).forEach((t) => {
+                if (t.semester === null || t.semester === undefined) {
+                    const found = (t.typeId && typeMap.get(String(t.typeId).trim().toLowerCase())) ||
+                                  (t.type && typeMap.get(String(t.type).trim().toLowerCase()));
+                    if (found !== undefined && found !== null) {
+                        t.semester = found;
+                    }
+                }
+            });
+        });
+    }
+
     async function load() {
         failure = ''; notice = '';
         try {
-            indicators = (await SPP.get('/api/reports?year=' + encodeURIComponent(year))).indicators || [];
+            const [repRes, typesRes] = await Promise.all([
+                SPP.get('/api/reports?year=' + encodeURIComponent(year)),
+                SPP.get('/api/practice-types').catch(() => null)
+            ]);
+            indicators = repRes.indicators || [];
+            if (typesRes && typesRes.practiceTypes) {
+                enrichSemesters(indicators, typesRes.practiceTypes);
+            }
         } catch (err) {
             indicators = [];
             failure = (err && err.message) || 'The indicators could not be loaded.';
@@ -377,8 +413,14 @@
         if (busy) return;
         busy = true; failure = ''; notice = ''; render();
         try {
-            const result = await SPP.post('/api/reports/generate', { year });
+            const [result, typesRes] = await Promise.all([
+                SPP.post('/api/reports/generate', { year }),
+                SPP.get('/api/practice-types').catch(() => null)
+            ]);
             indicators = result.indicators || [];
+            if (typesRes && typesRes.practiceTypes) {
+                enrichSemesters(indicators, typesRes.practiceTypes);
+            }
             notice = 'Saved ' + plural(indicators.length, 'program', 'programs') + ' for ' + year + ' in MongoDB, with the complete information of the practices.';
             if (window.SPP_REPORTS) window.SPP_REPORTS.reload();
         } catch (err) {

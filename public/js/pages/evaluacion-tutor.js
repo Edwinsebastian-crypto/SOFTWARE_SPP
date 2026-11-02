@@ -74,7 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function tarjeta(ev) {
         const abrir = () => abrirEditor(ev.id_evaluacion);
-        return h('div', { class: 'ev-card' },
+        return h('div', {
+            class: 'ev-card',
+            role: 'button',
+            tabindex: '0',
+            style: 'cursor: pointer;',
+            onclick: abrir,
+            onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); } }
+        },
             h('div', { class: 'ev-card-icon' }, icon('fa-solid fa-circle-question')),
             h('div', { class: 'ev-card-body' },
                 h('div', { class: 'ev-card-title' }, ev.titulo),
@@ -85,7 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     h('span', {}, icon('fa-regular fa-user'), plural(ev.intentos_presentados, 'intento', 'intentos')),
                     ev.fecha_limite ? h('span', {}, icon('fa-regular fa-calendar'), 'Límite: ' + fecha(ev.fecha_limite)) : null)),
             ev.nota_final !== null ? h('div', { class: 'ev-nota' }, nota(ev.nota_final), h('small', {}, 'de ' + ev.nota_maxima)) : null,
-            h('button', { type: 'button', class: 'ev-go', 'aria-label': 'Abrir ' + ev.titulo, onclick: abrir }, icon('fa-solid fa-arrow-right')));
+            h('button', {
+                type: 'button',
+                class: 'ev-go',
+                'aria-label': 'Abrir ' + ev.titulo,
+                onclick: (e) => { e.stopPropagation(); abrir(); }
+            }, icon('fa-solid fa-arrow-right')));
     }
 
     /* ----------------------------------------------- modal: crear / editar evaluación */
@@ -124,9 +136,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ================================================================= EDITOR */
     async function abrirEditor(id, tab) {
-        try { estado.ev = await API.obtenerEvaluacion(id); } catch (e) { return EvalUI.error(e); }
         estado.tab = tab || 'preguntas';
-        ver('editor'); renderEditor();
+        ver('editor');
+        $('#editor-title').textContent = 'Loading evaluation…';
+        clear($('#editor-badges'));
+        clear($('#editor-acciones'));
+        clear($('#editor-stats'));
+        clear($('#editor-agregar'));
+        const tabPreguntas = $('#tabpanel-preguntas');
+        if (tabPreguntas) clear(tabPreguntas).appendChild(h('p', { class: 'ev-loading' }, 'Loading questions…'));
+        clear($('#tabpanel-resultados'));
+        try {
+            estado.ev = await API.obtenerEvaluacion(id);
+            renderEditor();
+        } catch (e) {
+            ver('lista');
+            return EvalUI.error(e);
+        }
     }
     $('#btn-volver-lista').addEventListener('click', () => { ver('lista'); cargarLista(); });
     $('#tab-preguntas').addEventListener('click', () => cambiarTab('preguntas'));
@@ -476,12 +502,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPreguntas = document.getElementById('preguntas-preguntas-btn');
     if (btnPreguntas) {
         btnPreguntas.addEventListener('click', () => {
-            setTimeout(() => {
+            resolverPractica().catch(() => {}).then(() => {
+                ver('lista');
+                cargarLista();
+            });
+        });
+    }
+
+    const qCardTutor = document.getElementById('lb-card-questions') || document.getElementById('lb-card-tutor-questions');
+    if (qCardTutor) {
+        qCardTutor.addEventListener('click', (e) => {
+            if (!e.target.closest('#preguntas-preguntas-btn') && !e.target.closest('.lb-action-btn')) {
                 resolverPractica().catch(() => {}).then(() => {
                     ver('lista');
                     cargarLista();
                 });
-            }, 60);
+            }
         });
     }
 
@@ -492,6 +528,21 @@ document.addEventListener('DOMContentLoaded', () => {
             window.SPP_TEACHER?.updateQuestionsPill?.();
         });
     }
+
+    window.SPP_EVAL_TUTOR = {
+        abrir: () => {
+            resolverPractica().catch(() => {}).then(() => {
+                ver('lista');
+                cargarLista();
+            });
+        },
+        volverALista: () => {
+            ver('lista');
+        },
+        recargar: () => {
+            cargarLista();
+        }
+    };
 
     resolverPractica().catch(() => {}).then(cargarLista);
 });

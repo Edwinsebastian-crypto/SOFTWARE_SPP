@@ -204,13 +204,16 @@ function initTutorUI() {
             practicaPanel.style.display = 'none';
             preguntasPanel.style.display = 'flex';
             resetScroll();
+            if (window.SPP_EVAL_TUTOR && typeof window.SPP_EVAL_TUTOR.abrir === 'function') {
+                window.SPP_EVAL_TUTOR.abrir();
+            }
         });
     }
 
-    const cardTutorQuestions = document.getElementById('lb-card-tutor-questions');
+    const cardTutorQuestions = document.getElementById('lb-card-questions') || document.getElementById('lb-card-tutor-questions');
     if (cardTutorQuestions && preguntasBtn) {
         cardTutorQuestions.addEventListener('click', (e) => {
-            if (!e.target.closest('#preguntas-preguntas-btn')) preguntasBtn.click();
+            if (!e.target.closest('#preguntas-preguntas-btn') && !e.target.closest('.lb-action-btn')) preguntasBtn.click();
         });
         cardTutorQuestions.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
